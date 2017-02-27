@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
@@ -67,6 +68,7 @@ public class RSAAuthExecution implements AuthExecution {
 
 		// 验证签名
 		String origin = this.getOrigin(rsaReq);
+		logger.debug("请求签名原文 = {}", origin);
 
 		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.signData)) {
 			throw new InvalidSignatureException("不合法的签名");
@@ -74,6 +76,7 @@ public class RSAAuthExecution implements AuthExecution {
 
 		// 执行业务操作
 		String result = handler.handle(rsaReq.method, rsaReq.bizContent, jsonParser, req, res);
+		logger.info("响应业务内容 = {}", result);
 
 		// 设置返回数据
 		RSAAuthResponse rsaRes = new RSAAuthResponse();
@@ -87,6 +90,8 @@ public class RSAAuthExecution implements AuthExecution {
 		rsaRes.signType = rsaReq.signType;
 		// 获取签名
 		origin = this.getOrigin(rsaRes);
+		logger.info("响应签名原文 = {}", result);
+
 		rsaRes.signData = RSA.signBase64(partner.getConfigs().get(Key.SIGNATURE_RSA_PRIVATE_KEY), origin);
 
 		return rsaRes;
@@ -142,7 +147,12 @@ public class RSAAuthExecution implements AuthExecution {
 				continue;
 			}
 			try {
-				buffer.append("&").append(name).append("=").append(field.get(obj));
+				String value = (String) field.get(obj);
+				// 空值不参与签名
+				if (StringUtils.isBlank(value)) {
+					continue;
+				}
+				buffer.append("&").append(name).append("=").append(value);
 			} catch (Exception e) {
 				// 不会存在
 			}
@@ -156,7 +166,7 @@ public class RSAAuthExecution implements AuthExecution {
 		/** 签名类型 */
 		@NotEmpty(message = "签名类型不能为空")
 		@Values(value = { "RSA", "MD5" }, message = "签名类型支持RSA,MD5")
-		private String signType;
+		protected String signType;
 		/** 签名数据 */
 		@NotEmpty(message = "签名数据不能为空")
 		private String signData;

@@ -14,12 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.hualuomoli.gateway.server.constants.NameEnum;
 import com.github.hualuomoli.gateway.server.lang.InvalidParameterException;
 import com.github.hualuomoli.gateway.server.lang.InvalidRequestParameterAnnotationException;
+import com.github.hualuomoli.gateway.server.lang.NoMethodFoundException;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.validate.util.ValidatorUtils;
 import com.google.common.collect.Lists;
@@ -30,7 +33,7 @@ import com.google.common.collect.Maps;
  * @author lbq
  *
  */
-public class SpringBusinessHandler implements BusinessHandler {
+public class SpringBusinessHandler implements BusinessHandler, ApplicationContextAware {
 
 	private static final Logger logger = LoggerFactory.getLogger(SpringBusinessHandler.class);
 
@@ -38,30 +41,34 @@ public class SpringBusinessHandler implements BusinessHandler {
 	private Class<? extends Annotation> apiAnnotation;
 	private String packageName;
 
-	private Method apiAnnotaionValueMethod = null;
+	private static Method apiAnnotaionValueMethod = null;
 
 	private static final Map<String, List<Function>> functionMap = Maps.newHashMap();
-	private static final String DEFAULT_VERSION = "0.0.1";
+	private static final String DEFAULT_VERSION = "0.0.0";
 
-	public SpringBusinessHandler(ApplicationContext context, Class<? extends Annotation> apiAnnotation, String packageName) {
-		this.context = context;
+	public SpringBusinessHandler(Class<? extends Annotation> apiAnnotation, String packageName) {
 		this.apiAnnotation = apiAnnotation;
-
-		this.init();
+		this.packageName = packageName;
 	}
 
 	@Override
 	public String handle(String methodName, String bizContent, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res) throws Throwable {
 
-		String apiVersion = req.getHeader(NameEnum.API_VERSION.value());
+		String version = this.getVersion(req);
 
-		Function function = this.getFunction(methodName, apiVersion);
+		String realUrl = "/" + methodName.replaceAll("[.]", "/");
+
+		Function function = this.getFunction(realUrl, version);
+
+		if (function == null) {
+			throw new NoMethodFoundException("没有执行方法" + methodName);
+		}
 
 		Object controller = context.getBean(function.clazz);
 		Method method = function.method;
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
-		Object[] params = new Object[] { parameterTypes.length };
+		Object[] params = new Object[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
 			Class<?> parameterType = parameterTypes[i];
 			if (HttpServletRequest.class.isAssignableFrom(parameterType)) {
@@ -78,7 +85,7 @@ public class SpringBusinessHandler implements BusinessHandler {
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}
-				} else if (parameterType.getName().startsWith(packageName)) {
+				} else if (packageName == null || parameterType.getName().startsWith(packageName)) {
 					// 指定的包名
 					Object object = jsonParser.parseObject(bizContent, parameterType);
 					Set<String> errors = ValidatorUtils.valid(object);
@@ -108,31 +115,52 @@ public class SpringBusinessHandler implements BusinessHandler {
 	}
 
 	/**
+	 * 获取请求的版本号
+	 * @param req HTTP请求
+	 * @return 版本号.如果没有设置版本号或者版本号为空,返回null
+	 */
+	private String getVersion(HttpServletRequest req) {
+		String version = req.getHeader(NameEnum.VERSION.value());
+		if (version == null || version.trim().length() == 0) {
+			return null;
+		}
+		return version.trim();
+	}
+
+	/**
 	 * 获取执行功能 
 	 * @param methodName 请求方法名
 	 * @param apiVersion 请求API版本号
 	 * @return 执行功能,如果没找到返回null
 	 * @throws InvalidParameterException 请求没有指定API版本号
 	 */
-	private Function getFunction(String methodName, String apiVersion) throws InvalidParameterException {
+	private Function getFunction(String realUrl, String apiVersion) throws InvalidParameterException {
 
-		if (apiVersion == null) {
-			throw new InvalidParameterException("please use request.setHeader(version, value).");
-		}
+		// 初始化
+		init();
 
 		List<Function> supportFunctions = Lists.newArrayList();
-		List<Function> functions = functionMap.get(methodName);
+		List<Function> functions = functionMap.get(realUrl);
+
+		if (functions == null || functions.size() == 0) {
+			return null;
+		}
+
+		// 获取支持的function
 		for (Function function : functions) {
-			if (this.compare(function.version, apiVersion) <= 0) {
+			if (apiVersion == null) {
+				supportFunctions.add(function);
+			} else if (this.compare(function.version, apiVersion) <= 0) {
 				supportFunctions.add(function);
 			}
 		}
 
 		if (supportFunctions.size() == 0) {
-			logger.warn("there is no api support method={}, version={}", methodName, apiVersion);
+			logger.warn("there is no api support realUrl={}, version={}", realUrl, apiVersion);
 			return null;
 		}
 
+		// 正序排序
 		Collections.sort(supportFunctions, new Comparator<Function>() {
 
 			@Override
@@ -141,7 +169,8 @@ public class SpringBusinessHandler implements BusinessHandler {
 			}
 		});
 
-		Function function = supportFunctions.get(0);
+		// 获取最后一个
+		Function function = supportFunctions.get(supportFunctions.size() - 1);
 		logger.debug("url request version is {}, use {}", apiVersion, function.version);
 
 		return function;
@@ -152,16 +181,28 @@ public class SpringBusinessHandler implements BusinessHandler {
 	 */
 	private void init() {
 
-		Map<String, Object> controllerMap = context.getBeansWithAnnotation(RequestMapping.class);
-		for (String controllerName : controllerMap.keySet()) {
-
-			Object controller = controllerMap.get(controllerName);
-			Class<? extends Object> controllerClazz = controller.getClass();
-			RequestMapping requestMapping = controllerClazz.getAnnotation(RequestMapping.class);
-
-			this.initController(controllerClazz, requestMapping.value());
-
+		if (functionMap.size() > 0) {
+			return;
 		}
+
+		synchronized (functionMap) {
+
+			if (functionMap.size() > 0) {
+				return;
+			}
+
+			Map<String, Object> controllerMap = context.getBeansWithAnnotation(RequestMapping.class);
+			for (String controllerName : controllerMap.keySet()) {
+
+				Object controller = controllerMap.get(controllerName);
+				Class<? extends Object> controllerClazz = controller.getClass();
+				RequestMapping requestMapping = controllerClazz.getAnnotation(RequestMapping.class);
+
+				this.initController(controllerClazz, requestMapping.value());
+
+			}
+		}
+
 	}
 
 	/**
@@ -213,7 +254,7 @@ public class SpringBusinessHandler implements BusinessHandler {
 	 * @param methodUrls 		方法的URL
 	 */
 	private void initMethod(Class<?> controllerClazz, String controllerUrl, Method method, String[] methodUrls) {
-		if (methodUrls == null || methodUrls.length == 0) {
+		if (methodUrls == null) {
 			return;
 		}
 		for (String methodUrl : methodUrls) {
@@ -235,16 +276,14 @@ public class SpringBusinessHandler implements BusinessHandler {
 		realUrl = realUrl.replaceAll("//", "/");
 		realUrl = realUrl.substring(0, realUrl.length() - 1);
 
-		String methodName = realUrl.replaceAll("/", ".");
-
 		Function function = new Function();
-		function.methodName = methodName;
+		function.realUrl = realUrl;
 		function.method = method;
 		function.clazz = controllerClazz;
 		function.version = this.getApiVersion(controllerClazz, method);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("init method={},version={}", function.methodName, function.version);
+			logger.debug("init realUrl={},version={}", function.realUrl, function.version);
 		}
 
 		List<Function> functions = functionMap.get(realUrl);
@@ -346,14 +385,19 @@ public class SpringBusinessHandler implements BusinessHandler {
 
 	// 功能
 	private static final class Function {
-		/** 请求的方法名 */
-		private String methodName;
+		/** 请求的url路径 */
+		private String realUrl;
 		/** 请求的版本号 */
 		private String version;
 		/** 请求的方法 */
 		private Method method;
 		/** 请求的功能类 */
 		private Class<?> clazz;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.context = applicationContext;
 	}
 
 }

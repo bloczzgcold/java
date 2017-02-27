@@ -2,7 +2,7 @@ package com.github.hualuomoli.gateway.server.constants;
 
 /**
  * 编码枚举
- * @author hualuomoli
+ * @author lbq
  *
  */
 public enum CodeEnum {
@@ -19,6 +19,8 @@ public enum CodeEnum {
 	INVALID_SIGNATURE("0004", "签名不合法"),
 	/** 加密不合法 */
 	INVALID_ENCRYPTION("0005", "加密不合法"),
+	/** 加密不合法 */
+	INVALID_PARAMETER("0006", "不合法的参数"),
 	/** 业务处理失败 */
 	BUSINESS_ERROR("9999", "业务处理失败");
 

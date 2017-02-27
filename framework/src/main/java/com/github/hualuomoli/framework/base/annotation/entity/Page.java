@@ -1,4 +1,4 @@
-package com.github.hualuomoli.framework.entity;
+package com.github.hualuomoli.framework.base.annotation.entity;
 
 import java.util.List;
 

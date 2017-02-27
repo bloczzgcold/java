@@ -1,4 +1,4 @@
-package com.github.hualuomoli.framework.annotation;
+package com.github.hualuomoli.framework.base.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 批量插入前持久化预处理
+ * 修改前持久化预处理
  * @author lbq
  *
  */
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PreBatchInsert {
+public @interface PreUpdate {
 
 }
