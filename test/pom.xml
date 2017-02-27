@@ -12,7 +12,7 @@
 
 	<artifactId>hualuomoli-test</artifactId>
 	<packaging>pom</packaging>
-	
+
 	<modules>
 		<module>./framework</module>
 		<module>./gateway</module>
@@ -36,5 +36,48 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- 打包 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<!-- 保留空目录 -->
+					<includeEmptyDirectories>true</includeEmptyDirectories>
+					<!-- 没有web.xml不报错 -->
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<!-- 打包忽略demo目录 -->
+					<packagingExcludes>
+						<!-- WEB-INF/classes/demo/**, -->
+						<!-- WEB-INF/lib/** -->
+					</packagingExcludes>
+				</configuration>
+			</plugin>
+
+			<!-- 忽略安装 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<!-- 忽略发布 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 
 </project>

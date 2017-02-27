@@ -106,7 +106,7 @@
 		<repository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+			<url>http://nexus.hualuomoli.cn:8081/nexus/content/groups/public/</url>
 		</repository>
 
 	</repositories>
@@ -117,7 +117,7 @@
 		<pluginRepository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+			<url>http://nexus.hualuomoli.cn:8081/nexus/content/groups/public/</url>
 		</pluginRepository>
 
 	</pluginRepositories>
@@ -127,12 +127,12 @@
 		<repository>
 			<id>nexus-release</id>
 			<name>Repository for nexus release</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/repositories/repo/</url>
+			<url>http://nexus.hualuomoli.cn:8081/nexus/content/repositories/repo/</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus-snapshot</id>
 			<name>Snapshot for nexus snapshot</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/repositories/repo-s/</url>
+			<url>http://nexus.hualuomoli.cn:8081/nexus/content/repositories/repo-s/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
