@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.hualuomoli.framework.base.annotation.entity.Page;
+import com.github.hualuomoli.framework.base.entity.Page;
 import com.github.hualuomoli.framework.constants.DataStatus;
 import com.github.hualuomoli.framework.thread.Current;
 import com.github.hualuomoli.test.framework.biz.entity.User;

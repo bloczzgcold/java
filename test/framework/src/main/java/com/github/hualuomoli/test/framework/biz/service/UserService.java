@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.hualuomoli.framework.base.annotation.entity.Page;
+import com.github.hualuomoli.framework.base.entity.Page;
 import com.github.hualuomoli.framework.constants.DataStatus;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
 import com.github.hualuomoli.framework.thread.Current;
