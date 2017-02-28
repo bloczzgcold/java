@@ -28,7 +28,7 @@ public class DataSourceConfig {
 
 		DruidDataSource dataSource = new DruidDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://hualuomoli.github.com:3306/hualuomoli?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true");
+		dataSource.setUrl("jdbc:mysql://mysql.hualuomoli.github.com:3306/hualuomoli?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true");
 		dataSource.setUsername("hualuomoli");
 		dataSource.setPassword("");
 
