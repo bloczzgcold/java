@@ -87,6 +87,36 @@
     )
   </insert>
   
+  <insert id="batchInsert">
+    insert into `t_user` (
+		`id`			,
+		`username`		,
+		`nickname`		,
+		`age`			,
+		`sex`			,
+		`create_by`		,
+		`create_date`	,
+		`update_by`		,
+		`update_date`	,
+		`data_status`	,
+		`remark`		
+    ) 
+	<foreach collection="list" item="obj" separator="union all">
+	select
+		#{obj.id},
+		#{obj.username},
+		#{obj.nickname},
+		#{obj.age},
+		#{obj.sex},
+		#{obj.createBy},
+		#{obj.createDate},
+		#{obj.updateBy},
+		#{obj.updateDate},
+		#{obj.dataStatus},
+		#{obj.remark}
+	</foreach>
+  </insert>
+  
   <update id="update">
     update `t_user`
     <set>
@@ -126,6 +156,15 @@
   
   <delete id="delete">
     delete from `t_user` where id =  #{id}
+  </delete>
+  
+  <delete id="batchDelete">
+  	delete from `t_user`
+  	<where>
+  		<foreach collection="ids" item="id" separator="or">
+  			id = #{id}
+  		</foreach>
+  	</where>
   </delete>
   
   <select id="findList" resultType="com.github.hualuomoli.test.framework.biz.entity.User">

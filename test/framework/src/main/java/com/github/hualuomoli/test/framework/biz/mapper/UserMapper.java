@@ -2,6 +2,7 @@ package com.github.hualuomoli.test.framework.biz.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.github.hualuomoli.test.framework.biz.entity.User;
@@ -13,9 +14,17 @@ public interface UserMapper {
 
 	int insert(User user);
 
+	int batchInsert(@Param(value = "list") List<User> list);
+
+	int batchInsert(@Param(value = "list") User[] list);
+
 	int update(User user);
 
 	int delete(String id);
+
+	int batchDelete(@Param(value = "ids") List<String> ids);
+
+	int batchDelete(@Param(value = "ids") String[] ids);
 
 	List<User> findList(User user);
 }

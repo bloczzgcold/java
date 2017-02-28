@@ -17,23 +17,4 @@
 		<module>./server</module>
 	</modules>
 
-	<properties>
-
-	</properties>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-tools</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-	</dependencies>
-
 </project>

@@ -1,5 +1,6 @@
 package com.github.hualuomoli.test.framework.biz.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +41,54 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = false)
+	public int batchInsert(List<User> userList) {
+
+		if (userList == null || userList.size() == 0) {
+			return 0;
+		}
+
+		String username = Current.getUsername();
+		Date date = Current.getDate();
+
+		for (User user : userList) {
+			if (user.getId() == null) {
+				user.setId(UUID.randomUUID().toString().replaceAll("[-]", ""));
+			}
+			user.setCreateBy(username);
+			user.setCreateDate(date);
+			user.setUpdateBy(username);
+			user.setUpdateDate(date);
+			user.setDataStatus(DataStatus.NOMAL.value());
+		}
+
+		return userMapper.batchInsert(userList);
+	}
+
+	@Transactional(readOnly = false)
+	public int batchInsert(User[] users) {
+
+		if (users == null || users.length == 0) {
+			return 0;
+		}
+
+		String username = Current.getUsername();
+		Date date = Current.getDate();
+
+		for (User user : users) {
+			if (user.getId() == null) {
+				user.setId(UUID.randomUUID().toString().replaceAll("[-]", ""));
+			}
+			user.setCreateBy(username);
+			user.setCreateDate(date);
+			user.setUpdateBy(username);
+			user.setUpdateDate(date);
+			user.setDataStatus(DataStatus.NOMAL.value());
+		}
+
+		return userMapper.batchInsert(users);
+	}
+
+	@Transactional(readOnly = false)
 	public int update(User user) {
 
 		if (user.getId() == null) {
@@ -66,6 +115,22 @@ public class UserService {
 	@Transactional(readOnly = false)
 	public int delete(String id) {
 		return userMapper.delete(id);
+	}
+
+	@Transactional(readOnly = false)
+	public int batchDelete(List<String> ids) {
+		if (ids == null || ids.size() == 0) {
+			return 0;
+		}
+		return userMapper.batchDelete(ids);
+	}
+
+	@Transactional(readOnly = false)
+	public int batchDelete(String[] ids) {
+		if (ids == null || ids.length == 0) {
+			return 0;
+		}
+		return userMapper.batchDelete(ids);
 	}
 
 	public List<User> findList(User user) {
