@@ -52,16 +52,16 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 	}
 
 	@Override
-	public String handle(String methodName, String bizContent, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+	public String handle(String apiMethod, String bizContent, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res) throws Throwable {
 
 		String version = this.getVersion(req);
 
-		String realUrl = "/" + methodName.replaceAll("[.]", "/");
+		String realUrl = "/" + apiMethod.replaceAll("[.]", "/");
 
 		Function function = this.getFunction(realUrl, version);
 
 		if (function == null) {
-			throw new NoMethodFoundException("没有执行方法" + methodName);
+			throw new NoMethodFoundException("没有执行方法" + apiMethod);
 		}
 
 		Object controller = context.getBean(function.clazz);
@@ -120,7 +120,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 	 * @return 版本号.如果没有设置版本号或者版本号为空,返回null
 	 */
 	private String getVersion(HttpServletRequest req) {
-		String version = req.getHeader(NameEnum.VERSION.value());
+		String version = req.getHeader(NameEnum.API_VERSION.value());
 		if (version == null || version.trim().length() == 0) {
 			return null;
 		}

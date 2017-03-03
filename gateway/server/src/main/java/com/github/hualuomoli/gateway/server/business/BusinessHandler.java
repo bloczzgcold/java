@@ -15,7 +15,7 @@ public interface BusinessHandler {
 	/**
 	 * 处理业务数据
 	 * 
-	 * @param methodName 	业务请求方法
+	 * @param apiMethod 	业务请求方法
 	 * @param bizContent 	请求业务数据
 	 * @param jsonParser 	JSON转换器
 	 * @param req 			HTTP请求
@@ -23,6 +23,6 @@ public interface BusinessHandler {
 	 * @return 业务处理结果
 	 * @throws Throwable 业务执行过程中出现的错误
 	 */
-	String handle(String methodName, String bizContent, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res) throws Throwable;
+	String handle(String apiMethod, String bizContent, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res) throws Throwable;
 
 }

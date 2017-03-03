@@ -28,7 +28,7 @@ public class User {
 	/** 修改时间 */
 	private Date updateDate;
 	/** 数据状态 */
-	private Integer dataStatus;
+	private Integer status;
 	/** 描述信息 */
 	private String remark;
 
@@ -104,20 +104,20 @@ public class User {
 		this.updateDate = updateDate;
 	}
 
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	public String getRemark() {
 		return remark;
 	}
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	public Integer getDataStatus() {
-		return dataStatus;
-	}
-
-	public void setDataStatus(Integer dataStatus) {
-		this.dataStatus = dataStatus;
 	}
 
 }

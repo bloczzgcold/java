@@ -5,7 +5,7 @@ package com.github.hualuomoli.framework.constants;
  * @author lbq
  *
  */
-public enum DataStatus {
+public enum Status {
 
 	/** 正常 */
 	NOMAL(1, "正常")
@@ -17,7 +17,7 @@ public enum DataStatus {
 	/** 描述 */
 	private String label;
 
-	private DataStatus(Integer value, String label) {
+	private Status(Integer value, String label) {
 		this.value = value;
 		this.label = label;
 	}

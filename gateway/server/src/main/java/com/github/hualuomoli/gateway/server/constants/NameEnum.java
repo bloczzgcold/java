@@ -8,7 +8,7 @@ package com.github.hualuomoli.gateway.server.constants;
 public enum NameEnum {
 
 	/** API版本号 */
-	VERSION("version"),
+	API_VERSION("apiVersion"),
 
 	// ==================== 输入输出参数 ====================
 	/** 合作伙伴ID */
@@ -24,7 +24,7 @@ public enum NameEnum {
 
 	// ==================== 输入参数 ====================
 	/** 请求方法 */
-	IN_METHOD("method"),
+	IN_API_METHOD("apiMethod"),
 	/** 请求业务内容 */
 	IN_BIZCONTENT("bizContent"),
 

@@ -29,7 +29,7 @@ public class GatewayController {
 		gatewayServer.invoke(req, res);
 		String end = new SimpleDateFormat("HH:mm:ss S").format(new Date());
 
-		logger.debug("{} ~ {} - {}", start, end, gatewayServer);
+		logger.debug("{} ~ {}", start, end);
 	}
 
 }

@@ -9,6 +9,6 @@ CREATE TABLE `t_user` (
   `create_date` datetime DEFAULT NULL comment '创建时间',
   `update_by` varchar(32) DEFAULT NULL comment '修改人',
   `update_date` datetime DEFAULT NULL comment '修改时间',
-  `data_status` int(1) DEFAULT NULL comment '数据状态',
+  `status` int(1) DEFAULT NULL comment '数据状态',
   `remark` varchar(200) DEFAULT NULL comment '描述信息'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

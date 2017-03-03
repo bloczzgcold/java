@@ -12,71 +12,94 @@ import java.net.URLEncoder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.test.gateway.server.biz.entity.User;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserApiVersionControllerTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserApiVersionControllerTest.class);
 
-	private String version = "1.0.0";
+	private String apiVersion = "1.0.0";
 
-	@Test
-	public void test() throws IOException {
-
-		User user = null;
-
-		// 低于最低版本
-		version = "0.0.0.1";
-		user = this.runner();
-
-		// 使用最低版本
-		version = "0.0.1";
-		user = this.runner();
-		Assert.assertEquals("测试描述信息", user.getRemark());
-
-		// 高于最低版本,比第二个版本低.使用最低版本
-		version = "0.9.0";
-		user = this.runner();
-		Assert.assertEquals("测试描述信息", user.getRemark());
-
-		// 等于第二个版本,使用第二个版本
-		version = "1.0.0";
-		user = this.runner();
-		Assert.assertEquals("花落寞离", user.getNickname());
-
-		// 高于第一个、第二个版本,低于第三个版本.使用第二个版本
-		version = "1.0.0.1";
-		user = this.runner();
-		Assert.assertEquals("花落寞离", user.getNickname());
-
-		// 等于第三个版本,使用第三个版本
-		version = "1.0.1";
-		user = this.runner();
-		Assert.assertEquals(20, user.getAge().intValue());
-
-		// 高于所有版本,使用第三个版本
-		version = "5.0";
-		user = this.runner();
-		Assert.assertEquals(20, user.getAge().intValue());
-
-		// 没有指定版本号,使用最大版本
-		version = null;
-		user = this.runner();
-		Assert.assertEquals(20, user.getAge().intValue());
-
-		// 指定版本号为空值,使用最大版本
-		version = "";
-		user = this.runner();
-		Assert.assertEquals(20, user.getAge().intValue());
-
+	// 低于最低版本
+	@Test(expected = IOException.class)
+	public void test01LessFirst() throws IOException {
+		apiVersion = "0.0.0.1";
+		this.runner();
 	}
 
-	public User runner() throws IOException {
+	// 等于第一个版本
+	@Test
+	public void test02EqualFirst() throws IOException {
+		apiVersion = "0.0.1";
+		User user = this.runner();
+		Assert.assertEquals("测试描述信息", user.getRemark());
+	}
+
+	// 高于最低版本,比第二个版本低
+	@Test
+	public void test03GreaterFirstLessSecond() throws IOException {
+		apiVersion = "0.9.0";
+		User user = this.runner();
+		Assert.assertEquals("测试描述信息", user.getRemark());
+	}
+
+	// 等于第二个版本
+	@Test
+	public void test04EqualSecond() throws IOException {
+		apiVersion = "1.0.0";
+		User user = this.runner();
+		Assert.assertEquals("花落寞离", user.getNickname());
+	}
+
+	// 高于第一个、第二个版本,低于第三个版本
+	@Test
+	public void test05GreaterSecondLessThird() throws IOException {
+		apiVersion = "1.0.0.1";
+		User user = this.runner();
+		Assert.assertEquals("花落寞离", user.getNickname());
+	}
+
+	// 等于第三个版本
+	@Test
+	public void test06EqualsThird() throws IOException {
+		apiVersion = "1.0.1";
+		User user = this.runner();
+		Assert.assertEquals(20, user.getAge().intValue());
+	}
+
+	// 高于所有版本
+	@Test
+	public void test07GreaterThird() throws IOException {
+		apiVersion = "5.0";
+		User user = this.runner();
+		Assert.assertEquals(20, user.getAge().intValue());
+	}
+
+	// 没有指定版本号
+	@Test
+	public void test08NoVersion() throws IOException {
+		apiVersion = null;
+		User user = this.runner();
+		Assert.assertEquals(20, user.getAge().intValue());
+	}
+
+	// 指定版本号为空值
+	@Test
+	public void test09EmptyVersion() throws IOException {
+		apiVersion = "";
+		User user = this.runner();
+		Assert.assertEquals(20, user.getAge().intValue());
+	}
+
+	private User runner() throws IOException {
 
 		User user = new User();
 		user.setUsername("hualuomoli");
@@ -157,7 +180,7 @@ public class UserApiVersionControllerTest {
 			conn.setDoOutput(true); // output
 
 			// header
-			conn.setRequestProperty("version", version);
+			conn.setRequestProperty("apiVersion", apiVersion);
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			// output data

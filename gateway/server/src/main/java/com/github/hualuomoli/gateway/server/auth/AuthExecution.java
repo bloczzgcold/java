@@ -49,7 +49,7 @@ public interface AuthExecution {
 		protected String partnerId;
 		/** 请求的业务方法 */
 		@NotEmpty(message = "请求业务方法不能为空")
-		protected String method;
+		protected String apiMethod;
 		/** 时间戳 yyyyMMddHHmmss */
 		@NotEmpty(message = "请求时间戳不能为空")
 		protected String timestamp;

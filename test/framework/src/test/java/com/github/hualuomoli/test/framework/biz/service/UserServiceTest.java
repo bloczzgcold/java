@@ -12,7 +12,7 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.hualuomoli.framework.base.entity.Page;
-import com.github.hualuomoli.framework.constants.DataStatus;
+import com.github.hualuomoli.framework.constants.Status;
 import com.github.hualuomoli.framework.thread.Current;
 import com.github.hualuomoli.test.framework.biz.entity.User;
 import com.github.hualuomoli.test.framework.service.ServiceTest;
@@ -84,7 +84,7 @@ public class UserServiceTest extends ServiceTest {
 		// get
 		User user = userService.get(id);
 		Assert.assertNotNull(user);
-		Assert.assertEquals(DataStatus.DELETED.value(), user.getDataStatus());
+		Assert.assertEquals(Status.DELETED.value(), user.getStatus());
 	}
 
 	@Test

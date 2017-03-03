@@ -109,7 +109,7 @@ public class VersionRequestCondition implements RequestCondition<VersionRequestC
 	 * @return 版本号
 	 */
 	private String getRequestVersion(HttpServletRequest request) {
-		String version = request.getHeader("version");
+		String version = request.getHeader("apiVersion");
 		if (version == null || version.trim().length() == 0) {
 			return null;
 		}

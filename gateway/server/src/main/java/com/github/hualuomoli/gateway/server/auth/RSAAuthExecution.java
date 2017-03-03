@@ -58,7 +58,7 @@ public class RSAAuthExecution implements AuthExecution {
 		// 获取请求数据
 		RSAAuthRequest rsaReq = new RSAAuthRequest();
 		rsaReq.partnerId = req.getParameter(NameEnum.IN_OUT_PARTNERID.value());
-		rsaReq.method = req.getParameter(NameEnum.IN_METHOD.value());
+		rsaReq.apiMethod = req.getParameter(NameEnum.IN_API_METHOD.value());
 		rsaReq.timestamp = req.getParameter(NameEnum.IN_OUT_TIMESTAMP.value());
 		rsaReq.bizContent = req.getParameter(NameEnum.IN_BIZCONTENT.value());
 		rsaReq.signType = req.getParameter(NameEnum.IN_OUT_SIGNTYPE.value());
@@ -75,7 +75,7 @@ public class RSAAuthExecution implements AuthExecution {
 		}
 
 		// 执行业务操作
-		String result = handler.handle(rsaReq.method, rsaReq.bizContent, jsonParser, req, res);
+		String result = handler.handle(rsaReq.apiMethod, rsaReq.bizContent, jsonParser, req, res);
 		logger.info("响应业务内容 = {}", result);
 
 		// 设置返回数据

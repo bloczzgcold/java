@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hualuomoli.framework.base.entity.Page;
-import com.github.hualuomoli.framework.constants.DataStatus;
+import com.github.hualuomoli.framework.constants.Status;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
 import com.github.hualuomoli.framework.thread.Current;
 import com.github.hualuomoli.test.framework.biz.entity.User;
@@ -35,7 +35,7 @@ public class UserService {
 		user.setCreateDate(Current.getDate());
 		user.setUpdateBy(Current.getUsername());
 		user.setUpdateDate(Current.getDate());
-		user.setDataStatus(DataStatus.NOMAL.value());
+		user.setStatus(Status.NOMAL.value());
 
 		return userMapper.insert(user);
 	}
@@ -58,7 +58,7 @@ public class UserService {
 			user.setCreateDate(date);
 			user.setUpdateBy(username);
 			user.setUpdateDate(date);
-			user.setDataStatus(DataStatus.NOMAL.value());
+			user.setStatus(Status.NOMAL.value());
 		}
 
 		return userMapper.batchInsert(userList);
@@ -82,7 +82,7 @@ public class UserService {
 			user.setCreateDate(date);
 			user.setUpdateBy(username);
 			user.setUpdateDate(date);
-			user.setDataStatus(DataStatus.NOMAL.value());
+			user.setStatus(Status.NOMAL.value());
 		}
 
 		return userMapper.batchInsert(users);
@@ -107,7 +107,7 @@ public class UserService {
 	public int logicDelete(String id) {
 		User user = new User();
 		user.setId(id);
-		user.setDataStatus(DataStatus.DELETED.value());
+		user.setStatus(Status.DELETED.value());
 
 		return this.update(user);
 	}

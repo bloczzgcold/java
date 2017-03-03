@@ -12,7 +12,7 @@
     `create_date`	as "createDate",
     `update_by`		as "updateBy",
     `update_date`	as "updateDate",
-    `data_status`	as "dataStatus",
+    `status`	as "status",
     `remark`		as "remark"
   </sql>
   
@@ -44,8 +44,8 @@
     <if test="updateDate != null"> 
       and `update_date` = #{updateDate}
     </if>
-    <if test="dataStatus != null"> 
-      and `data_status` = #{dataStatus}
+    <if test="status != null"> 
+      and `status` = #{status}
     </if>
     <if test="remark != null and remark != ''"> 
       and `remark` = #{remark}
@@ -70,7 +70,7 @@
 		`create_date`	,
 		`update_by`		,
 		`update_date`	,
-		`data_status`	,
+		`status`	,
 		`remark`		
     ) values (
 		#{id},
@@ -82,7 +82,7 @@
 		#{createDate},
 		#{updateBy},
 		#{updateDate},
-		#{dataStatus},
+		#{status},
 		#{remark}
     )
   </insert>
@@ -114,8 +114,8 @@
 	    <if test="updateDate != null"> 
 	      `update_date` = #{updateDate},
 	    </if>
-	    <if test="dataStatus != null"> 
-	      `data_status` = #{dataStatus},
+	    <if test="status != null"> 
+	      `status` = #{status},
 	    </if>
 	    <if test="remark != null and remark != ''"> 
 	      `remark` = #{remark},
