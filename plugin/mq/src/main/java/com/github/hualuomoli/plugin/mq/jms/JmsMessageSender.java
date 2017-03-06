@@ -4,6 +4,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -17,6 +19,8 @@ import com.github.hualuomoli.plugin.mq.lang.MessageQueueException;
  *
  */
 public class JmsMessageSender implements MessageSender {
+
+	private static final Logger logger = LoggerFactory.getLogger(JmsMessageSender.class);
 
 	private JmsTemplate jmsTemplate;
 
@@ -42,6 +46,8 @@ public class JmsMessageSender implements MessageSender {
 		default:
 			break;
 		}
+
+		logger.debug("发送数据到MQ,destinationName={},data={}", destinationName, data);
 
 		try {
 			jmsTemplate.send(destinationName, new MessageCreator() {

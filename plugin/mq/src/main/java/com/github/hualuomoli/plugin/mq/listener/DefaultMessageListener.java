@@ -4,11 +4,8 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SessionAwareMessageListener;
-import org.springframework.util.ErrorHandler;
 
 import com.github.hualuomoli.plugin.mq.MessageDealer;
 import com.github.hualuomoli.plugin.mq.lang.MessageQueueException;
@@ -19,8 +16,6 @@ import com.github.hualuomoli.plugin.mq.lang.MessageQueueException;
  *
  */
 public class DefaultMessageListener extends DefaultMessageListenerContainer {
-
-	private static final Logger logger = LoggerFactory.getLogger(DefaultMessageListener.class);
 
 	private MessageDealer messageDealer;
 
@@ -34,15 +29,6 @@ public class DefaultMessageListener extends DefaultMessageListenerContainer {
 
 	// 初始化
 	private void init() {
-
-		// 设置异常处理类,不处理
-		super.setErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void handleError(Throwable t) {
-				logger.warn("", t);
-			}
-		});
 
 		this.setMessageListener(new SessionAwareMessageListener<TextMessage>() {
 
