@@ -15,7 +15,6 @@ import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.constants.CodeEnum;
 import com.github.hualuomoli.gateway.server.constants.NameEnum;
 import com.github.hualuomoli.gateway.server.lang.InvalidEncryptionException;
-import com.github.hualuomoli.gateway.server.lang.InvalidParameterException;
 import com.github.hualuomoli.gateway.server.lang.InvalidSignatureException;
 import com.github.hualuomoli.gateway.server.lang.NoMethodFoundException;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader;
@@ -23,6 +22,7 @@ import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor.Message;
+import com.github.hualuomoli.validator.lang.InvalidParameterException;
 
 /**
  * 网关服务器
@@ -95,26 +95,31 @@ public class GatewayServer {
 			authRes = authExecution.deal(partner, jsonParser, req, res, businessHandler);
 			flush(authRes, req, res);
 		} catch (InvalidSignatureException ise) {
+			// 签名不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_SIGNATURE.value();
 			authRes.message = "不合法的签名数据";
 			flush(authRes, req, res);
 		} catch (InvalidEncryptionException iee) {
+			// 加密不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_ENCRYPTION.value();
 			authRes.message = "不合法的加密数据";
 			flush(authRes, req, res);
 		} catch (NoMethodFoundException nmfe) {
+			// 请求方法未找到
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.NO_BUSINESS_HANDLER_FOUND.value();
 			authRes.message = nmfe.getMessage();
 			flush(authRes, req, res);
 		} catch (InvalidParameterException ipe) {
+			// 实体类要求参数规则不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_PARAMETER.value();
 			authRes.message = ipe.getMessage();
 			flush(authRes, req, res);
 		} catch (Throwable e) {
+			// 其他错误
 			Message message = exceptionProcessor.process(e);
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.SUCCESS.value();

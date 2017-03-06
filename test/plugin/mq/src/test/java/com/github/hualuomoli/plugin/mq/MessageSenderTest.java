@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -16,8 +17,13 @@ public class MessageSenderTest extends ServiceTest {
 	@Resource(name = "jmsTemplate")
 	private JmsTemplate jmsTemplate;
 
+	@AfterClass
+	public static void afterClass() throws InterruptedException {
+		Thread.sleep(1000 * 2);
+	}
+
 	@Test
-	public void testSendQueue() throws InterruptedException {
+	public void testSendQueue() {
 
 		JmsMessageSender sender = new JmsMessageSender();
 		sender.setJmsTemplate(jmsTemplate);
@@ -32,11 +38,10 @@ public class MessageSenderTest extends ServiceTest {
 			sender.send("ln_core_queue", i + " " + timestamp + " 单点message");
 		}
 
-		Thread.sleep(2 * 1000);
 	}
 
 	@Test
-	public void testSendTopic() throws InterruptedException {
+	public void testSendTopic() {
 		JmsMessageSender sender = new JmsMessageSender();
 		sender.setJmsTemplate(jmsTemplate);
 
@@ -50,7 +55,6 @@ public class MessageSenderTest extends ServiceTest {
 			sender.send("ln_core_topic", i + " " + timestamp + " 广播message", Type.TOPIC);
 		}
 
-		Thread.sleep(3 * 1000);
 	}
 
 }

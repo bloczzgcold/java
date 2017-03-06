@@ -5,21 +5,22 @@
 
 	<parent>
 		<groupId>com.github.hualuomoli</groupId>
-		<artifactId>hualuomoli-test-plugin</artifactId>
+		<artifactId>hualuomoli</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>hualuomoli-test-plugin-mq</artifactId>
+	<artifactId>hualuomoli-validator</artifactId>
 	<packaging>jar</packaging>
 
 	<properties>
+
+		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
 
 	</properties>
 
 	<dependencies>
 
-		<!-- hualuomoli -->
 		<dependency>
 			<groupId>com.github.hualuomoli</groupId>
 			<artifactId>hualuomoli-logger</artifactId>
@@ -30,35 +31,19 @@
 			<artifactId>hualuomoli-tools</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-plugin-mq</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
 
+		<!-- validator -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>4.0.8.RELEASE</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-		</dependency> -->
 
 		<!-- junit-test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- spring-test -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>4.0.8.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- servlet -->
@@ -68,6 +53,13 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 	</dependencies>
 

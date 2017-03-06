@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,11 +19,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.hualuomoli.gateway.server.constants.NameEnum;
-import com.github.hualuomoli.gateway.server.lang.InvalidParameterException;
-import com.github.hualuomoli.gateway.server.lang.InvalidRequestParameterAnnotationException;
 import com.github.hualuomoli.gateway.server.lang.NoMethodFoundException;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
-import com.github.hualuomoli.validate.util.ValidatorUtils;
+import com.github.hualuomoli.validator.Validate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -88,10 +85,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 				} else if (packageName == null || parameterType.getName().startsWith(packageName)) {
 					// 指定的包名
 					Object object = jsonParser.parseObject(bizContent, parameterType);
-					Set<String> errors = ValidatorUtils.valid(object);
-					if (errors != null && errors.size() > 0) {
-						throw new InvalidRequestParameterAnnotationException(errors);
-					}
+					Validate.valid(object);
 					params[i] = object;
 				} else {
 					if (logger.isWarnEnabled()) {
@@ -132,9 +126,8 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 	 * @param methodName 请求方法名
 	 * @param apiVersion 请求API版本号
 	 * @return 执行功能,如果没找到返回null
-	 * @throws InvalidParameterException 请求没有指定API版本号
 	 */
-	private Function getFunction(String realUrl, String apiVersion) throws InvalidParameterException {
+	private Function getFunction(String realUrl, String apiVersion) {
 
 		// 初始化
 		init();

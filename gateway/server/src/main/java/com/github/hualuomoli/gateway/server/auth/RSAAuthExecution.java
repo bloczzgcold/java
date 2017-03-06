@@ -24,7 +24,7 @@ import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Key;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.tool.RSA;
-import com.github.hualuomoli.validate.values.Values;
+import com.github.hualuomoli.validator.constraints.Values;
 
 /**
  * RSA权限认证
