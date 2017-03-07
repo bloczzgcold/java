@@ -43,9 +43,9 @@ public class GatewayServer {
 	 * 初始化
 	 * @param partnerLoader　		合作伙伴加载器
 	 * @param exceptionProcessor　	异常处理器
+	 * @param businessHandler　		业务处理者
 	 * @param jsonParser			JSON转换器
 	 * @param authExecutions　		权限执行者
-	 * @param businessHandlers　		业务处理者
 	 */
 	public GatewayServer(PartnerLoader partnerLoader//
 			, ExceptionProcessor exceptionProcessor//

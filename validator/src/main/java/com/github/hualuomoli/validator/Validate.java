@@ -22,9 +22,9 @@ public class Validate {
 	/**
 	 * 验证实体类是否有效
 	 * @param object 实体类
-	 * @return 如果有效返回null,否则返回错误信息
+	 * @throws InvalidParameterException 不合法的数据
 	 */
-	public static void valid(Object object) {
+	public static void valid(Object object) throws InvalidParameterException {
 		valid(object, Default.class);
 	}
 

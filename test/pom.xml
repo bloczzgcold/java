@@ -38,27 +38,28 @@
 
 	</dependencies>
 
+	<!-- 忽略所有的maven操作 -->
 	<build>
 		<plugins>
-			<!-- 打包 -->
+			<!-- 源码 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
-					<!-- 保留空目录 -->
-					<includeEmptyDirectories>true</includeEmptyDirectories>
-					<!-- 没有web.xml不报错 -->
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- 打包忽略demo目录 -->
-					<packagingExcludes>
-						<!-- WEB-INF/classes/demo/**, -->
-						<!-- WEB-INF/lib/** -->
-					</packagingExcludes>
+					<skipSource>true</skipSource>
 				</configuration>
 			</plugin>
-
-			<!-- 忽略安装 -->
+			<!-- 文档 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!-- 安装 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
@@ -67,8 +68,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
-			<!-- 忽略发布 -->
+			<!-- 发布 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -77,7 +77,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 

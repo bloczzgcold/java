@@ -138,7 +138,7 @@ public class PaginationSQLHelper {
 	/**
 	 * 根据数据库方言，生成特定的分页sql
 	 * @param sql     Mapper中的Sql语句
-	 * @param pageNo 	当前页码
+	 * @param pageNumber 	当前页码
 	 * @param pageSize  每页数量
 	 * @param orderBy 排序
 	 * @param dialect 方言类型
@@ -176,8 +176,8 @@ public class PaginationSQLHelper {
 
 	/** 
 	 * 去除qlString的select子句。 
-	 * @param hql 
-	 * @return 
+	 * @param qlString 需要处理的字符串 
+	 * @return 移除select
 	 */
 	@SuppressWarnings("unused")
 	private String removeSelect(String qlString) {
@@ -187,8 +187,8 @@ public class PaginationSQLHelper {
 
 	/** 
 	 * 去除hql的orderBy子句。 
-	 * @param hql 
-	 * @return 
+	 * @param qlString 
+	 * @return 移除order by
 	 */
 	private static String removeOrders(String qlString) {
 		Pattern p = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);

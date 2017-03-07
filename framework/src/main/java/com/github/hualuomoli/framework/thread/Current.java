@@ -30,7 +30,7 @@ public class Current {
 
 	/**
 	 * 设置当前线程日期
-	 * @param username 当前线程日期
+	 * @param date 当前线程日期
 	 */
 	public static void setDate(Date date) {
 		LOCAL_DATE.set(date);

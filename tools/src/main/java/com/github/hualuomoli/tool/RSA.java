@@ -26,7 +26,6 @@ public class RSA {
 	 * 获取Base64的签名数据
 	 * @param privateKeyBase64	64位私钥
 	 * @param origin			签名原文
-	 * @param charset			签名原文编码集
 	 * @return Base64签名
 	 */
 	public static String signBase64(String privateKeyBase64, String origin) {

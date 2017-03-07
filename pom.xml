@@ -58,6 +58,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<includePom>true</includePom>
+				</configuration>
 			</plugin>
 			<!-- 文档 -->
 			<plugin>
