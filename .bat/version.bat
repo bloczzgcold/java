@@ -1,5 +1,7 @@
 @echo off
 
+cd ..
+
 set /p version=please input new version£º
 echo.
 
