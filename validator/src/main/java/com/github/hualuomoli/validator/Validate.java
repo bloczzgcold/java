@@ -25,7 +25,29 @@ public class Validate {
 	 * @throws InvalidParameterException 不合法的数据
 	 */
 	public static void valid(Object object) throws InvalidParameterException {
-		valid(object, Default.class);
+		Set<ConstraintViolation<Object>> set = valid(object, Default.class);
+		if (set == null || set.size() == 0) {
+			return;
+		}
+		// 设置错误信息
+		Set<String> errors = Sets.newHashSet();
+		for (ConstraintViolation<Object> constraintViolation : set) {
+			errors.add(constraintViolation.getMessage());
+		}
+		throw new InvalidParameterException(errors);
+	}
+
+	/**
+	 * 验证实体类是否有效
+	 * @param object 实体类
+	 * @throws InvalidParameterException 不合法的数据
+	 */
+	public static void valid(Object object, String message) throws InvalidParameterException {
+		Set<ConstraintViolation<Object>> set = valid(object, Default.class);
+		if (set == null || set.size() == 0) {
+			return;
+		}
+		throw new InvalidParameterException(message);
 	}
 
 	/**
@@ -34,31 +56,21 @@ public class Validate {
 	 * @param groups 验证规则
 	 * @throws InvalidParameterException 不合法的数据
 	 */
-	public static void valid(Object object, Class<?>... groups) throws InvalidParameterException {
+	private static Set<ConstraintViolation<Object>> valid(Object object, Class<?>... groups) {
 
 		if (object == null) {
-			return;
+			return null;
 		}
 
 		if (groups == null || groups.length == 0) {
-			return;
+			return null;
 		}
 
 		// 获取验证器
 		Validator validator = getValidator();
 
 		// 验证
-		Set<ConstraintViolation<Object>> set = validator.validate(object, groups);
-		if (set == null || set.size() == 0) {
-			return;
-		}
-
-		// 设置错误信息
-		Set<String> errors = Sets.newHashSet();
-		for (ConstraintViolation<Object> constraintViolation : set) {
-			errors.add(constraintViolation.getMessage());
-		}
-		throw new InvalidParameterException(errors);
+		return validator.validate(object, groups);
 	}
 
 	/**

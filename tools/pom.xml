@@ -129,6 +129,14 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.github.hualuomoli</groupId>
+			<artifactId>hualuomoli-framework-properties</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/config.zip</systemPath>
+		</dependency>
 
 	</dependencies>
 
