@@ -49,6 +49,7 @@ public class ConfigurationTest {
 
 	@Test
 	public void test04InitJar() {
+		// add libs/config.zip to build path
 		Configuration.init(new String[] { "classpath*:config.properties", "classpath*:config1.properties" });
 		String name = Configuration.get("project.name");
 		String version = Configuration.get("project.version");
