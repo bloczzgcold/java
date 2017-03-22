@@ -23,7 +23,7 @@ import com.github.hualuomoli.validator.constraintvalidation.GreaterIntegerValida
 @Constraint(validatedBy = { GreaterIntegerValidator.class, GreaterDoubleValidator.class })
 public @interface Greater {
 
-	String message();
+	String message() default "invalid amount.";
 
 	Class<?>[] groups() default {};
 

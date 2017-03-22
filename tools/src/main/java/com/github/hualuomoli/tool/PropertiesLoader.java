@@ -54,6 +54,19 @@ public final class PropertiesLoader {
 
 	/**
 	 * 加载Properties配置文件
+	 * @param prop 配置信息
+	 * @param filenames 文件
+	 * @return 配置信息
+	 */
+	public static Properties loadProperties(Properties prop, String... filenames) {
+		for (String filename : filenames) {
+			loadProperties(filename, prop);
+		}
+		return prop;
+	}
+
+	/**
+	 * 加载Properties配置文件
 	 * @param filename 文件
 	 * @param prop 配置信息
 	 * @return 配置信息
