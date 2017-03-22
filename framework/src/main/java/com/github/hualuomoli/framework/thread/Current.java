@@ -41,7 +41,11 @@ public class Current {
 	 * @return 当前线程日期
 	 */
 	public static Date getDate() {
-		return LOCAL_DATE.get();
+		Date date = LOCAL_DATE.get();
+		if (date == null) {
+			setDate(date);
+		}
+		return date;
 	}
 
 }
