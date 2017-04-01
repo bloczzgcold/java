@@ -5,3 +5,5 @@ CREATE TABLE `t_partner` (
   `name` varchar(32) not null comment '合作伙伴名称',
   `configs` text not null comment '配置信息 '
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

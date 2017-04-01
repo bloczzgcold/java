@@ -23,7 +23,7 @@ import com.github.hualuomoli.gateway.server.lang.InvalidSignatureException;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Key;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
-import com.github.hualuomoli.tool.RSA;
+import com.github.hualuomoli.tool.security.RSA;
 import com.github.hualuomoli.validator.constraints.Values;
 
 /**
@@ -52,8 +52,7 @@ public class RSAAuthExecution implements AuthExecution {
 	}
 
 	@Override
-	public RSAAuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler)
-			throws Throwable {
+	public RSAAuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler) throws Throwable {
 
 		// 获取请求数据
 		RSAAuthRequest rsaReq = new RSAAuthRequest();
@@ -62,7 +61,7 @@ public class RSAAuthExecution implements AuthExecution {
 		rsaReq.timestamp = req.getParameter(NameEnum.IN_OUT_TIMESTAMP.value());
 		rsaReq.bizContent = req.getParameter(NameEnum.IN_BIZCONTENT.value());
 		rsaReq.signType = req.getParameter(NameEnum.IN_OUT_SIGNTYPE.value());
-		rsaReq.signData = req.getParameter(NameEnum.IN_OUT_SIGNDATA.value());
+		rsaReq.sign = req.getParameter(NameEnum.IN_OUT_SIGN.value());
 
 		logger.info("请求业务内容 = {}", rsaReq.bizContent);
 
@@ -70,7 +69,7 @@ public class RSAAuthExecution implements AuthExecution {
 		String origin = this.getOrigin(rsaReq);
 		logger.debug("请求签名原文 = {}", origin);
 
-		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.signData)) {
+		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.sign)) {
 			throw new InvalidSignatureException("不合法的签名");
 		}
 
@@ -92,7 +91,7 @@ public class RSAAuthExecution implements AuthExecution {
 		origin = this.getOrigin(rsaRes);
 		logger.info("响应签名原文 = {}", result);
 
-		rsaRes.signData = RSA.signBase64(partner.getConfigs().get(Key.SIGNATURE_RSA_PRIVATE_KEY), origin);
+		rsaRes.sign = RSA.signBase64(partner.getConfigs().get(Key.SIGNATURE_RSA_PRIVATE_KEY), origin);
 
 		return rsaRes;
 
@@ -142,7 +141,7 @@ public class RSAAuthExecution implements AuthExecution {
 		StringBuilder buffer = new StringBuilder();
 		for (Field field : fieldList) {
 			String name = field.getName();
-			if (NameEnum.IN_OUT_SIGNDATA.value().equals(name)) {
+			if (NameEnum.IN_OUT_SIGN.value().equals(name)) {
 				// 签名数据不参与签名
 				continue;
 			}
@@ -169,7 +168,7 @@ public class RSAAuthExecution implements AuthExecution {
 		protected String signType;
 		/** 签名数据 */
 		@NotEmpty(message = "签名数据不能为空")
-		private String signData;
+		private String sign;
 	}
 
 	// RSA权限响应
@@ -177,14 +176,14 @@ public class RSAAuthExecution implements AuthExecution {
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
-		private String signData;
+		private String sign;
 
 		public String getSignType() {
 			return signType;
 		}
 
-		public String getSignData() {
-			return signData;
+		public String getSign() {
+			return sign;
 		}
 	}
 

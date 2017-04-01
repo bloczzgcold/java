@@ -18,7 +18,7 @@ public enum NameEnum {
 	/** 签名类型 */
 	IN_OUT_SIGNTYPE("signType"),
 	/** 签名数据 */
-	IN_OUT_SIGNDATA("signData"),
+	IN_OUT_SIGN("sign"),
 	/** 加密类型 */
 	IN_OUT_ENCRYPTTYPE("encryptType"),
 

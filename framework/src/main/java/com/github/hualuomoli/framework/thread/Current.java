@@ -43,6 +43,7 @@ public class Current {
 	public static Date getDate() {
 		Date date = LOCAL_DATE.get();
 		if (date == null) {
+			date = new Date();
 			setDate(date);
 		}
 		return date;

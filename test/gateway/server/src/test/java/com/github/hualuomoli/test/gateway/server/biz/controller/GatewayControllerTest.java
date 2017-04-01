@@ -24,7 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.gateway.server.constants.CodeEnum;
 import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
 import com.github.hualuomoli.test.gateway.server.biz.entity.User;
-import com.github.hualuomoli.tool.RSA;
+import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GatewayControllerTest {

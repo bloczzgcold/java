@@ -1,4 +1,4 @@
-package com.github.hualuomoli.tool;
+package com.github.hualuomoli.tool.security;
 
 import java.nio.charset.Charset;
 import java.security.KeyFactory;
@@ -67,24 +67,24 @@ public class RSA {
 	 * 验证签名,默认签名原文为UTF-8
 	 * @param publicKeyBase64 	64位公钥 #Base64
 	 * @param origin 			签名原文
-	 * @param signDataBase64	签名数据
+	 * @param signBase64		签名数据
 	 * @return 签名是否合法
 	 */
-	public static boolean verify(String publicKeyBase64, String origin, String signDataBase64) {
-		return verify(publicKeyBase64, origin, signDataBase64, CHARSET);
+	public static boolean verify(String publicKeyBase64, String origin, String signBase64) {
+		return verify(publicKeyBase64, origin, signBase64, CHARSET);
 	}
 
 	/**
 	 * 验证签名
 	 * @param publicKeyBase64 	64位公钥 #Base64
 	 * @param origin 			签名原文
-	 * @param signDataBase64	签名数据
+	 * @param signBase64		签名数据
 	 * @param charset			签名原文编码集
 	 * @return 签名是否合法
 	 */
-	public static boolean verify(String publicKeyBase64, String origin, String signDataBase64, Charset charset) {
+	public static boolean verify(String publicKeyBase64, String origin, String signBase64, Charset charset) {
 
-		if (publicKeyBase64 == null || origin == null || signDataBase64 == null || charset == null) {
+		if (publicKeyBase64 == null || origin == null || signBase64 == null || charset == null) {
 			return false;
 		}
 
@@ -98,7 +98,7 @@ public class RSA {
 			Signature verifier = Signature.getInstance(algorithm);
 			verifier.initVerify(pubKey);
 			verifier.update(origin.getBytes(charset));
-			return verifier.verify(Base64.decode(signDataBase64));
+			return verifier.verify(Base64.decode(signBase64));
 		} catch (Exception e) {
 			logger.debug("验证签名错误", e);
 		}

@@ -1,4 +1,4 @@
-package com.github.hualuomoli.tool;
+package com.github.hualuomoli.tool.security;
 
 /**
  * 使用阿里巴巴的base64编码方式
