@@ -33,6 +33,14 @@ import com.github.hualuomoli.validator.constraints.Values;
  */
 public class RSAAuthExecution implements AuthExecution {
 
+	/** RSA私钥 */
+	private String privateKeyBase64;
+
+	public RSAAuthExecution(String privateKeyBase64) {
+		super();
+		this.privateKeyBase64 = privateKeyBase64;
+	}
+
 	@Override
 	public boolean support(Partner partner, HttpServletRequest req, HttpServletResponse res) {
 
@@ -44,7 +52,7 @@ public class RSAAuthExecution implements AuthExecution {
 
 		// 没有配置RSA
 		Map<Key, String> configs = partner.getConfigs();
-		if (!configs.containsKey(Key.SIGNATURE_RSA_PUBLIC_KEY) || !configs.containsKey(Key.SIGNATURE_RSA_PRIVATE_KEY)) {
+		if (!configs.containsKey(Key.SIGNATURE_RSA_PUBLIC_KEY)) {
 			return false;
 		}
 
@@ -91,7 +99,7 @@ public class RSAAuthExecution implements AuthExecution {
 		origin = this.getOrigin(rsaRes);
 		logger.info("响应签名原文 = {}", result);
 
-		rsaRes.sign = RSA.signBase64(partner.getConfigs().get(Key.SIGNATURE_RSA_PRIVATE_KEY), origin);
+		rsaRes.sign = RSA.signBase64(privateKeyBase64, origin);
 
 		return rsaRes;
 

@@ -50,8 +50,6 @@ public interface PartnerLoader {
 	public static enum Key {
 		/** RSA签名(公钥) */
 		SIGNATURE_RSA_PUBLIC_KEY("SIGNATURE.RSA.PUBLIC.KEY"),
-		/** RSA签名(私钥) */
-		SIGNATURE_RSA_PRIVATE_KEY("SIGNATURE.RSA.PRIVATE.KEY"),
 		/** MD5签名 */
 		SIGNATURE_MD5("SIGNATURE.MD5"),
 		/** AES加密 */
