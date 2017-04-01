@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>com.github.hualuomoli</groupId>
-		<artifactId>hualuomoli-test-gateway</artifactId>
+		<artifactId>hualuomoli-demo-gateway</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>hualuomoli-test-gateway-server</artifactId>
+	<artifactId>hualuomoli-demo-gateway-server</artifactId>
 	<packaging>war</packaging>
 
 	<properties>

@@ -10,7 +10,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>hualuomoli-test</artifactId>
+	<artifactId>hualuomoli-demo</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>

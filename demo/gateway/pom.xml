@@ -5,20 +5,16 @@
 
 	<parent>
 		<groupId>com.github.hualuomoli</groupId>
-		<artifactId>hualuomoli-test</artifactId>
+		<artifactId>hualuomoli-demo</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>hualuomoli-test-plugin</artifactId>
+	<artifactId>hualuomoli-demo-gateway</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>./mq</module>
+		<module>./server</module>
 	</modules>
-
-	<properties>
-
-	</properties>
 
 </project>
