@@ -12,7 +12,7 @@ import com.github.hualuomoli.gateway.client.json.JSONAdaptor;
 import com.github.hualuomoli.gateway.client.lang.DealException;
 import com.github.hualuomoli.gateway.client.lang.GatewayException;
 import com.github.hualuomoli.tool.http.HttpClient;
-import com.github.hualuomoli.tool.http.HttpURLCleint;
+import com.github.hualuomoli.tool.http.HttpURLClient;
 import com.github.hualuomoli.tool.security.RSA;
 
 /**
@@ -38,7 +38,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor implements GatewayCli
 	private HttpClient httpClient;
 
 	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey) {
-		this(serverURL, partnerId, publicKey, privateKey, CHARSET, new JSONAdaptor(), new HttpURLCleint());
+		this(serverURL, partnerId, publicKey, privateKey, CHARSET, new JSONAdaptor(), new HttpURLClient());
 	}
 
 	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset, JSON json, HttpClient httpClient) {
