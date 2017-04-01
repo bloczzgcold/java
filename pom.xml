@@ -15,7 +15,7 @@
 		<module>./framework</module>
 		<module>./gateway</module>
 		<module>./plugin</module>
-		<module>./test</module>
+		<module>./demo</module>
 	</modules>
 
 	<properties>
