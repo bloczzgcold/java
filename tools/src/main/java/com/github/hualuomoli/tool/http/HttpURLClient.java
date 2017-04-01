@@ -28,13 +28,13 @@ import com.google.common.collect.Lists;
  * @author lbq
  *
  */
-public class HttpURLCleint extends HttpCleintAdaptor {
+public class HttpURLClient extends HttpCleintAdaptor {
 
-	public HttpURLCleint() {
+	public HttpURLClient() {
 		super();
 	}
 
-	public HttpURLCleint(String datePattern) {
+	public HttpURLClient(String datePattern) {
 		super(datePattern);
 	}
 

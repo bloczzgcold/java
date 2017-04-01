@@ -56,13 +56,13 @@ public class HttpClientTest {
 		List<Param> params = Lists.newArrayList();
 		params.add(new Param("user", user));
 
-		new HttpURLCleint().urlencoded("http://www.baidu.com", Charset.forName("UTF-8"), params);
+		new HttpURLClient().urlencoded("http://www.baidu.com", Charset.forName("UTF-8"), params);
 	}
 
 	@Test(expected = IOException.class)
 	public void testJson() throws IOException {
 
-		new HttpURLCleint().json("http://www.baidu.com", Charset.forName("UTF-8"), JSON.toJSONString(user));
+		new HttpURLClient().json("http://www.baidu.com", Charset.forName("UTF-8"), JSON.toJSONString(user));
 	}
 
 	public static class User {
