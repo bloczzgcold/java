@@ -1,6 +1,5 @@
 package com.github.hualuomoli.gateway.server;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +47,10 @@ public class GatewayServer {
 	 * @param authExecutions　		权限执行者
 	 */
 	public GatewayServer(PartnerLoader partnerLoader//
-			, ExceptionProcessor exceptionProcessor//
-			, BusinessHandler businessHandler //
-			, JSONParser jsonParser //
-			, List<AuthExecution> authExecutions) {
+	, ExceptionProcessor exceptionProcessor//
+	, BusinessHandler businessHandler //
+	, JSONParser jsonParser //
+	, List<AuthExecution> authExecutions) {
 
 		this.partnerLoader = partnerLoader;
 		this.exceptionProcessor = exceptionProcessor;
@@ -66,7 +65,7 @@ public class GatewayServer {
 	 * @param req HTTP请求
 	 * @param res HTTP响应
 	 */
-	public void invoke(HttpServletRequest req, HttpServletResponse res) {
+	public String invoke(HttpServletRequest req, HttpServletResponse res) {
 
 		AuthResponse authRes = null;
 
@@ -76,8 +75,7 @@ public class GatewayServer {
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.NO_PARTNER_FOUND.value();
 			authRes.message = "合作伙伴未找到";
-			flush(authRes, req, res);
-			return;
+			return jsonParser.toJsonString(authRes);
 		}
 
 		// 权限执行者
@@ -86,38 +84,37 @@ public class GatewayServer {
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.NO_AUTH_EXECUTION_FOUND.value();
 			authRes.message = "网关执行者未找到";
-			flush(authRes, req, res);
-			return;
+			return jsonParser.toJsonString(authRes);
 		}
 
 		// 执行业务
 		try {
 			authRes = authExecution.deal(partner, jsonParser, req, res, businessHandler);
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		} catch (InvalidSignatureException ise) {
 			// 签名不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_SIGNATURE.value();
 			authRes.message = "不合法的签名数据";
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		} catch (InvalidEncryptionException iee) {
 			// 加密不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_ENCRYPTION.value();
 			authRes.message = "不合法的加密数据";
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		} catch (NoMethodFoundException nmfe) {
 			// 请求方法未找到
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.NO_BUSINESS_HANDLER_FOUND.value();
 			authRes.message = nmfe.getMessage();
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		} catch (InvalidParameterException ipe) {
 			// 实体类要求参数规则不合法
 			authRes = new AuthResponse();
 			authRes.code = CodeEnum.INVALID_PARAMETER.value();
 			authRes.message = ipe.getMessage();
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		} catch (Throwable e) {
 			// 其他错误
 			Message message = exceptionProcessor.process(e);
@@ -125,27 +122,8 @@ public class GatewayServer {
 			authRes.code = CodeEnum.SUCCESS.value();
 			authRes.subCode = message.getCode();
 			authRes.subMessage = message.getMessage();
-			flush(authRes, req, res);
+			return jsonParser.toJsonString(authRes);
 		}
-	}
-
-	/**
-	 * 输出数据
-	 * @param authRes 	响应内容
-	 * @param req 		HTTP请求
-	 * @param res 		HTTP响应
-	 */
-	private void flush(AuthResponse authRes, HttpServletRequest req, HttpServletResponse res) {
-		String flushData = jsonParser.toJsonString(authRes);
-
-		res.setContentType("application/json");
-		res.setCharacterEncoding("UTF-8");
-
-		try {
-			res.getWriter().println(flushData);
-		} catch (IOException e) {
-		}
-
 	}
 
 	/**
