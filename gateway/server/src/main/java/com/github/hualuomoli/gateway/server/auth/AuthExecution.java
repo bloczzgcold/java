@@ -86,11 +86,11 @@ public interface AuthExecution {
 		/** 业务处理信息 */
 		public String subMessage;
 		/** 合作伙伴ID */
-		public String partnerId;
+		protected String partnerId;
 		/** 时间戳 yyyyMMddHHmmss */
-		public String timestamp;
+		protected String timestamp;
 		/** 响应内容 */
-		public String result;
+		protected String result;
 
 		public String getCode() {
 			return code;

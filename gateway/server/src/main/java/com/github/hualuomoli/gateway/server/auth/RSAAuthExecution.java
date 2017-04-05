@@ -102,7 +102,7 @@ public class RSAAuthExecution implements AuthExecution {
 		rsaRes.signType = rsaReq.signType;
 		// 获取签名
 		origin = this.getOrigin(rsaRes);
-		logger.info("响应签名原文 = {}", result);
+		logger.info("响应签名原文 = {}", origin);
 
 		rsaRes.sign = RSA.signBase64(privateKeyBase64, origin);
 
@@ -179,7 +179,7 @@ public class RSAAuthExecution implements AuthExecution {
 	// RSA权限响应
 	public static class RSAAuthResponse extends AuthResponse {
 		/** 签名类型 */
-		private String signType;
+		protected String signType;
 		/** 签名数据 */
 		private String sign;
 
