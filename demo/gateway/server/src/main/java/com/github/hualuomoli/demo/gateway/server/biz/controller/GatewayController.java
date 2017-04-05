@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.hualuomoli.gateway.server.GatewayServer;
 
@@ -25,6 +26,7 @@ public class GatewayController {
 	private GatewayServer gatewayServer;
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
 	public String execute(HttpServletRequest req, HttpServletResponse res) {
 		String start = new SimpleDateFormat("HH:mm:ss S").format(new Date());
 		String result = gatewayServer.invoke(req, res);

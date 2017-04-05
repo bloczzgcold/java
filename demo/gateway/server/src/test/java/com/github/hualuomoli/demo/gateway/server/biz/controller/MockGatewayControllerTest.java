@@ -3,6 +3,8 @@ package com.github.hualuomoli.demo.gateway.server.biz.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -14,10 +16,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hualuomoli.gateway.server.constants.CodeEnum;
-import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.demo.gateway.server.controller.ControllerTest;
+import com.github.hualuomoli.gateway.server.constants.CodeEnum;
+import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -25,9 +27,12 @@ public class MockGatewayControllerTest extends ControllerTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MockGatewayControllerTest.class);
 
-	private static final String privateKeyBase64 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIjM6DZ+1QSDCgWmCPLqHd006iMhUulpxzAcQ8V3as5eJus+AzZ9PnLjqxOikZLa2TJUj2HqD55Z9QGaXXZIHXuW4WBVVwOlvJqafqlJooUyLBf+oDVuuR6KE7PksT7wXwBrt/3A/c5i9qAm4KAVBoPjVBo2CRoXbwm96MWw8vPpAgMBAAECgYAUKxF5J03EcoVBu+7J0VZBzJFQSJNusheZsjETpb1rW1oliGj02ZYhXgtUw7zuh7FJyEmzR8yxrdV/PQDWdV9TJ6EYlq70Rx3GTAB3oaZ8liknBCAm9tt4yYCYWZQwhM7PNqplp89T7hxi4EkO/op7ndqMC3o658oWyFDy1YbTAQJBANMNDKvKv8Esi/+JinLCdvI2SSM6pjHMzS6DUqgUtYehougJUwUNERt2UDtoPSKBTQRVMxoXhnlveWeNjNFJi7kCQQCl7473FgQ/py09dgEpRfOGcfzs5+OFI3Aeo/2OTzhb/JVGYcSxvXNssU2EdRExVCPxwA7aEYUmbI0lqiX/CqGxAkEAsNg3bN/4K6LrMFWMyDqAttacFEP5rLMCnt31bdfkgGEFg08E3K+lTRCnjA/9YiNcaKwHpO5fhPPOk+G9REVPKQJAM334XmJ9pQcKueTRjW5AmLrsotN+vgT2OPvope2dbqYd6H5UXFeO5u7KQE1XrXgPw2g286K2L+tFjaeULOWusQJAIq3bsGWoxNVRpMuCbYpXdxoFVNsT+m1z3DMpmxbLY5/1it14Izdv+7a3BrCxADbeA+/spWfIM3azNvLPFbRSkg==";
+	private static final String privateKeyBase64 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJDbtC/LQthh7uaFsD7ExqYQKWWhye3r/J1ifLqngLmTT+V1jwJdokrPG7hSzB50h6NQzlEZ4PFl2LGuGYr0yJJdahxdaz6kfaDBro5a8DO7KmE4fAGEhqFXEjvvf+Gs/R90CayMHK5BUBM4xpQtwMbTq0QbNMfzcBhEsD/Lc/g7AgMBAAECgYBfalglox1Eqj1SWnzc24B9oeeiqg74SJj8kgLWb766fe4Cloy8YjCkVgdMQj1xUhCF4pQDl6gzWYKChssMXHA/9b0YvSRFsCc32e/cqqApSGdeHKzhVS418ojc4LckCgq3fTtZPKxt8S1HG4QcJRu6sMtU5shjLxe1WioDWX/eAQJBAOtDIC4yjLVS42SNR6zrp0ntskYUGNT9n80znPbJjdZ5yymlPTQRdzR6n6UubjtQxEkYq22X6DTeWRW0EORXENkCQQCdoIq8bZ/I8lSakd2UaugM8IwBVSIsgGZ969BBRoZPTyIk5Vht1XJ2X9b2xxIoADyJZfd0sqNysQhULw5uZmUzAkBtfccrWQFdnl8QPCSAmQg5gvO2Y8IO1p8Z3IyP2sw1ZmekUTAD3KES/oLwWISa/ILt1hpqnglHGbhyPmSiMNc5AkBNRyH9UzldCQFVbmHVm7v8bAoXtSc17hVRcsT825iJVWCF+jKqVlTxl/cJsXtDRSpoqibxfYsIdaaBrzhCA81lAkEA6fDs2dWBXDVcnTREr71y6UMyKubxE0aGJMsoE/FTkOo8y0z/EDewZoVnK5qFSOPZUZoknCQiVP3kln15BZvWQg==";
+	private static final String publicKeyBase64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCfYQmI9qwot7MsIIcJ19ZxeDdajUByjxKNn5zkT8dTsrqOM1M/PY5Tt+lsNxzWQFplElN3de2LKMGG6Q3NQ9qHGWusTLVOW1cpafHcatDwIWV8MZ0E+SgCMgvIJbU3ZUOG3KZEgVkA9qiL93oMMKRKoAPo4LS4gSKQViHkAPKoBwIDAQAB";
+
 	private String apiVersion = "1.0.0";
 	private Request req;
+	private Response res;
 
 	@Before
 	public void before() {
@@ -36,7 +41,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 		user.setUsername("hualuomoli");
 
 		req = new Request();
-		req.partnerId = "123456789";
+		req.partnerId = "tester";
 		req.apiMethod = "test.user.find";
 		req.timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		req.bizContent = JSON.toJSONString(user);
@@ -52,7 +57,30 @@ public class MockGatewayControllerTest extends ControllerTest {
 
 		logger.debug("签名原文={}", origin);
 
-		req.signData = RSA.signBase64(privateKeyBase64, origin);
+		req.sign = RSA.signBase64(privateKeyBase64, origin);
+	}
+
+	@After
+	public void after() {
+		Assert.assertNotNull(res);
+
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("&code=").append(res.code);
+		buffer.append("&message=").append(res.message);
+		buffer.append("&partnerId=").append(res.partnerId);
+		buffer.append("&signType=").append(res.signType);
+		if (StringUtils.isNotBlank(res.subCode)) {
+			buffer.append("&subCode=").append(res.subCode);
+			buffer.append("&subMessage=").append(res.subMessage);
+		}
+		buffer.append("&timestamp=").append(res.timestamp);
+		buffer.append("&result=").append(res.result);
+
+		String origin = buffer.toString().substring(1);
+
+		logger.debug("签名原文={}", origin);
+		RSA.verify(publicKeyBase64, origin, res.sign);
+
 	}
 
 	// 低于最低版本
@@ -64,6 +92,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_FOUND.value(), res.code);
 					}
 				}, Response.class));
@@ -78,6 +108,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("测试描述信息", user.getRemark());
@@ -94,6 +126,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("测试描述信息", user.getRemark());
@@ -110,6 +144,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("花落寞离", user.getNickname());
@@ -126,6 +162,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("花落寞离", user.getNickname());
@@ -142,6 +180,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -158,6 +198,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -174,6 +216,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -190,6 +234,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 				.andDo(this.content(new Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
+						MockGatewayControllerTest.this.res = res;
+
 						Assert.assertEquals("0000", res.code);
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -210,7 +256,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 						.param("timestamp", req.timestamp) //
 						.param("bizContent", req.bizContent) //
 						.param("signType", req.signType) //
-						.param("signData", req.signData)) //
+						.param("sign", req.sign)) //
 				.andExpect(this.isOk()) //
 				.andDo(this.content());
 	}
@@ -227,7 +273,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
-		private String signData;
+		private String sign;
 
 		public String getPartnerId() {
 			return partnerId;
@@ -249,12 +295,11 @@ public class MockGatewayControllerTest extends ControllerTest {
 			return signType;
 		}
 
-		public String getSignData() {
-			return signData;
+		public String getSign() {
+			return sign;
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public static class Response {
 		/** 调用结果编码 #CodeEnum */
 		private String code;
@@ -273,7 +318,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
-		private String signData;
+		private String sign;
 
 		public void setCode(String code) {
 			this.code = code;
@@ -307,8 +352,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 			this.signType = signType;
 		}
 
-		public void setSignData(String signData) {
-			this.signData = signData;
+		public void setSign(String sign) {
+			this.sign = sign;
 		}
 
 	}

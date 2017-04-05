@@ -1,5 +1,7 @@
 package com.github.hualuomoli.gateway.server.auth;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +32,7 @@ public interface AuthExecution {
 	boolean support(Partner partner, HttpServletRequest req, HttpServletResponse res);
 
 	/**
-	 * 处理请求
+	 * 处理请求,使用
 	 * @param partner 		合作伙伴信息
 	 * @param jsonParser	JSON转换器
 	 * @param req 			HTTP请求
@@ -39,7 +41,20 @@ public interface AuthExecution {
 	 * @return 处理结果
 	 * @throws Throwable 处理过程中出现的异常
 	 */
-	AuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler) throws Throwable;
+	AuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler, List<Filter> filters) throws Throwable;
+
+	// 过滤器
+	interface Filter {
+
+		/**
+		 * 预处理
+		 * @param partnerId 合作伙伴ID
+		 * @param apiMethod 请求方法
+		 * @throws 预处理错误
+		 */
+		void preHandler(String partnerId, String apiMethod) throws Exception;
+
+	}
 
 	// 权限请求公共信息
 	class AuthRequest {

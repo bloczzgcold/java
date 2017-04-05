@@ -60,7 +60,7 @@ public class RSAAuthExecution implements AuthExecution {
 	}
 
 	@Override
-	public RSAAuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler) throws Throwable {
+	public RSAAuthResponse deal(Partner partner, JSONParser jsonParser, HttpServletRequest req, HttpServletResponse res, BusinessHandler handler, List<AuthExecution.Filter> filters) throws Throwable {
 
 		// 获取请求数据
 		RSAAuthRequest rsaReq = new RSAAuthRequest();
@@ -79,6 +79,11 @@ public class RSAAuthExecution implements AuthExecution {
 
 		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.sign)) {
 			throw new InvalidSignatureException("不合法的签名");
+		}
+
+		// 过滤器
+		for (Filter filter : filters) {
+			filter.preHandler(rsaReq.partnerId, rsaReq.apiMethod);
 		}
 
 		// 执行业务操作

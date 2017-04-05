@@ -20,6 +20,7 @@ public interface BusinessHandler {
 	 * @param jsonParser 	JSON转换器
 	 * @param req 			HTTP请求
 	 * @param res 			HTTP响应
+	 * @param filters		过滤器
 	 * @return 业务处理结果
 	 * @throws Throwable 业务执行过程中出现的错误
 	 */

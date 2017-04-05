@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.gateway.server.constants.CodeEnum;
 import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
-import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -32,7 +32,6 @@ public class GatewayControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(GatewayControllerTest.class);
 
 	private static final String privateKeyBase64 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJDbtC/LQthh7uaFsD7ExqYQKWWhye3r/J1ifLqngLmTT+V1jwJdokrPG7hSzB50h6NQzlEZ4PFl2LGuGYr0yJJdahxdaz6kfaDBro5a8DO7KmE4fAGEhqFXEjvvf+Gs/R90CayMHK5BUBM4xpQtwMbTq0QbNMfzcBhEsD/Lc/g7AgMBAAECgYBfalglox1Eqj1SWnzc24B9oeeiqg74SJj8kgLWb766fe4Cloy8YjCkVgdMQj1xUhCF4pQDl6gzWYKChssMXHA/9b0YvSRFsCc32e/cqqApSGdeHKzhVS418ojc4LckCgq3fTtZPKxt8S1HG4QcJRu6sMtU5shjLxe1WioDWX/eAQJBAOtDIC4yjLVS42SNR6zrp0ntskYUGNT9n80znPbJjdZ5yymlPTQRdzR6n6UubjtQxEkYq22X6DTeWRW0EORXENkCQQCdoIq8bZ/I8lSakd2UaugM8IwBVSIsgGZ969BBRoZPTyIk5Vht1XJ2X9b2xxIoADyJZfd0sqNysQhULw5uZmUzAkBtfccrWQFdnl8QPCSAmQg5gvO2Y8IO1p8Z3IyP2sw1ZmekUTAD3KES/oLwWISa/ILt1hpqnglHGbhyPmSiMNc5AkBNRyH9UzldCQFVbmHVm7v8bAoXtSc17hVRcsT825iJVWCF+jKqVlTxl/cJsXtDRSpoqibxfYsIdaaBrzhCA81lAkEA6fDs2dWBXDVcnTREr71y6UMyKubxE0aGJMsoE/FTkOo8y0z/EDewZoVnK5qFSOPZUZoknCQiVP3kln15BZvWQg==";
-	@SuppressWarnings("unused")
 	private static final String publicKeyBase64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCfYQmI9qwot7MsIIcJ19ZxeDdajUByjxKNn5zkT8dTsrqOM1M/PY5Tt+lsNxzWQFplElN3de2LKMGG6Q3NQ9qHGWusTLVOW1cpafHcatDwIWV8MZ0E+SgCMgvIJbU3ZUOG3KZEgVkA9qiL93oMMKRKoAPo4LS4gSKQViHkAPKoBwIDAQAB";
 	private String apiVersion = "1.0.0";
 
@@ -153,7 +152,25 @@ public class GatewayControllerTest {
 
 		logger.debug("响应内容={}", result);
 
-		return JSON.parseObject(result, Response.class);
+		Response res = JSON.parseObject(result, Response.class);
+		buffer = new StringBuilder();
+		buffer.append("&code=").append(res.code);
+		buffer.append("&message=").append(res.message);
+		buffer.append("&partnerId=").append(res.partnerId);
+		buffer.append("&signType=").append(res.signType);
+		if (StringUtils.isNotBlank(res.subCode)) {
+			buffer.append("&subCode=").append(res.subCode);
+			buffer.append("&subMessage=").append(res.subMessage);
+		}
+		buffer.append("&timestamp=").append(res.timestamp);
+		buffer.append("&result=").append(res.result);
+
+		origin = buffer.toString().substring(1);
+
+		logger.debug("签名原文={}", origin);
+		RSA.verify(publicKeyBase64, origin, res.sign);
+
+		return res;
 	}
 
 	public static class Request {
@@ -195,7 +212,6 @@ public class GatewayControllerTest {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public static class Response {
 		/** 调用结果编码 #CodeEnum */
 		private String code;
@@ -214,7 +230,7 @@ public class GatewayControllerTest {
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
-		private String signData;
+		private String sign;
 
 		public void setCode(String code) {
 			this.code = code;
@@ -248,8 +264,8 @@ public class GatewayControllerTest {
 			this.signType = signType;
 		}
 
-		public void setSignData(String signData) {
-			this.signData = signData;
+		public void setSign(String sign) {
+			this.sign = sign;
 		}
 
 	}

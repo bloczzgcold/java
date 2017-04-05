@@ -22,6 +22,7 @@ import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor.Message;
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
+import com.google.common.collect.Lists;
 
 /**
  * 网关服务器
@@ -36,7 +37,8 @@ public class GatewayServer {
 	private ExceptionProcessor exceptionProcessor;
 	private BusinessHandler businessHandler;
 	private JSONParser jsonParser;
-	private List<AuthExecution> authExecutions = new ArrayList<AuthExecution>();
+	private List<AuthExecution> authExecutions = Lists.newArrayList();
+	private List<AuthExecution.Filter> filters = Lists.newArrayList();
 
 	/**
 	 * 初始化
@@ -50,14 +52,15 @@ public class GatewayServer {
 	, ExceptionProcessor exceptionProcessor//
 	, BusinessHandler businessHandler //
 	, JSONParser jsonParser //
-	, List<AuthExecution> authExecutions) {
+	, List<AuthExecution> authExecutions //
+	, List<AuthExecution.Filter> filters) {
 
 		this.partnerLoader = partnerLoader;
 		this.exceptionProcessor = exceptionProcessor;
 		this.businessHandler = businessHandler;
 		this.jsonParser = jsonParser;
-		this.authExecutions.addAll(authExecutions);
-
+		this.authExecutions = authExecutions;
+		this.filters = filters;
 	}
 
 	/**
@@ -89,7 +92,7 @@ public class GatewayServer {
 
 		// 执行业务
 		try {
-			authRes = authExecution.deal(partner, jsonParser, req, res, businessHandler);
+			authRes = authExecution.deal(partner, jsonParser, req, res, businessHandler, filters);
 			return jsonParser.toJsonString(authRes);
 		} catch (InvalidSignatureException ise) {
 			// 签名不合法
