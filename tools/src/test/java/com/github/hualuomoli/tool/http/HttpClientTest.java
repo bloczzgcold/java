@@ -46,8 +46,14 @@ public class HttpClientTest {
 		addresses.add(address1);
 		addresses.add(address2);
 
+		// 
+		List<String> hobbys = Lists.newArrayList();
+		hobbys.add("reading");
+		hobbys.add("sport");
+
 		user.setInfo(info);
 		user.setAddresses(addresses);
+		user.setHobbys(hobbys);
 
 	}
 
@@ -69,6 +75,7 @@ public class HttpClientTest {
 
 		private Info info;
 		private List<Address> addresses;
+		private List<String> hobbys;
 
 		public static class Info {
 			private String usercode;
@@ -180,6 +187,14 @@ public class HttpClientTest {
 
 		public void setAddresses(List<Address> addresses) {
 			this.addresses = addresses;
+		}
+
+		public List<String> getHobbys() {
+			return hobbys;
+		}
+
+		public void setHobbys(List<String> hobbys) {
+			this.hobbys = hobbys;
 		}
 	}
 

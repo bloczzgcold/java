@@ -1,24 +1,18 @@
 package com.github.hualuomoli.tool.http;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hualuomoli.tool.util.ReflectionUtils;
+import com.github.hualuomoli.tool.util.HttpUtils;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public abstract class HttpCleintAdaptor implements HttpClient {
 
@@ -96,13 +90,6 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 	 */
 	protected abstract String execute(String urlStr, String content, Charset charset, Method method, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException;
 
-	public static enum Method {
-		/** POST */
-		POST,
-		/** GET */
-		GET;
-	}
-
 	/**
 	 * 获取参数
 	 * @param params 参数信息
@@ -114,144 +101,41 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 			return StringUtils.EMPTY;
 		}
 
-		List<HttpParam> paramList = Lists.newArrayList();
-		StringBuilder buffer = new StringBuilder();
+		List<HttpUtils.Param> paramList = Lists.newArrayList();
 		for (Param param : params) {
-			paramList.addAll(this.getHttpParams(param, charset));
+			List<HttpUtils.Param> ps = HttpUtils.getUrlencodedParams(param.getName(), param.getValue(), datePattern);
+			paramList.addAll(ps);
 		}
 
 		if (paramList == null || paramList.size() == 0) {
 			return StringUtils.EMPTY;
 		}
 
-		for (HttpParam httpParam : paramList) {
-			logger.debug("[urlencoded] {}={}", httpParam.name, httpParam.value);
-			buffer.append("&").append(httpParam.name).append("=").append(this.encoded(httpParam.value, charset));
+		// 排序
+		Collections.sort(paramList, new Comparator<HttpUtils.Param>() {
+
+			@Override
+			public int compare(com.github.hualuomoli.tool.util.HttpUtils.Param o1, com.github.hualuomoli.tool.util.HttpUtils.Param o2) {
+				return com.github.hualuomoli.tool.util.StringUtils.compare(o1.name, o2.name);
+			}
+		});
+
+		StringBuilder buffer = new StringBuilder();
+
+		for (HttpUtils.Param param : paramList) {
+			logger.debug("[urlencoded] {}={}", param.name, param.value);
+			buffer.append("&").append(param.name).append("=").append(HttpUtils.encoded(param.value, charset));
 		}
 
 		return buffer.substring(1).toString();
 	}
 
-	class HttpParam {
-		String name;
-		String value;
-
-		private HttpParam(String name, String value) {
-			this.name = name;
-			this.value = value;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<HttpParam> getHttpParams(Param param, String charset) {
-		String name = param.getName();
-		Object value = param.getValue();
-		if (value == null) {
-			return Lists.newArrayList();
-		}
-		Class<?> clazz = value.getClass();
-
-		// 字符串
-		if (String.class.isAssignableFrom(clazz)) {
-			return Lists.newArrayList(new HttpParam(name, (String) value));
-		}
-
-		// 数值
-		if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)//
-				|| Float.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)) {
-			return Lists.newArrayList(new HttpParam(name, String.valueOf(value)));
-		}
-
-		// 日期
-		if (Date.class.isAssignableFrom(clazz)) {
-			return Lists.newArrayList(new HttpParam(name, new SimpleDateFormat(datePattern).format((Date) value)));
-		}
-
-		// 枚举
-		if (Enum.class.isAssignableFrom(clazz)) {
-			return Lists.newArrayList(new HttpParam(name, ((Enum<?>) value).name()));
-		}
-
-		// map
-		if (Map.class.isAssignableFrom(clazz)) {
-			Map<String, Object> map = (Map<String, Object>) value;
-			List<HttpParam> paramList = Lists.newArrayList();
-
-			for (String key : map.keySet()) {
-				paramList.addAll(this.getHttpParams(new Param(name + "[" + key + "]", map.get(key)), charset));
-			}
-			return paramList;
-		}
-
-		// list
-		if (List.class.isAssignableFrom(clazz)) {
-			List<?> list = (List<?>) value;
-			List<HttpParam> paramList = Lists.newArrayList();
-
-			for (int i = 0; i < list.size(); i++) {
-				Object obj = list.get(i);
-				paramList.addAll(this.getHttpParams(new Param(name + "[" + i + "]", obj), charset));
-			}
-			return paramList;
-		}
-
-		// 实体类
-		Set<String> fieldNames = this.getClassFieldNames(clazz);
-		List<HttpParam> paramList = Lists.newArrayList();
-
-		for (String fieldName : fieldNames) {
-			try {
-				Object val = ReflectionUtils.getFieldValue(value, fieldName);
-				paramList.addAll(this.getHttpParams(new Param(name + "[" + fieldName + "]", val), charset));
-			} catch (Exception e) {
-				logger.debug("", e);
-			}
-			// end for
-		}
-
-		return paramList;
-	}
-
-	/**
-	 * 获取类型的属性名称
-	 * @param clazz 类型
-	 * @return 属性名称
-	 */
-	private Set<String> getClassFieldNames(Class<?> clazz) {
-		Set<String> sets = Sets.newHashSet();
-
-		if (clazz == null) {
-			return sets;
-		}
-
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-			int modifiers = field.getModifiers();
-			if (Modifier.isFinal(modifiers)) {
-				// 不可改变的属性
-				continue;
-			}
-			sets.add(field.getName());
-		}
-
-		// add super class
-		sets.addAll(this.getClassFieldNames(clazz.getSuperclass()));
-
-		return sets;
-	}
-
-	/**
-	 * 数据编码
-	 * @param value 值
-	 * @param charset 编码
-	 * @return 编码后的值
-	 */
-	private String encoded(String value, String charset) {
-		try {
-			return URLEncoder.encode(value, charset);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+	// 调用方式
+	public static enum Method {
+		/** POST */
+		POST,
+		/** GET */
+		GET;
 	}
 
 }
