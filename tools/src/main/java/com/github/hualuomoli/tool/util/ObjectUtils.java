@@ -50,7 +50,7 @@ public class ObjectUtils {
 			if (names.contains(field.getName())) {
 				continue;
 			}
-			if (field.getName().startsWith("This$")) {
+			if (field.getName().startsWith("this$")) {
 				continue;
 			}
 			fieldList.add(field);
