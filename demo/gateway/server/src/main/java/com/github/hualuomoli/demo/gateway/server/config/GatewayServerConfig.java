@@ -3,6 +3,8 @@ package com.github.hualuomoli.demo.gateway.server.config;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public class GatewayServerConfig {
 		filters.add(new AuthExecution.Filter() {
 
 			@Override
-			public void preHandler(String partnerId, String apiMethod) throws Exception {
+			public void preHandler(String partnerId, String apiMethod, HttpServletRequest req, HttpServletResponse res) throws Exception {
 				logger.debug("partnerId={},apiMethod={}", partnerId, apiMethod);
 			};
 		});

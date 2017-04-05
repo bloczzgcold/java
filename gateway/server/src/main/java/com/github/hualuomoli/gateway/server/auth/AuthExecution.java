@@ -50,9 +50,11 @@ public interface AuthExecution {
 		 * 预处理
 		 * @param partnerId 合作伙伴ID
 		 * @param apiMethod 请求方法
+		 * @param req 			HTTP请求
+		 * @param res 			HTTP响应
 		 * @throws 预处理错误
 		 */
-		void preHandler(String partnerId, String apiMethod) throws Exception;
+		void preHandler(String partnerId, String apiMethod, HttpServletRequest req, HttpServletResponse res) throws Exception;
 
 	}
 

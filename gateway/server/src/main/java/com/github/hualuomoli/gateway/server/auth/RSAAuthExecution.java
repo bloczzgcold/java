@@ -83,7 +83,7 @@ public class RSAAuthExecution implements AuthExecution {
 
 		// 过滤器
 		for (Filter filter : filters) {
-			filter.preHandler(rsaReq.partnerId, rsaReq.apiMethod);
+			filter.preHandler(rsaReq.partnerId, rsaReq.apiMethod, req, res);
 		}
 
 		// 执行业务操作
@@ -102,7 +102,7 @@ public class RSAAuthExecution implements AuthExecution {
 		rsaRes.signType = rsaReq.signType;
 		// 获取签名
 		origin = this.getOrigin(rsaRes);
-		logger.info("响应签名原文 = {}", origin);
+		logger.debug("响应签名原文 = {}", origin);
 
 		rsaRes.sign = RSA.signBase64(privateKeyBase64, origin);
 
