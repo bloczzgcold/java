@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -24,6 +23,7 @@ import com.github.hualuomoli.gateway.client.json.JSON;
 import com.github.hualuomoli.gateway.client.lang.DealException;
 import com.github.hualuomoli.gateway.client.lang.GatewayException;
 import com.github.hualuomoli.tool.http.HttpClient;
+import com.github.hualuomoli.tool.util.ObjectUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -185,7 +185,7 @@ public abstract class GatewayClientAdaptor implements GatewayClient {
 
 		List<HttpClient.Param> params = Lists.newArrayList();
 		Class<?> clazz = obj.getClass();
-		List<Field> fields = getFields(clazz, null);
+		List<Field> fields = ObjectUtils.getFields(clazz);
 		for (Field field : fields) {
 			try {
 				String name = field.getName();
@@ -221,7 +221,7 @@ public abstract class GatewayClientAdaptor implements GatewayClient {
 	 */
 	protected String getASCIISignOrigin(Object object, Set<String> ignores) {
 		Class<?> clazz = object.getClass();
-		List<Field> fields = getFields(clazz, null);
+		List<Field> fields = ObjectUtils.getFields(clazz);
 
 		List<ASCII> asciiList = new ArrayList<ASCII>();
 
@@ -294,32 +294,6 @@ public abstract class GatewayClientAdaptor implements GatewayClient {
 
 		return origin;
 
-	}
-
-	/**
-	 * 获取类的所有属性及所有父属性
-	 * @param clazz 类
-	 * @param names 已经存在的属性
-	 * @return 类的属性及所有父属性
-	 */
-	public static List<Field> getFields(Class<?> clazz, Set<String> names) {
-		List<Field> fieldList = new ArrayList<Field>();
-		if (clazz == null) {
-			return fieldList;
-		}
-		if (names == null) {
-			names = new HashSet<String>();
-		}
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-			if (names.contains(field.getName())) {
-				continue;
-			}
-			fieldList.add(field);
-			names.add(field.getName());
-		}
-		fieldList.addAll(getFields(clazz.getSuperclass(), names));
-		return fieldList;
 	}
 
 	// ASCII

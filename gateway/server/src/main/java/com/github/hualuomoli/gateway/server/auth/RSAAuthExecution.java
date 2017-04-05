@@ -2,7 +2,6 @@ package com.github.hualuomoli.gateway.server.auth;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -24,6 +23,7 @@ import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Key;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.tool.security.RSA;
+import com.github.hualuomoli.tool.util.ObjectUtils;
 import com.github.hualuomoli.validator.constraints.Values;
 
 /**
@@ -111,16 +111,8 @@ public class RSAAuthExecution implements AuthExecution {
 	 * @return 签名原文
 	 */
 	private String getOrigin(Object obj) {
-		Field[] parentFields = obj.getClass().getSuperclass().getDeclaredFields();
-		Field[] fields = obj.getClass().getDeclaredFields();
 
-		List<Field> fieldList = new ArrayList<Field>();
-		for (Field field : parentFields) {
-			fieldList.add(field);
-		}
-		for (Field field : fields) {
-			fieldList.add(field);
-		}
+		List<Field> fieldList = ObjectUtils.getFields(obj.getClass());
 
 		// sort
 		Collections.sort(fieldList, new Comparator<Field>() {
