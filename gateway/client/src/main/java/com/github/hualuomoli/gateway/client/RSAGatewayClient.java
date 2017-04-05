@@ -116,6 +116,30 @@ public class RSAGatewayClient extends GatewayClientAdaptor implements GatewayCli
 		/** 签名数据 */
 		private String sign;
 
+		public String getPartnerId() {
+			return partnerId;
+		}
+
+		public String getApiMethod() {
+			return apiMethod;
+		}
+
+		public String getTimestamp() {
+			return timestamp;
+		}
+
+		public String getBizContent() {
+			return bizContent;
+		}
+
+		public String getSignType() {
+			return signType;
+		}
+
+		public String getSign() {
+			return sign;
+		}
+
 		@Override
 		public String toString() {
 			return "RSARequest [partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp=" + timestamp + ", bizContent=" + bizContent + ", signType=" + signType + ", sign=" + sign + "]";
@@ -147,40 +171,80 @@ public class RSAGatewayClient extends GatewayClientAdaptor implements GatewayCli
 		/** 签名数据 */
 		private String sign;
 
+		public String getCode() {
+			return code;
+		}
+
 		public void setCode(String code) {
 			this.code = code;
+		}
+
+		public String getMessage() {
+			return message;
 		}
 
 		public void setMessage(String message) {
 			this.message = message;
 		}
 
+		public String getSubCode() {
+			return subCode;
+		}
+
 		public void setSubCode(String subCode) {
 			this.subCode = subCode;
+		}
+
+		public String getSubMessage() {
+			return subMessage;
 		}
 
 		public void setSubMessage(String subMessage) {
 			this.subMessage = subMessage;
 		}
 
+		public String getPartnerId() {
+			return partnerId;
+		}
+
 		public void setPartnerId(String partnerId) {
 			this.partnerId = partnerId;
+		}
+
+		public String getApiMethod() {
+			return apiMethod;
 		}
 
 		public void setApiMethod(String apiMethod) {
 			this.apiMethod = apiMethod;
 		}
 
+		public String getTimestamp() {
+			return timestamp;
+		}
+
 		public void setTimestamp(String timestamp) {
 			this.timestamp = timestamp;
+		}
+
+		public String getResult() {
+			return result;
 		}
 
 		public void setResult(String result) {
 			this.result = result;
 		}
 
+		public String getSignType() {
+			return signType;
+		}
+
 		public void setSignType(String signType) {
 			this.signType = signType;
+		}
+
+		public String getSign() {
+			return sign;
 		}
 
 		public void setSign(String sign) {
