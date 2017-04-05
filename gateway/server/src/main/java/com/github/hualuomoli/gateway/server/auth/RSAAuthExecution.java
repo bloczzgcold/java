@@ -166,7 +166,7 @@ public class RSAAuthExecution implements AuthExecution {
 	}
 
 	// RSA权限请求
-	private static class RSAAuthRequest extends AuthRequest {
+	private static final class RSAAuthRequest extends AuthRequest {
 		/** 签名类型 */
 		@NotEmpty(message = "签名类型不能为空")
 		@Values(value = { "RSA", "MD5" }, message = "签名类型支持RSA,MD5")
@@ -177,7 +177,7 @@ public class RSAAuthExecution implements AuthExecution {
 	}
 
 	// RSA权限响应
-	public static class RSAAuthResponse extends AuthResponse {
+	public static final class RSAAuthResponse extends AuthResponse {
 		/** 签名类型 */
 		protected String signType;
 		/** 签名数据 */
