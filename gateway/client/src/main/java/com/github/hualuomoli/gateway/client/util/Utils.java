@@ -2,6 +2,7 @@ package com.github.hualuomoli.gateway.client.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,8 +178,19 @@ public class Utils {
 	 * @return 值
 	 */
 	private static Object getFieldValue(Field field, Object obj, Class<?> clazz) {
+
+		String name = field.getName();
+
+		// 修饰符为public或protected
+		if (Modifier.isPublic(field.getModifiers()) || Modifier.isProtected(field.getModifiers())) {
+			try {
+				return field.get(obj);
+			} catch (Exception e) {
+				// 无法获取,使用get方法获取
+			}
+		}
+
 		try {
-			String name = field.getName();
 			String upper = name.substring(0, 1).toUpperCase();
 			if (name.length() > 1) {
 				upper += name.substring(1);
