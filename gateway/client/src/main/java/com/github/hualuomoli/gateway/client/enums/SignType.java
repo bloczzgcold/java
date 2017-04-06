@@ -8,8 +8,8 @@ package com.github.hualuomoli.gateway.client.enums;
 public enum SignType {
 
 	/** RSA */
-	RSA(),
+	RSA,
 	/** MD5 */
-	MD5();
+	MD5;
 
 }

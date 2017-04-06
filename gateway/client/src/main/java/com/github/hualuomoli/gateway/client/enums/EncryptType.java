@@ -8,6 +8,6 @@ package com.github.hualuomoli.gateway.client.enums;
 public enum EncryptType {
 
 	/** AES */
-	AES();
+	AES;
 
 }

@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.json;
+package com.github.hualuomoli.gateway.server.parser;
 
 import java.util.List;
 

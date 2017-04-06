@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.demo.gateway.server.controller.ControllerTest;
-import com.github.hualuomoli.gateway.server.constants.CodeEnum;
-import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
+import com.github.hualuomoli.gateway.server.enums.CodeEnum;
+import com.github.hualuomoli.gateway.server.enums.SignatureTypeEnum;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -43,7 +43,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 		req = new Request();
 		req.partnerId = "tester";
 		req.apiMethod = "test.user.find";
-		req.timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		req.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date());
 		req.bizContent = JSON.toJSONString(user);
 		req.signType = SignatureTypeEnum.RSA.name();
 
@@ -94,7 +94,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
 
-						Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_FOUND.value(), res.code);
+						Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_METHOD.value(), res.code);
 					}
 				}, Response.class));
 	}

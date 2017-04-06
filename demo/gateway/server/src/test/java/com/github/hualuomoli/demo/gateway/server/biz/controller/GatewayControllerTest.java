@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
-import com.github.hualuomoli.gateway.server.constants.CodeEnum;
-import com.github.hualuomoli.gateway.server.constants.SignatureTypeEnum;
+import com.github.hualuomoli.gateway.server.enums.CodeEnum;
+import com.github.hualuomoli.gateway.server.enums.SignatureTypeEnum;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -40,7 +40,7 @@ public class GatewayControllerTest {
 	public void test01LessFirst() throws IOException {
 		apiVersion = "0.0.0.1";
 		Response res = this.runner();
-		Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_FOUND.value(), res.code);
+		Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_METHOD.value(), res.code);
 	}
 
 	// 等于第一个版本
@@ -131,7 +131,7 @@ public class GatewayControllerTest {
 		Request req = new Request();
 		req.partnerId = "tester";
 		req.apiMethod = "test.user.find";
-		req.timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		req.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date());
 		req.bizContent = JSON.toJSONString(user);
 		req.signType = SignatureTypeEnum.RSA.name();
 
@@ -143,7 +143,7 @@ public class GatewayControllerTest {
 		buffer.append("&timestamp=").append(req.timestamp);
 		String origin = buffer.toString().substring(1);
 
-		logger.debug("签名原文={}", origin);
+		logger.debug("请求签名原文={}", origin);
 
 		req.sign = RSA.signBase64(privateKeyBase64, origin);
 
@@ -167,7 +167,7 @@ public class GatewayControllerTest {
 
 		origin = buffer.toString().substring(1);
 
-		logger.debug("签名原文={}", origin);
+		logger.debug("响应签名原文={}", origin);
 		RSA.verify(publicKeyBase64, origin, res.sign);
 
 		return res;

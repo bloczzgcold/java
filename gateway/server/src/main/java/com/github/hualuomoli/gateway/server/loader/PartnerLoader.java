@@ -49,21 +49,11 @@ public interface PartnerLoader {
 	/** 配置参数的key名称 */
 	public static enum Key {
 		/** RSA签名(公钥) */
-		SIGNATURE_RSA_PUBLIC_KEY("SIGNATURE.RSA.PUBLIC.KEY"),
+		SIGNATURE_RSA_PUBLIC_KEY,
 		/** MD5签名 */
-		SIGNATURE_MD5("SIGNATURE.MD5"),
+		SIGNATURE_MD5,
 		/** AES加密 */
-		ENCRYPTION_AES("ENCRYPTION.AES");
-
-		private String value;
-
-		private Key(String value) {
-			this.value = value;
-		}
-
-		public String value() {
-			return value;
-		}
+		ENCRYPTION_AES;
 
 	}
 

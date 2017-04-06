@@ -16,10 +16,10 @@ import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.demo.gateway.server.biz.service.GatewayPartnerLoader;
 import com.github.hualuomoli.framework.mvc.annotation.ApiVersion;
 import com.github.hualuomoli.gateway.server.GatewayServer;
-import com.github.hualuomoli.gateway.server.auth.AuthExecution;
-import com.github.hualuomoli.gateway.server.auth.RSAAuthExecution;
-import com.github.hualuomoli.gateway.server.business.BusinessHandler;
-import com.github.hualuomoli.gateway.server.business.SpringBusinessHandler;
+import com.github.hualuomoli.gateway.server.handler.AuthHandler;
+import com.github.hualuomoli.gateway.server.handler.BusinessHandler;
+import com.github.hualuomoli.gateway.server.handler.RSAAuthHandler;
+import com.github.hualuomoli.gateway.server.handler.SpringBusinessHandler;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor;
 import com.google.common.collect.Lists;
@@ -41,20 +41,31 @@ public class GatewayServerConfig {
 	@Bean
 	public GatewayServer initGateway() {
 
-		List<AuthExecution> authExecutions = Lists.newArrayList();
+		List<AuthHandler> authHandlers = Lists.newArrayList();
 		String privateKeyBase64 = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJ9hCYj2rCi3sywghwnX1nF4N1qNQHKPEo2fnORPx1Oyuo4zUz89jlO36Ww3HNZAWmUSU3d17YsowYbpDc1D2ocZa6xMtU5bVylp8dxq0PAhZXwxnQT5KAIyC8gltTdlQ4bcpkSBWQD2qIv3egwwpEqgA+jgtLiBIpBWIeQA8qgHAgMBAAECgYA//svAViPcmZ51Cn6Ogj8WAspfLraBCVfOzBdISYxk3DAyZwN3MjVTAlbU3/BRSzfAu7IOFqkSJoRGso+bKzK0SCc1RiQD8n/Vw0f29zsgzPSrwUKIri6eO/BKmqS8R6vKn1VowYcYoLPb74SNewk+dqmoAog/CHZCLkEJvYZy6QJBANPpLRQTUaKltzbdNCeDt4vLW4dHWYOVwBku4X0ktVYoEYVCOa2tt2WVw6hpquYdt9NRYjFviV3FaWv70Jaqd30CQQDAieff8mQC7o6B+tOF0CTiPybEA7geWDSWveu8vNcycw8MEvTDgIosmsSeP14iJ+wJwryT2nqOAKis4zadypzTAkEAl8c/Pk3H/tLqsyUkodi5sirpV69G8fRkLqVhZBzStO7l/ag9X6Q4402tYgatHTzT2UtFJVtZ7AvlQi6ObBuUkQJBAK2l8vXcY+ztAKQj90/RWOKgeDMC87SScuOdaJYxbpi2gtSt6AjGzlfKQhhDKH//p3dqJa/ntO6Lk5VR2zlWujcCQB2K8BFD3SSH2wnYWELbn35E+wR4oskG4cW/5mliov1lLTtGVlJabULZ5vK2owbfgyJ6SO1stBYXcQwMaghQCug=";
-		authExecutions.add(new RSAAuthExecution(privateKeyBase64));
+		authHandlers.add(new RSAAuthHandler(privateKeyBase64));
 
-		List<AuthExecution.Filter> filters = Lists.newArrayList();
-		filters.add(new AuthExecution.Filter() {
+		List<BusinessHandler.HandlerInterceptor> interceptors = Lists.newArrayList();
+		interceptors.add(new BusinessHandler.HandlerInterceptor() {
 
 			@Override
-			public void preHandler(String partnerId, String apiMethod, HttpServletRequest req, HttpServletResponse res) throws Exception {
+			public void preHandle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, Object handler) throws Exception {
 				logger.debug("partnerId={},apiMethod={}", partnerId, apiMethod);
-			};
+			}
+
+			@Override
+			public void postHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
+
+			}
+
+			@Override
+			public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Throwable t) throws Exception {
+
+			}
+
 		});
 
-		return new GatewayServer(partnerLoader, exceptionProcessor, businessHandler, jsonParser, authExecutions, filters);
+		return new GatewayServer(partnerLoader, exceptionProcessor, businessHandler, jsonParser, authHandlers, interceptors);
 	}
 
 	@Bean(name = "exceptionProcessor")
