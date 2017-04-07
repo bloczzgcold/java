@@ -1,8 +1,6 @@
 package com.github.hualuomoli.demo.gateway.server.biz.controller;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -16,7 +14,6 @@ import com.github.hualuomoli.demo.gateway.server.controller.ClientControllerTest
 import com.github.hualuomoli.gateway.client.http.HttpClient;
 import com.github.hualuomoli.gateway.client.lang.DealException;
 import com.github.hualuomoli.gateway.client.lang.GatewayException;
-import com.github.hualuomoli.gateway.server.enums.SignatureTypeEnum;
 import com.google.common.collect.Lists;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -100,20 +97,19 @@ public class ClientGatewayControllerTest extends ClientControllerTest {
 		User user = new User();
 		user.setUsername("hualuomoli");
 
-		Request req = new Request();
-		req.partnerId = "tester";
-		req.apiMethod = "test.user.find";
-		req.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date());
-		req.bizContent = JSON.toJSONString(user);
-		req.signType = SignatureTypeEnum.RSA.name();
-
 		List<HttpClient.Header> requestHeaders = Lists.newArrayList();
 		requestHeaders.add(new HttpClient.Header("apiVersion", apiVersion));
 
 		// 添加header头信息
 		client.addHeader("apiVersion", apiVersion);
 
-		return client.callObject("test.user.find", JSON.toJSONString(user), User.class);
+		if (Math.random() > 0.5) {
+			// 使用方法和内容的方式
+			return client.callObject("test.user.find", JSON.toJSONString(user), User.class);
+		} else {
+			// 使用object转换器的方式
+			return client.callObject(user, User.class);
+		}
 	}
 
 	public static class Request {

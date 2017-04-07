@@ -22,7 +22,7 @@ public interface ObjectGatewayClient {
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网管错误
 	 */
-	String call(Object object, ObejctParser parser) throws DealException, GatewayException;
+	String call(Object object) throws DealException, GatewayException;
 
 	/**
 	 * 调用
@@ -33,7 +33,7 @@ public interface ObjectGatewayClient {
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网管错误
 	 */
-	<T> T callObject(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException;
+	<T> T callObject(Object object, Class<T> clazz) throws DealException, GatewayException;
 
 	/**
 	 * 调用
@@ -44,7 +44,7 @@ public interface ObjectGatewayClient {
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网管错误
 	 */
-	<T> List<T> callArray(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException;
+	<T> List<T> callArray(Object object, Class<T> clazz) throws DealException, GatewayException;
 
 	/**
 	 * 调用
@@ -55,7 +55,7 @@ public interface ObjectGatewayClient {
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网管错误
 	 */
-	<T> Page<T> callPage(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException;
+	<T> Page<T> callPage(Object object, Class<T> clazz) throws DealException, GatewayException;
 
 	/**
 	 * 调用
@@ -63,7 +63,7 @@ public interface ObjectGatewayClient {
 	 * @param parser 参数解析器
 	 * @param callback 也处理回调
 	 */
-	void call(Object object, ObejctParser parser, Callback callback);
+	void call(Object object, Callback callback);
 
 	// 转换器
 	interface ObejctParser {

@@ -2,11 +2,14 @@ package com.github.hualuomoli.demo.gateway.server.biz.entity;
 
 import java.util.Date;
 
+import com.github.hualuomoli.demo.gateway.anno.RequestApiMethod;
+
 /**
  * 用户
  * @author lbq
  *
  */
+@RequestApiMethod(value = "test.user.find")
 public class User {
 
 	/** id(UUID) */

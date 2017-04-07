@@ -21,10 +21,12 @@ public abstract class GatewayClientAdaptor implements GatewayClient, ObjectGatew
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S");
 
 	private JSONParser jSONParser;
+	private ObjectGatewayClient.ObejctParser obejctParser;
 
-	public GatewayClientAdaptor(JSONParser jSONParser) {
+	public GatewayClientAdaptor(JSONParser jSONParser, ObjectGatewayClient.ObejctParser obejctParser) {
 		super();
 		this.jSONParser = jSONParser;
+		this.obejctParser = obejctParser;
 	}
 
 	@Override
@@ -80,47 +82,42 @@ public abstract class GatewayClientAdaptor implements GatewayClient, ObjectGatew
 	}
 
 	@Override
-	public String call(Object object, ObejctParser parser) throws DealException, GatewayException {
+	public String call(Object object) throws DealException, GatewayException {
 		Validate.notNull(object, "object is blank.");
-		Validate.notNull(parser, "parser is nuil.");
 
-		return this.call(parser.getMethod(object), parser.getBizContent(object));
+		return this.call(obejctParser.getMethod(object), obejctParser.getBizContent(object));
 	}
 
 	@Override
-	public <T> T callObject(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException {
+	public <T> T callObject(Object object, Class<T> clazz) throws DealException, GatewayException {
 		Validate.notNull(object, "object is blank.");
-		Validate.notNull(parser, "parser is nuil.");
 		Validate.notNull(clazz, "clazz is nuil.");
 
-		return this.callObject(parser.getMethod(object), parser.getBizContent(object), clazz);
+		return this.callObject(obejctParser.getMethod(object), obejctParser.getBizContent(object), clazz);
 	}
 
 	@Override
-	public <T> List<T> callArray(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException {
+	public <T> List<T> callArray(Object object, Class<T> clazz) throws DealException, GatewayException {
 		Validate.notNull(object, "object is blank.");
-		Validate.notNull(parser, "parser is nuil.");
 		Validate.notNull(clazz, "clazz is nuil.");
 
-		return this.callArray(parser.getMethod(object), parser.getBizContent(object), clazz);
+		return this.callArray(obejctParser.getMethod(object), obejctParser.getBizContent(object), clazz);
 	}
 
 	@Override
-	public <T> Page<T> callPage(Object object, ObejctParser parser, Class<T> clazz) throws DealException, GatewayException {
+	public <T> Page<T> callPage(Object object, Class<T> clazz) throws DealException, GatewayException {
 		Validate.notNull(object, "object is blank.");
-		Validate.notNull(parser, "parser is nuil.");
 		Validate.notNull(clazz, "clazz is nuil.");
 
-		return this.callPage(parser.getMethod(object), parser.getBizContent(object), clazz);
+		return this.callPage(obejctParser.getMethod(object), obejctParser.getBizContent(object), clazz);
 	}
 
 	@Override
-	public void call(Object object, ObejctParser parser, Callback callback) {
+	public void call(Object object, Callback callback) {
 		Validate.notNull(object, "object is blank.");
-		Validate.notNull(parser, "parser is nuil.");
 		Validate.notNull(callback, "callback is nuil.");
 
-		this.call(parser.getMethod(object), parser.getBizContent(object), callback);
+		this.call(obejctParser.getMethod(object), obejctParser.getBizContent(object), callback);
 	}
 
 	/**
