@@ -17,13 +17,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
-import com.github.hualuomoli.demo.gateway.server.controller.ControllerTest;
+import com.github.hualuomoli.demo.gateway.server.controller.MockControllerTest;
 import com.github.hualuomoli.gateway.server.enums.CodeEnum;
 import com.github.hualuomoli.gateway.server.enums.SignatureTypeEnum;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MockGatewayControllerTest extends ControllerTest {
+public class MockGatewayControllerTest extends MockControllerTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MockGatewayControllerTest.class);
 
@@ -50,6 +50,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("&apiMethod=").append(req.apiMethod);
 		buffer.append("&bizContent=").append(req.bizContent);
+		buffer.append("&gatewayVersion=").append(req.gatewayVersion);
 		buffer.append("&partnerId=").append(req.partnerId);
 		buffer.append("&signType=").append(req.signType);
 		buffer.append("&timestamp=").append(req.timestamp);
@@ -66,6 +67,7 @@ public class MockGatewayControllerTest extends ControllerTest {
 
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("&code=").append(res.code);
+		buffer.append("&gatewayVersion=").append(res.gatewayVersion);
 		buffer.append("&message=").append(res.message);
 		buffer.append("&partnerId=").append(res.partnerId);
 		buffer.append("&signType=").append(res.signType);
@@ -262,6 +264,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 	}
 
 	public static class Request {
+		/** 网关版本号 */
+		private final String gatewayVersion = "1.0.0";
 		/** 合作伙伴ID */
 		protected String partnerId;
 		/** 请求的业务方法 */
@@ -309,6 +313,8 @@ public class MockGatewayControllerTest extends ControllerTest {
 		private String subCode;
 		/** 业务处理信息 */
 		private String subMessage;
+		/** 网关版本号 */
+		private String gatewayVersion;
 		/** 合作伙伴ID */
 		private String partnerId;
 		/** 时间戳 yyyyMMddHHmmss */
@@ -334,6 +340,10 @@ public class MockGatewayControllerTest extends ControllerTest {
 
 		public void setSubMessage(String subMessage) {
 			this.subMessage = subMessage;
+		}
+
+		public void setGatewayVersion(String gatewayVersion) {
+			this.gatewayVersion = gatewayVersion;
 		}
 
 		public void setPartnerId(String partnerId) {

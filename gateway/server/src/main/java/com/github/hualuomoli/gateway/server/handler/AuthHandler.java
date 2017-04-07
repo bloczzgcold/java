@@ -15,6 +15,9 @@ import com.github.hualuomoli.gateway.server.parser.JSONParser;
  */
 public interface AuthHandler {
 
+	/** 网关版本号 */
+	final String VERSION = "1.0.0";
+
 	/**
 	 * 是否支持
 	 * @param req HTTP请求
@@ -40,7 +43,8 @@ public interface AuthHandler {
 
 	// 权限请求公共信息
 	class AuthRequest {
-
+		/** 网关版本号 */
+		protected final String gatewayVersion = VERSION;
 		/** 合作伙伴ID */
 		protected String partnerId;
 		/** 请求的业务方法 */
@@ -55,6 +59,15 @@ public interface AuthHandler {
 	// 权限响应公共信息
 	public class AuthResponse {
 
+		/** 网关版本号 */
+		protected final String gatewayVersion = VERSION;
+		/** 合作伙伴ID */
+		protected String partnerId;
+		/** 请求的业务方法 */
+		protected String apiMethod;
+		/** 时间戳 yyyy-MM-dd HH:mm:ss S */
+		protected String timestamp;
+
 		/** 调用结果编码 #CodeEnum */
 		public String code;
 		/** 调用结果信息 */
@@ -64,40 +77,44 @@ public interface AuthHandler {
 		/** 业务处理信息 */
 		public String subMessage;
 
-		/** 合作伙伴ID */
-		protected String partnerId;
-		/** 请求的业务方法 */
-		protected String apiMethod;
-		/** 时间戳 yyyy-MM-dd HH:mm:ss S */
-		protected String timestamp;
 		/** 响应内容 */
 		protected String result;
-		
-		public String getCode() {
-			return code;
+
+		public String getGatewayVersion() {
+			return gatewayVersion;
 		}
-		public String getMessage() {
-			return message;
-		}
-		public String getSubCode() {
-			return subCode;
-		}
-		public String getSubMessage() {
-			return subMessage;
-		}
+
 		public String getPartnerId() {
 			return partnerId;
 		}
+
 		public String getApiMethod() {
 			return apiMethod;
 		}
+
 		public String getTimestamp() {
 			return timestamp;
 		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public String getSubCode() {
+			return subCode;
+		}
+
+		public String getSubMessage() {
+			return subMessage;
+		}
+
 		public String getResult() {
 			return result;
 		}
-
 
 	}
 

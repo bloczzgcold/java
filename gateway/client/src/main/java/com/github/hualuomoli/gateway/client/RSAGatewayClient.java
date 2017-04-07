@@ -75,6 +75,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			StringBuilder requestBuffer = new StringBuilder();
 			requestBuffer.append("&apiMethod=").append(req.apiMethod);
 			requestBuffer.append("&bizContent=").append(req.bizContent);
+			requestBuffer.append("&gatewayVersion=").append(req.gatewayVersion);
 			requestBuffer.append("&partnerId=").append(req.partnerId);
 			requestBuffer.append("&signType=").append(req.signType);
 			requestBuffer.append("&timestamp=").append(req.timestamp);
@@ -129,6 +130,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			StringBuilder responseBuffer = new StringBuilder();
 			responseBuffer.append("&apiMethod=").append(res.apiMethod);
 			responseBuffer.append("&code=").append(res.code);
+			responseBuffer.append("&gatewayVersion=").append(res.gatewayVersion);
 			responseBuffer.append("&message=").append(res.message);
 			responseBuffer.append("&partnerId=").append(res.partnerId);
 			responseBuffer.append("&result=").append(res.result);
@@ -190,12 +192,16 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 
 	/** RSA请求 */
 	public static final class RSARequest {
+
+		/** 网关版本号 */
+		private final String gatewayVersion = GATEWAY_VERSION;
 		/** 合作伙伴ID */
 		private String partnerId;
 		/** 请求的业务方法 */
 		private String apiMethod;
 		/** 时间戳 */
 		private String timestamp;
+
 		/** 业务内容 */
 		private String bizContent;
 		/** 签名类型 */
@@ -213,6 +219,15 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 	/** RSA响应 */
 	public static final class RSAResponse {
 
+		/** 网关版本号 */
+		private final String gatewayVersion = GATEWAY_VERSION;
+		/** 合作伙伴ID */
+		private String partnerId;
+		/** 请求的业务方法 */
+		private String apiMethod;
+		/** 时间戳 */
+		private String timestamp;
+
 		/** 调用结果编码 */
 		private String code;
 		/** 调用结果名称 */
@@ -222,18 +237,24 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 		/** 业务处理名称 */
 		private String subMessage;
 
-		/** 合作伙伴ID */
-		private String partnerId;
-		/** 请求的业务方法 */
-		private String apiMethod;
-		/** 时间戳 */
-		private String timestamp;
 		/** 响应内容 */
 		private String result;
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
 		private String sign;
+
+		public void setPartnerId(String partnerId) {
+			this.partnerId = partnerId;
+		}
+
+		public void setApiMethod(String apiMethod) {
+			this.apiMethod = apiMethod;
+		}
+
+		public void setTimestamp(String timestamp) {
+			this.timestamp = timestamp;
+		}
 
 		public void setCode(String code) {
 			this.code = code;
@@ -251,18 +272,6 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			this.subMessage = subMessage;
 		}
 
-		public void setPartnerId(String partnerId) {
-			this.partnerId = partnerId;
-		}
-
-		public void setApiMethod(String apiMethod) {
-			this.apiMethod = apiMethod;
-		}
-
-		public void setTimestamp(String timestamp) {
-			this.timestamp = timestamp;
-		}
-
 		public void setResult(String result) {
 			this.result = result;
 		}
@@ -273,12 +282,6 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 
 		public void setSign(String sign) {
 			this.sign = sign;
-		}
-
-		@Override
-		public String toString() {
-			return "RSAResponse [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", partnerId=" + partnerId + ", apiMethod=" + apiMethod
-					+ ", timestamp=" + timestamp + ", result=" + result + ", signType=" + signType + ", sign=" + sign + "]";
 		}
 
 	}

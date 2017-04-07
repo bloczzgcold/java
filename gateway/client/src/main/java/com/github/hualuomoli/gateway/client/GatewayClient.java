@@ -14,6 +14,9 @@ import com.github.hualuomoli.gateway.client.lang.GatewayException;
  */
 public interface GatewayClient {
 
+	/** 网关版本号 */
+	final String GATEWAY_VERSION = "1.0.0";
+
 	/**
 	 * 调用
 	 * @param method 请求的方法

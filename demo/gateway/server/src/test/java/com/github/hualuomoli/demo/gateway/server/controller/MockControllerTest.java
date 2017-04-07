@@ -32,7 +32,7 @@ import com.github.hualuomoli.demo.gateway.server.config.MvcConfig;
 		@ContextConfiguration(name = "parent", classes = BaseConfig.class), //
 		@ContextConfiguration(name = "child", classes = MvcConfig.class) //
 })
-public class ControllerTest {
+public class MockControllerTest {
 
 	// http://www.csdn123.com/html/mycsdn20140110/a7/a75383fcc7d869a7627583ada5e76e46.html
 	// perform：执行一个RequestBuilder请求，会自动执行SpringMVC的流程并映射到相应的控制器执行处理；
@@ -40,7 +40,7 @@ public class ControllerTest {
 	// andExpect：添加ResultMatcher验证规则，验证控制器执行完成后结果是否正确；
 	// andReturn：最后返回相应的MvcResult；然后进行自定义验证/进行下一步的异步处理；
 
-	protected static final Logger logger = LoggerFactory.getLogger(ControllerTest.class);
+	protected static final Logger logger = LoggerFactory.getLogger(MockControllerTest.class);
 
 	private static final String characterEncoding = "UTF-8";
 

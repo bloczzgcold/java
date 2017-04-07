@@ -11,10 +11,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
-import com.github.hualuomoli.demo.gateway.server.controller.ControllerTest;
+import com.github.hualuomoli.demo.gateway.server.controller.MockControllerTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MockUserApiVersionControllerTest extends ControllerTest {
+public class MockUserApiVersionControllerTest extends MockControllerTest {
 
 	private String apiVersion = "1.0.0";
 
