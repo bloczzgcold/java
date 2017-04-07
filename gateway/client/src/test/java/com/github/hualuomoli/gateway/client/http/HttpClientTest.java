@@ -1,7 +1,9 @@
 package com.github.hualuomoli.gateway.client.http;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hualuomoli.gateway.client.util.Utils;
 
 public class HttpClientTest {
 
@@ -59,13 +62,19 @@ public class HttpClientTest {
 	@Test(expected = IOException.class)
 	public void testUrlencoded() throws IOException {
 
-		new HttpURLClient().urlencoded("http://www.baidu.com", Charset.forName("UTF-8"), user);
+		new HttpURLClient(new Utils.DateFormat() {
+
+			@Override
+			public String format(Date date, Field field) {
+				return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+			}
+		}).urlencoded("http://www.baidu.com", Charset.forName("UTF-8"), user);
 	}
 
 	@Test(expected = IOException.class)
 	public void testJson() throws IOException {
 
-		new HttpURLClient().json("http://www.baidu.com", Charset.forName("UTF-8"), JSON.toJSONString(user));
+		new HttpURLClient(null).json("http://www.baidu.com", Charset.forName("UTF-8"), JSON.toJSONString(user));
 	}
 
 	public static class User {

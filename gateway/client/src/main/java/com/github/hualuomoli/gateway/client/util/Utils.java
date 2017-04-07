@@ -2,7 +2,6 @@ package com.github.hualuomoli.gateway.client.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,22 +65,20 @@ public class Utils {
 	 * @param datePattern 日期格式化方式
 	 * @return 参数信息
 	 */
-	public static List<UrlencodedParam> getUrlencodedParams(Object object, String datePattern) {
-		Validate.notNull(datePattern, "datePattern is null.");
+	public static List<UrlencodedParam> getUrlencodedParams(Object object, DateFormat dateFormat) {
+		Validate.notNull(dateFormat, "dateFormat is null.");
 
 		List<UrlencodedParam> params = new ArrayList<UrlencodedParam>();
 		if (object == null) {
 			return params;
 		}
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-
 		Class<?> clazz = object.getClass();
 		List<Field> fields = Utils.getFields(clazz);
 		for (Field field : fields) {
 			String name = field.getName();
 			Object value = Utils.getFieldValue(field, object, clazz);
-			params.addAll(Utils.getUrlencodedParams(name, value, simpleDateFormat));
+			params.addAll(Utils.getUrlencodedParams(name, value, field, dateFormat));
 		}
 
 		return params;
@@ -93,18 +90,16 @@ public class Utils {
 	 * @param datePattern 日期格式化方式
 	 * @return 参数信息
 	 */
-	public static List<UrlencodedParam> getUrlencodedParams(Map<String, Object> map, String datePattern) {
-		Validate.notNull(datePattern, "datePattern is null.");
+	public static List<UrlencodedParam> getUrlencodedParams(Map<String, Object> map, DateFormat dateFormat) {
+		Validate.notNull(dateFormat, "dateFormat is null.");
 
 		List<UrlencodedParam> params = new ArrayList<UrlencodedParam>();
 		if (map == null || map.size() == 0) {
 			return params;
 		}
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-
 		for (String name : map.keySet()) {
-			params.addAll(Utils.getUrlencodedParams(name, map.get(name), simpleDateFormat));
+			params.addAll(Utils.getUrlencodedParams(name, map.get(name), null, dateFormat));
 		}
 
 		return params;
@@ -114,11 +109,12 @@ public class Utils {
 	 * 获取urlencoded放肆请求的参数
 	 * @param name 名称
 	 * @param value 值
-	 * @param simpleDateFormat 日期格式化
+	 * @param field 属性
+	 * @param dateFormat 日期格式化
 	 * @return 参数列表
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<UrlencodedParam> getUrlencodedParams(String name, Object value, SimpleDateFormat simpleDateFormat) {
+	public static List<UrlencodedParam> getUrlencodedParams(String name, Object value, Field f, DateFormat dateFormat) {
 
 		List<UrlencodedParam> params = new ArrayList<UrlencodedParam>();
 
@@ -143,7 +139,7 @@ public class Utils {
 
 		// 日期
 		if (Date.class.isAssignableFrom(clazz)) {
-			params.add(new UrlencodedParam(name, simpleDateFormat.format((Date) value)));
+			params.add(new UrlencodedParam(name, dateFormat.format((Date) value, f)));
 			return params;
 		}
 
@@ -164,7 +160,7 @@ public class Utils {
 				String k = key.toString();
 				Object v = map.get(key);
 				// name[attribute]
-				params.addAll(Utils.getUrlencodedParams(name + "[" + k + "]", v, simpleDateFormat));
+				params.addAll(Utils.getUrlencodedParams(name + "[" + k + "]", v, f, dateFormat));
 			}
 			return params;
 		}
@@ -176,7 +172,7 @@ public class Utils {
 			for (int i = 0; i < list.size(); i++) {
 				Object v = list.get(i);
 				// name[index]
-				params.addAll(getUrlencodedParams(name + "[" + i + "]", v, simpleDateFormat));
+				params.addAll(getUrlencodedParams(name + "[" + i + "]", v, f, dateFormat));
 			}
 			return params;
 		}
@@ -187,7 +183,7 @@ public class Utils {
 		for (Field field : fields) {
 			String fieldName = field.getName();
 			Object v = Utils.getFieldValue(field, value, clazz);
-			params.addAll(Utils.getUrlencodedParams(name + "[" + fieldName + "]", v, simpleDateFormat));
+			params.addAll(Utils.getUrlencodedParams(name + "[" + fieldName + "]", v, field, dateFormat));
 		}
 		return params;
 	}
@@ -232,6 +228,19 @@ public class Utils {
 			this.name = name;
 			this.value = value;
 		}
+	}
+
+	// 日期格式化
+	public static interface DateFormat {
+
+		/**
+		 * 格式化日期
+		 * @param date 日期
+		 * @param field 实体类属性
+		 * @return 日期字符串
+		 */
+		String format(Date date, Field field);
+
 	}
 
 	/**

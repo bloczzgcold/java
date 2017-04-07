@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 import com.github.hualuomoli.gateway.client.util.Validate;
 
 /**
@@ -34,12 +35,8 @@ public class HttpURLClient extends HttpCleintAdaptor {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpURLClient.class);
 
-	public HttpURLClient() {
-		super();
-	}
-
-	public HttpURLClient(String datePattern) {
-		super(datePattern);
+	public HttpURLClient(DateFormat dateFormat) {
+		super(dateFormat);
 	}
 
 	@Override

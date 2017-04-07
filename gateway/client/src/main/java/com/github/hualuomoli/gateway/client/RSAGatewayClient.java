@@ -45,7 +45,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 	/** HTTP发起URL请求 */
 	private HttpClient httpClient;
 
-	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset, JSONParser jsonParser, ObjectGatewayClient.ObejctParser obejctParser,
+	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset, JSONParser jsonParser, GatewayClient.ObejctParser obejctParser,
 			HttpClient httpClient) {
 		super(jsonParser, obejctParser);
 		this.serverURL = serverURL;

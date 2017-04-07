@@ -11,18 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.client.util.Utils;
+import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 
 public abstract class HttpCleintAdaptor implements HttpClient {
 
 	private final Logger logger = LoggerFactory.getLogger(HttpCleintAdaptor.class);
-	private String datePattern;
+	private DateFormat dateFormat;
 
-	public HttpCleintAdaptor() {
-		this("yyyy-MM-dd HH:mm:ss");
-	}
-
-	public HttpCleintAdaptor(String datePattern) {
-		this.datePattern = datePattern;
+	public HttpCleintAdaptor(DateFormat dateFormat) {
+		super();
+		this.dateFormat = dateFormat;
 	}
 
 	@Override
@@ -40,7 +38,7 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 
 		// 发送的内容
 		String content = null;
-		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(object, datePattern);
+		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(object, dateFormat);
 
 		if (paramList == null || paramList.size() == 0) {
 			content = "";
@@ -76,7 +74,7 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 		// 发送的内容
 		String content = null;
-		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(paramMap, datePattern);
+		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(paramMap, dateFormat);
 
 		if (paramList == null || paramList.size() == 0) {
 			content = "";

@@ -16,14 +16,14 @@ import com.github.hualuomoli.gateway.client.util.Validate;
  * @author lbq
  *
  */
-public abstract class GatewayClientAdaptor implements GatewayClient, ObjectGatewayClient {
+public abstract class GatewayClientAdaptor implements GatewayClient {
 
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S");
 
 	private JSONParser jSONParser;
-	private ObjectGatewayClient.ObejctParser obejctParser;
+	private GatewayClient.ObejctParser obejctParser;
 
-	public GatewayClientAdaptor(JSONParser jSONParser, ObjectGatewayClient.ObejctParser obejctParser) {
+	public GatewayClientAdaptor(JSONParser jSONParser, GatewayClient.ObejctParser obejctParser) {
 		super();
 		this.jSONParser = jSONParser;
 		this.obejctParser = obejctParser;

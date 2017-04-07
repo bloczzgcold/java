@@ -1,17 +1,22 @@
 package com.github.hualuomoli.demo.gateway.server.controller;
 
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.demo.gateway.anno.RequestApiMethod;
-import com.github.hualuomoli.gateway.client.ObjectGatewayClient;
+import com.github.hualuomoli.gateway.client.GatewayClient;
 import com.github.hualuomoli.gateway.client.RSAGatewayClient;
+import com.github.hualuomoli.gateway.client.http.HttpClient;
 import com.github.hualuomoli.gateway.client.http.HttpURLClient;
 import com.github.hualuomoli.gateway.client.json.JSON;
 import com.github.hualuomoli.gateway.client.json.JSONParser;
+import com.github.hualuomoli.gateway.client.util.Utils;
 
 public class ClientControllerTest {
 
@@ -26,13 +31,21 @@ public class ClientControllerTest {
 		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCfYQmI9qwot7MsIIcJ19ZxeDdajUByjxKNn5zkT8dTsrqOM1M/PY5Tt+lsNxzWQFplElN3de2LKMGG6Q3NQ9qHGWusTLVOW1cpafHcatDwIWV8MZ0E+SgCMgvIJbU3ZUOG3KZEgVkA9qiL93oMMKRKoAPo4LS4gSKQViHkAPKoBwIDAQAB";
 
 		JSONParser jsonParser = new JSON();
-		ObjectGatewayClient.ObejctParser obejctParser = getObjectParser(jsonParser);
+		GatewayClient.ObejctParser obejctParser = getObjectParser(jsonParser);
+		HttpClient httpClient = new HttpURLClient(new Utils.DateFormat() {
 
-		client = new RSAGatewayClient(serverURL, partnerId, publicKey, privateKey, Charset.forName("UTF-8"), jsonParser, obejctParser, new HttpURLClient());
+			@Override
+			public String format(Date date, Field field) {
+				return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+			}
+		});
+		;
+
+		client = new RSAGatewayClient(serverURL, partnerId, publicKey, privateKey, Charset.forName("UTF-8"), jsonParser, obejctParser, httpClient);
 	}
 
-	private static ObjectGatewayClient.ObejctParser getObjectParser(final JSONParser jsonParser) {
-		return new ObjectGatewayClient.ObejctParser() {
+	private static GatewayClient.ObejctParser getObjectParser(final JSONParser jsonParser) {
+		return new GatewayClient.ObejctParser() {
 
 			@Override
 			public String getMethod(Object object) {
