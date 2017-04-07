@@ -160,7 +160,7 @@ public class Utils {
 				String k = key.toString();
 				Object v = map.get(key);
 				// name[attribute]
-				params.addAll(Utils.getUrlencodedParams(name + "[" + k + "]", v, f, dateFormat));
+				params.addAll(Utils.getUrlencodedParams(name + "." + k, v, f, dateFormat));
 			}
 			return params;
 		}
@@ -183,7 +183,7 @@ public class Utils {
 		for (Field field : fields) {
 			String fieldName = field.getName();
 			Object v = Utils.getFieldValue(field, value, clazz);
-			params.addAll(Utils.getUrlencodedParams(name + "[" + fieldName + "]", v, field, dateFormat));
+			params.addAll(Utils.getUrlencodedParams(name + "." + fieldName, v, field, dateFormat));
 		}
 		return params;
 	}
