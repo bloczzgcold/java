@@ -20,6 +20,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.client.util.Validate;
 
@@ -29,6 +31,8 @@ import com.github.hualuomoli.gateway.client.util.Validate;
  *
  */
 public class HttpURLClient extends HttpCleintAdaptor {
+
+	private static final Logger logger = LoggerFactory.getLogger(HttpURLClient.class);
 
 	public HttpURLClient() {
 		super();
@@ -49,9 +53,15 @@ public class HttpURLClient extends HttpCleintAdaptor {
 			responseHeaders = new ArrayList<Header>();
 		}
 
+		logger.debug("发送数据={}", content);
+
 		byte[] result = this.execute(urlStr, content.getBytes(), method.name(), requestHeaders, responseHeaders);
 
-		return new String(result, charset);
+		String res = new String(result, charset);
+
+		logger.debug("返回数据={}", res);
+
+		return res;
 	}
 
 	/**
@@ -84,7 +94,13 @@ public class HttpURLClient extends HttpCleintAdaptor {
 
 			// header
 			for (Header header : headers) {
-				conn.setRequestProperty(header.getName(), header.getValue());
+				String headerName = header.getName();
+				String headerValue = header.getValue();
+
+				if (headerName == null || headerValue == null) {
+					continue;
+				}
+				conn.setRequestProperty(headerName, headerValue);
 			}
 
 			// output data

@@ -72,34 +72,32 @@ public interface AuthHandler {
 		protected String timestamp;
 		/** 响应内容 */
 		protected String result;
-
+		
 		public String getCode() {
 			return code;
 		}
-
 		public String getMessage() {
 			return message;
 		}
-
 		public String getSubCode() {
 			return subCode;
 		}
-
 		public String getSubMessage() {
 			return subMessage;
 		}
-
 		public String getPartnerId() {
 			return partnerId;
 		}
-
+		public String getApiMethod() {
+			return apiMethod;
+		}
 		public String getTimestamp() {
 			return timestamp;
 		}
-
 		public String getResult() {
 			return result;
 		}
+
 
 	}
 

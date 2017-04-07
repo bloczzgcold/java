@@ -2,13 +2,10 @@ package com.github.hualuomoli.gateway.server.handler;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +20,7 @@ import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Key;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.security.RSA;
+import com.github.hualuomoli.gateway.server.util.Utils;
 
 /**
  * 网关认证
@@ -66,14 +64,14 @@ public class RSAAuthHandler implements AuthHandler {
 		rsaReq.sign = req.getParameter("sign");
 
 		// 验证请求参数
-		this.notBlank(rsaReq.partnerId, "partnerId is not blank.");
-		this.notBlank(rsaReq.apiMethod, "apiMethod is not blank.");
-		this.notBlank(rsaReq.timestamp, "timestamp is not blank.");
-		this.notBlank(rsaReq.bizContent, "bizContent is not blank.");
-		this.notBlank(rsaReq.signType, "signType is not blank.");
-		this.notBlank(rsaReq.sign, "sign is not blank.");
+		Utils.notBlank(rsaReq.partnerId, "partnerId is not blank.");
+		Utils.notBlank(rsaReq.apiMethod, "apiMethod is not blank.");
+		Utils.notBlank(rsaReq.timestamp, "timestamp is not blank.");
+		Utils.notBlank(rsaReq.bizContent, "bizContent is not blank.");
+		Utils.notBlank(rsaReq.signType, "signType is not blank.");
+		Utils.notBlank(rsaReq.sign, "sign is not blank.");
 
-		this.isTrue(rsaReq.timestamp.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}( \\d{0,4})?"), "timestamp is invalid.");
+		Utils.isTrue(rsaReq.timestamp.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}( \\d{0,4})?"), "timestamp is invalid.");
 
 		logger.info("请求业务内容 = {}", rsaReq.bizContent);
 
@@ -118,7 +116,7 @@ public class RSAAuthHandler implements AuthHandler {
 	 */
 	private String getOrigin(Object obj) {
 
-		List<Field> fieldList = this.getFields(obj.getClass());
+		List<Field> fieldList = Utils.getFields(obj.getClass());
 
 		// sort
 		Collections.sort(fieldList, new Comparator<Field>() {
@@ -165,78 +163,6 @@ public class RSAAuthHandler implements AuthHandler {
 		}
 
 		return buffer.toString().substring(1);
-	}
-
-	/**
-	 * 获取类的所有属性及所有父属性
-	 * @param clazz 类
-	 * @param names 已经存在的属性
-	 * @return 类的属性及所有父属性
-	 */
-	public List<Field> getFields(Class<?> clazz) {
-		List<Field> fields = this.getFields(clazz, new HashSet<String>());
-
-		if (logger.isDebugEnabled()) {
-			for (Field field : fields) {
-				logger.debug("field name {}", field.getName());
-			}
-		}
-
-		return fields;
-	}
-
-	/**
-	 * 获取类的所有属性及所有父属性
-	 * @param clazz 类
-	 * @param names 已经存在的属性
-	 * @return 类的属性及所有父属性
-	 */
-	private List<Field> getFields(Class<?> clazz, Set<String> names) {
-		List<Field> fieldList = new ArrayList<Field>();
-		if (clazz == null) {
-			return fieldList;
-		}
-		if (names == null) {
-			names = new HashSet<String>();
-		}
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-			if (names.contains(field.getName())) {
-				continue;
-			}
-			if (field.getName().startsWith("this$")) {
-				continue;
-			}
-			fieldList.add(field);
-			names.add(field.getName());
-		}
-		fieldList.addAll(this.getFields(clazz.getSuperclass(), names));
-		return fieldList;
-	}
-
-	/**
-	 * 是否为空
-	 * @param value 值
-	 * @return 提示信息
-	 */
-	private void notBlank(String value, String message) {
-		if (value == null) {
-			throw new NullPointerException(message);
-		}
-		if (value.trim().length() == 0) {
-			throw new IllegalArgumentException(message);
-		}
-	}
-
-	/**
-	 * 是否为真
-	 * @param exp 验证表达式
-	 * @param message 提示信息
-	 */
-	private void isTrue(boolean exp, String message) {
-		if (!exp) {
-			throw new IllegalArgumentException(message);
-		}
 	}
 
 	// RSA权限请求

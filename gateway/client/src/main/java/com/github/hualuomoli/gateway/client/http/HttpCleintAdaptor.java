@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,70 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 	}
 
 	@Override
+	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException {
+		return this.urlencoded(url, charset, paramMap, null, null);
+	}
+
+	@Override
 	public String urlencoded(String url, Charset charset, Object object, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
 		// 发送的内容
-		String content = this.getParams(object, charset.name());
+		String content = null;
+		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(object, datePattern);
+
+		if (paramList == null || paramList.size() == 0) {
+			content = "";
+		} else {
+			// 排序
+			Utils.sort(paramList);
+
+			StringBuilder buffer = new StringBuilder();
+
+			for (Utils.UrlencodedParam param : paramList) {
+				logger.debug("[urlencoded] {}={}", param.name, param.value);
+				buffer.append("&").append(param.name).append("=").append(this.encoded(param.value, charset.name()));
+			}
+
+			content = buffer.substring(1).toString();
+
+		}
+
+		// headers(添加Content-Type)
+		if (requestHeaders == null) {
+			requestHeaders = new ArrayList<Header>();
+		}
+		if (responseHeaders == null) {
+			requestHeaders = new ArrayList<Header>();
+		}
+		requestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
+
+		// 执行
+		return this.execute(url, content, charset, Method.POST, requestHeaders, responseHeaders);
+	}
+
+	@Override
+	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+		// 发送的内容
+		String content = null;
+		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(paramMap, datePattern);
+
+		if (paramList == null || paramList.size() == 0) {
+			content = "";
+		} else {
+			// 排序
+			Utils.sort(paramList);
+
+			StringBuilder buffer = new StringBuilder();
+
+			for (Utils.UrlencodedParam param : paramList) {
+				logger.debug("[urlencoded] {}={}", param.name, param.value);
+				buffer.append("&").append(param.name).append("=").append(this.encoded(param.value, charset.name()));
+			}
+
+			content = buffer.substring(1).toString();
+
+		}
+
 		// headers(添加Content-Type)
 		if (requestHeaders == null) {
 			requestHeaders = new ArrayList<Header>();
@@ -81,36 +142,6 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 	 * @throws IOException 处理异常
 	 */
 	protected abstract String execute(String urlStr, String content, Charset charset, Method method, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException;
-
-	/**
-	 * 获取参数
-	 * @param params 参数信息
-	 * @param charset 编码集
-	 * @return 参数
-	 */
-	private String getParams(Object object, String charset) {
-		if (object == null) {
-			return "";
-		}
-
-		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(object, datePattern);
-
-		if (paramList == null || paramList.size() == 0) {
-			return "";
-		}
-
-		// 排序
-		Utils.sort(paramList);
-
-		StringBuilder buffer = new StringBuilder();
-
-		for (Utils.UrlencodedParam param : paramList) {
-			logger.debug("[urlencoded] {}={}", param.name, param.value);
-			buffer.append("&").append(param.name).append("=").append(this.encoded(param.value, charset));
-		}
-
-		return buffer.substring(1).toString();
-	}
 
 	// 调用方式
 	public static enum Method {

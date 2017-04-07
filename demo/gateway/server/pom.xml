@@ -43,6 +43,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.hualuomoli</groupId>
+			<artifactId>hualuomoli-gateway-client</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.hualuomoli</groupId>
 			<artifactId>hualuomoli-validator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

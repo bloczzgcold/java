@@ -221,8 +221,11 @@ public class GatewayControllerTest {
 		private String subCode;
 		/** 业务处理信息 */
 		private String subMessage;
+
 		/** 合作伙伴ID */
 		private String partnerId;
+		/** 请求的业务方法 */
+		protected String apiMethod;
 		/** 时间戳 yyyyMMddHHmmss */
 		private String timestamp;
 		/** 响应内容 */
@@ -250,6 +253,10 @@ public class GatewayControllerTest {
 
 		public void setPartnerId(String partnerId) {
 			this.partnerId = partnerId;
+		}
+		
+		public String getApiMethod() {
+			return apiMethod;
 		}
 
 		public void setTimestamp(String timestamp) {

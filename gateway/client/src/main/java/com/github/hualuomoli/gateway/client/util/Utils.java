@@ -2,7 +2,6 @@ package com.github.hualuomoli.gateway.client.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,13 +89,36 @@ public class Utils {
 
 	/**
 	 * 获取urlencoded放肆请求的参数
+	 * @param object 参数
+	 * @param datePattern 日期格式化方式
+	 * @return 参数信息
+	 */
+	public static List<UrlencodedParam> getUrlencodedParams(Map<String, Object> map, String datePattern) {
+		Validate.notNull(datePattern, "datePattern is null.");
+
+		List<UrlencodedParam> params = new ArrayList<UrlencodedParam>();
+		if (map == null || map.size() == 0) {
+			return params;
+		}
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+
+		for (String name : map.keySet()) {
+			params.addAll(Utils.getUrlencodedParams(name, map.get(name), simpleDateFormat));
+		}
+
+		return params;
+	}
+
+	/**
+	 * 获取urlencoded放肆请求的参数
 	 * @param name 名称
 	 * @param value 值
 	 * @param simpleDateFormat 日期格式化
 	 * @return 参数列表
 	 */
 	@SuppressWarnings("unchecked")
-	private static List<UrlencodedParam> getUrlencodedParams(String name, Object value, SimpleDateFormat simpleDateFormat) {
+	public static List<UrlencodedParam> getUrlencodedParams(String name, Object value, SimpleDateFormat simpleDateFormat) {
 
 		List<UrlencodedParam> params = new ArrayList<UrlencodedParam>();
 
@@ -177,18 +199,9 @@ public class Utils {
 	 * @param clazz 数据类型
 	 * @return 值
 	 */
-	private static Object getFieldValue(Field field, Object obj, Class<?> clazz) {
+	public static Object getFieldValue(Field field, Object obj, Class<?> clazz) {
 
 		String name = field.getName();
-
-		// 修饰符为public或protected
-		if (Modifier.isPublic(field.getModifiers()) || Modifier.isProtected(field.getModifiers())) {
-			try {
-				return field.get(obj);
-			} catch (Exception e) {
-				// 无法获取,使用get方法获取
-			}
-		}
 
 		try {
 			String upper = name.substring(0, 1).toUpperCase();
@@ -204,7 +217,7 @@ public class Utils {
 			Method method = clazz.getMethod(methodName);
 			return method.invoke(obj);
 		} catch (Exception e) {
-			logger.debug("无法获取属性", e);
+			logger.debug("无法获取属性{}", name, e);
 		}
 		return null;
 	}

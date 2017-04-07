@@ -3,6 +3,7 @@ package com.github.hualuomoli.gateway.client.http;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 /**
  * HTTP发起请求
@@ -26,6 +27,16 @@ public interface HttpClient {
 	 * 执行http请求(urlencoded)
 	 * @param url 请求的url
 	 * @param charset 数据编码集
+	 * @param paramMap 请求的参数
+	 * @return 执行结果
+	 * @throws IOException 执行错误
+	 */
+	String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException;
+
+	/**
+	 * 执行http请求(urlencoded)
+	 * @param url 请求的url
+	 * @param charset 数据编码集
 	 * @param object 请求的参数
 	 * @param requestHeaders 请求的header信息
 	 * @param responseHeaders 响应的header西悉尼
@@ -33,6 +44,18 @@ public interface HttpClient {
 	 * @throws IOException 执行错误
 	 */
 	String urlencoded(String url, Charset charset, Object object, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException;
+
+	/**
+	 * 执行http请求(urlencoded)
+	 * @param url 请求的url
+	 * @param charset 数据编码集
+	 * @param paramMap 请求的参数
+	 * @param requestHeaders 请求的header信息
+	 * @param responseHeaders 响应的header西悉尼
+	 * @return 执行结果
+	 * @throws IOException 执行错误
+	 */
+	String urlencoded(String url, Charset charset, Map<String, Object> paramMap, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException;
 
 	/**
 	 * 执行http请求(urlencoded)
