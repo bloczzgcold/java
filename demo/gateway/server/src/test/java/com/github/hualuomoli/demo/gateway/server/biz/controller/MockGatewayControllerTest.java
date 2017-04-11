@@ -92,14 +92,14 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "0.0.0.1";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
 
 						Assert.assertEquals(CodeEnum.NO_BUSINESS_HANDLER_METHOD.value(), res.code);
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 等于第一个版本
@@ -108,7 +108,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "0.0.1";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -117,7 +117,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("测试描述信息", user.getRemark());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 高于最低版本,比第二个版本低
@@ -126,7 +126,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "0.9.0";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -135,7 +135,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("测试描述信息", user.getRemark());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 等于第二个版本
@@ -144,7 +144,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "1.0.0";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -153,7 +153,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("花落寞离", user.getNickname());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 高于第一个、第二个版本,低于第三个版本
@@ -162,7 +162,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "1.0.0.1";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -171,7 +171,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals("花落寞离", user.getNickname());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 等于第三个版本
@@ -180,7 +180,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "1.0.1";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -189,7 +189,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 高于所有版本
@@ -198,7 +198,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "5.0";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -207,7 +207,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 没有指定版本号
@@ -216,7 +216,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = null;
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -225,7 +225,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, Response.class));
+				}));
 	}
 
 	// 指定版本号为空值
@@ -234,7 +234,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 		apiVersion = "";
 		this.runner() //
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -243,7 +243,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						User user = JSON.parseObject(res.result, User.class);
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, Response.class));
+				}));
 	}
 
 	private ResultActions runner() throws Exception {

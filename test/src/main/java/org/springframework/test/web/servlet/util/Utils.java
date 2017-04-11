@@ -1,4 +1,4 @@
-package org.springframework.test.web.servlet.request;
+package org.springframework.test.web.servlet.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,12 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Utils {
-
-	private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
 	/**
 	 * 获取类的所有属性及所有父属性
@@ -245,7 +240,7 @@ public class Utils {
 			Method method = clazz.getMethod(methodName);
 			return method.invoke(obj);
 		} catch (Exception e) {
-			logger.debug("无法获取属性{}", name, e);
+			e.printStackTrace();
 		}
 		return null;
 	}

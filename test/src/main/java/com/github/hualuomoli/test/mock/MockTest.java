@@ -12,8 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.alibaba.fastjson.JSON;
-
 public class MockTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MockTest.class);
@@ -111,20 +109,20 @@ public class MockTest {
 	}
 
 	// 打印响应内容
-	public static final <T> ResultHandler content(final Dealer<T> dealer, final Class<T> clazz) {
+	public static final <T> ResultHandler content(final Dealer dealer) {
 		return new ResultHandler() {
 
 			@Override
 			public void handle(MvcResult result) throws Exception {
 				byte[] bytes = result.getResponse().getContentAsByteArray();
-				dealer.deal(JSON.parseObject(new String(bytes, characterEncoding), clazz));
+				dealer.deal(new String(bytes, characterEncoding));
 			}
 		};
 	}
 
-	public static interface Dealer<T> {
+	public static interface Dealer {
 
-		void deal(T t);
+		void deal(String content);
 
 	}
 

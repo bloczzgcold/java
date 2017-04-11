@@ -39,12 +39,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "0.0.1";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("测试描述信息", user.getRemark());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 高于最低版本,比第二个版本低
@@ -53,12 +53,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "0.9.0";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("测试描述信息", user.getRemark());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 等于第二个版本
@@ -67,12 +67,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "1.0.0";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("花落寞离", user.getNickname());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 高于第一个、第二个版本,低于第三个版本
@@ -81,12 +81,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "1.0.0.1";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("花落寞离", user.getNickname());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 等于第三个版本
@@ -95,12 +95,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "1.0.1";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 高于所有版本
@@ -109,12 +109,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "5.0";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 没有指定版本号
@@ -123,12 +123,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = null;
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, User.class));
+				}));
 	}
 
 	// 指定版本号为空值
@@ -137,12 +137,12 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		apiVersion = "";
 		this.runner()//
 				.andExpect(MockTest.isOk()) //
-				.andDo(MockTest.content(new MockTest.Dealer<User>() {
+				.andDo(MockTest.content(new MockControllerTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
 					}
-				}, User.class));
+				}));
 	}
 
 	private ResultActions runner() throws Exception {

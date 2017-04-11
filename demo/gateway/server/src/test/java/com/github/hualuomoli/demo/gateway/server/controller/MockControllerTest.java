@@ -1,5 +1,8 @@
 package com.github.hualuomoli.demo.gateway.server.controller;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,8 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.demo.gateway.server.config.BaseConfig;
 import com.github.hualuomoli.demo.gateway.server.config.MvcConfig;
+import com.github.hualuomoli.test.mock.MockTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -39,6 +44,22 @@ public class MockControllerTest {
 	@Before
 	public void setUp() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+	}
+
+	public static abstract class Dealer<T> implements MockTest.Dealer {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void deal(String content) {
+
+			Type genType = getClass().getGenericSuperclass();
+			Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+			Class<T> entityClass = (Class<T>) params[0];
+			this.deal(JSON.parseObject(content, entityClass));
+		}
+
+		public abstract void deal(T t);
+
 	}
 
 }
