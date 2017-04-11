@@ -16,10 +16,24 @@
 	<properties>
 
 		<spring.version>4.0.8.RELEASE</spring.version>
+		<fastjson.version>1.2.11</fastjson.version>
 
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.github.hualuomoli</groupId>
+			<artifactId>hualuomoli-logger</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		
+		<!-- fastjson -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -43,6 +57,8 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		
 
 	</dependencies>
 

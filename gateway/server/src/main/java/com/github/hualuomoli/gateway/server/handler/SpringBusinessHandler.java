@@ -47,6 +47,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 		this.packageName = packageName;
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public String handle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
 	, List<HandlerInterceptor> interceptors) throws Throwable {
@@ -76,13 +77,12 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			} else {
 				// list
 				if (List.class.isAssignableFrom(parameterType)) {
-					try {
-						Method m = parameterType.getMethod("get", new Class[] { int.class });
-						Class<?> clazz = m.getReturnType();
-						params[i] = jsonParser.parseArray(bizContent, clazz);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+
+					sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl genericParameterTypes = (sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl) method
+							.getGenericParameterTypes()[i];
+					Class<?> clazz = (Class<?>) genericParameterTypes.getActualTypeArguments()[0];
+
+					params[i] = jsonParser.parseArray(bizContent, clazz);
 				} else if (packageName == null || parameterType.getName().startsWith(packageName)) {
 					// 指定的包名
 					Object object = jsonParser.parseObject(bizContent, parameterType);
@@ -166,7 +166,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 		// 获取支持的function
 		for (Function function : functions) {
-			if (apiVersion == null) {
+			if (apiVersion == null || function.version == null) {
 				supportFunctions.add(function);
 			} else if (this.compare(function.version, apiVersion) <= 0) {
 				supportFunctions.add(function);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.hualuomoli.test.web.servlet.request;
+package org.springframework.test.web.servlet.request;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -40,7 +40,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.test.web.servlet.request.Utils.UrlencodedParam;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -108,7 +108,6 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 
 	private final List<RequestPostProcessor> postProcessors = new ArrayList<RequestPostProcessor>();
 
-
 	/**
 	 * Package private constructor. To get an instance, use static factory
 	 * methods in {@link MockMvcRequestBuilders}.
@@ -153,14 +152,88 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 		addToMultiValueMap(this.parameters, name, values);
 		return this;
 	}
-	
+
 	/**
 	 * Add a request parameter to the {@link MockHttpServletRequest}.
-	 * If called more than once, the new values are added.
-	 * @param name the parameter name
-	 * @param values one or more values
+	 * @param object the parameter
 	 */
-	public MockHttpServletRequestBuilder param(Object obj) {
+	public MockHttpServletRequestBuilder objectParam(Object object) {
+		return this.objectParam(object, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 */
+	public MockHttpServletRequestBuilder listParam(List<?> list) {
+		return this.listParam(list, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 */
+	public MockHttpServletRequestBuilder mapParam(Map<String, ?> map) {
+		return this.mapParam(map, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 * @param datePattern date pattern
+	 */
+	public MockHttpServletRequestBuilder objectParam(Object object, String datePattern) {
+		if (object == null) {
+			return this;
+		}
+
+		return this.addParam(Utils.getUrlencodedParams(object, datePattern));
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 * @param datePattern date pattern
+	 */
+	public MockHttpServletRequestBuilder listParam(List<?> list, String datePattern) {
+		if (list == null || list.size() == 0) {
+			return this;
+		}
+
+		return this.addParam(Utils.getUrlencodedParams(list, datePattern));
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 * @param datePattern date pattern
+	 */
+	public MockHttpServletRequestBuilder mapParam(Map<String, ?> map, String datePattern) {
+		if (map == null || map.size() == 0) {
+			return this;
+		}
+
+		return this.addParam(Utils.getUrlencodedParams(map, datePattern));
+	}
+
+	/**
+	 * Add a request parameter to the {@link MockHttpServletRequest}.
+	 * @param object the parameter
+	 * @param datePattern date pattern
+	 */
+	public MockHttpServletRequestBuilder addParam(List<UrlencodedParam> list) {
+
+		if (list == null || list.size() == 0) {
+			return this;
+		}
+
+		for (UrlencodedParam urlencodedParam : list) {
+			String name = urlencodedParam.name;
+			String value = urlencodedParam.value;
+			System.out.println(name + "=" + value);
+			addToMultiValueMap(this.parameters, name, new String[] { value });
+		}
+
 		return this;
 	}
 
@@ -245,8 +318,7 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 	public MockHttpServletRequestBuilder content(String content) {
 		try {
 			this.content = content.getBytes("UTF-8");
-		}
-		catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e) {
 			// should never happen
 		}
 		return this;
@@ -419,7 +491,7 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 	 * secure channel, such as HTTPS.
 	 * @param secure whether the request is using a secure channel
 	 */
-	public MockHttpServletRequestBuilder secure(boolean secure){
+	public MockHttpServletRequestBuilder secure(boolean secure) {
 		this.secure = secure;
 		return this;
 	}
@@ -436,7 +508,6 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 		this.postProcessors.add(postProcessor);
 		return this;
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -589,8 +660,7 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 					request.addParameter(UriUtils.decode(entry.getKey(), "UTF-8"), value);
 				}
 			}
-		}
-		catch (UnsupportedEncodingException ex) {
+		} catch (UnsupportedEncodingException ex) {
 			// shouldn't happen
 		}
 
@@ -657,13 +727,11 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 	 * Update the contextPath, servletPath, and pathInfo of the request.
 	 */
 	private void updatePathRequestProperties(MockHttpServletRequest request, String requestUri) {
-		Assert.isTrue(requestUri.startsWith(this.contextPath),
-				"requestURI [" + requestUri + "] does not start with contextPath [" + this.contextPath + "]");
+		Assert.isTrue(requestUri.startsWith(this.contextPath), "requestURI [" + requestUri + "] does not start with contextPath [" + this.contextPath + "]");
 		request.setContextPath(this.contextPath);
 		request.setServletPath(this.servletPath);
 		if (ValueConstants.DEFAULT_NONE.equals(this.pathInfo)) {
-			Assert.isTrue(requestUri.startsWith(this.contextPath + this.servletPath),
-					"Invalid servletPath [" + this.servletPath + "] for requestURI [" + requestUri + "]");
+			Assert.isTrue(requestUri.startsWith(this.contextPath + this.servletPath), "Invalid servletPath [" + this.servletPath + "] for requestURI [" + requestUri + "]");
 			String extraPath = requestUri.substring(this.contextPath.length() + this.servletPath.length());
 			this.pathInfo = (StringUtils.hasText(extraPath)) ? extraPath : null;
 		}
@@ -676,11 +744,9 @@ public class MockHttpServletRequestBuilder implements RequestBuilder, Mergeable 
 			ServletContext servletContext = request.getServletContext();
 			WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
 			flashMapManager = wac.getBean(DispatcherServlet.FLASH_MAP_MANAGER_BEAN_NAME, FlashMapManager.class);
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			// ignore
-		}
-		catch (NoSuchBeanDefinitionException ex) {
+		} catch (NoSuchBeanDefinitionException ex) {
 			// ignore
 		}
 		return (flashMapManager != null ? flashMapManager : new SessionFlashMapManager());

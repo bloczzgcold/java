@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.demo.gateway.server.controller.MockControllerTest;
+import com.github.hualuomoli.test.mock.MockTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MockUserApiVersionControllerTest extends MockControllerTest {
@@ -37,8 +38,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test02EqualFirst() throws Exception {
 		apiVersion = "0.0.1";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("测试描述信息", user.getRemark());
@@ -51,8 +52,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test03GreaterFirstLessSecond() throws Exception {
 		apiVersion = "0.9.0";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("测试描述信息", user.getRemark());
@@ -65,8 +66,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test04EqualSecond() throws Exception {
 		apiVersion = "1.0.0";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("花落寞离", user.getNickname());
@@ -79,8 +80,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test05GreaterSecondLessThird() throws Exception {
 		apiVersion = "1.0.0.1";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals("花落寞离", user.getNickname());
@@ -93,8 +94,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test06EqualsThird() throws Exception {
 		apiVersion = "1.0.1";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -107,8 +108,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test07GreaterThird() throws Exception {
 		apiVersion = "5.0";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -121,8 +122,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test08NoVersion() throws Exception {
 		apiVersion = null;
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -135,8 +136,8 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	public void test09EmptyVersion() throws Exception {
 		apiVersion = "";
 		this.runner()//
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<User>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<User>() {
 					@Override
 					public void deal(User user) {
 						Assert.assertEquals(20, user.getAge().intValue());
@@ -145,7 +146,7 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 	}
 
 	private ResultActions runner() throws Exception {
-		MockHttpServletRequestBuilder builder = this.urlEncoded("/test/user/find");
+		MockHttpServletRequestBuilder builder = MockTest.urlEncoded("/test/user/find");
 
 		if (apiVersion != null) {
 			builder.header("apiVersion", apiVersion);
@@ -153,7 +154,7 @@ public class MockUserApiVersionControllerTest extends MockControllerTest {
 		return mockMvc
 				.perform(builder//
 						.param("username", "hualuomoli"))//
-				.andDo(this.content());
+				.andDo(MockTest.content());
 	}
 
 }

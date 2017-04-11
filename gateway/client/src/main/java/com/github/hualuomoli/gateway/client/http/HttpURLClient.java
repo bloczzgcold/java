@@ -72,6 +72,8 @@ public class HttpURLClient extends HttpCleintAdaptor {
 	 */
 	private byte[] execute(String urlStr, byte[] content, String method, List<Header> headers, List<Header> responseHeaders) throws IOException {
 
+		logger.info("请求的URL={}", urlStr);
+
 		HttpURLConnection conn = null;
 		OutputStream os = null;
 		InputStream is = null;

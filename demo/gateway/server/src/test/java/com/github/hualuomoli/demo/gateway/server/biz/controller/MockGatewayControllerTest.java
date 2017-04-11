@@ -20,6 +20,7 @@ import com.github.hualuomoli.demo.gateway.server.biz.entity.User;
 import com.github.hualuomoli.demo.gateway.server.controller.MockControllerTest;
 import com.github.hualuomoli.gateway.server.enums.CodeEnum;
 import com.github.hualuomoli.gateway.server.enums.SignatureTypeEnum;
+import com.github.hualuomoli.test.mock.MockTest;
 import com.github.hualuomoli.tool.security.RSA;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -90,8 +91,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test01LessFirst() throws Exception {
 		apiVersion = "0.0.0.1";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -106,8 +107,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test02EqualFirst() throws Exception {
 		apiVersion = "0.0.1";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -124,8 +125,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test03GreaterFirstLessSecond() throws Exception {
 		apiVersion = "0.9.0";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -142,8 +143,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test04EqualSecond() throws Exception {
 		apiVersion = "1.0.0";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -160,8 +161,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test05GreaterSecondLessThird() throws Exception {
 		apiVersion = "1.0.0.1";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -178,8 +179,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test06EqualsThird() throws Exception {
 		apiVersion = "1.0.1";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -196,8 +197,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test07GreaterThird() throws Exception {
 		apiVersion = "5.0";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -214,8 +215,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test08NoVersion() throws Exception {
 		apiVersion = null;
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -232,8 +233,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	public void test09EmptyVersion() throws Exception {
 		apiVersion = "";
 		this.runner() //
-				.andExpect(this.isOk()) //
-				.andDo(this.content(new Dealer<Response>() {
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content(new MockTest.Dealer<Response>() {
 					@Override
 					public void deal(Response res) {
 						MockGatewayControllerTest.this.res = res;
@@ -246,7 +247,7 @@ public class MockGatewayControllerTest extends MockControllerTest {
 	}
 
 	private ResultActions runner() throws Exception {
-		MockHttpServletRequestBuilder builder = this.urlEncoded("/test/gateway");
+		MockHttpServletRequestBuilder builder = MockTest.urlEncoded("/test/gateway");
 
 		if (apiVersion != null) {
 			builder.header("apiVersion", apiVersion);
@@ -259,8 +260,8 @@ public class MockGatewayControllerTest extends MockControllerTest {
 						.param("bizContent", req.bizContent) //
 						.param("signType", req.signType) //
 						.param("sign", req.sign)) //
-				.andExpect(this.isOk()) //
-				.andDo(this.content());
+				.andExpect(MockTest.isOk()) //
+				.andDo(MockTest.content());
 	}
 
 	public static class Request {

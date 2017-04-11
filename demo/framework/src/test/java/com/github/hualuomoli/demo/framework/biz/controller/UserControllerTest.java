@@ -5,34 +5,35 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.github.hualuomoli.demo.framework.controller.ControllerTest;
+import com.github.hualuomoli.test.mock.MockTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserControllerTest extends ControllerTest {
 
 	@Test
 	public void testJson() throws Exception {
-		mockMvc.perform(this.urlEncoded("/test/user/json")//
+		mockMvc.perform(MockTest.urlEncoded("/test/user/json")//
 				.param("id", "1234"))//
-				.andDo(this.print()) //
-				.andDo(this.content())//
-				.andExpect(this.isOk());
+				.andDo(MockTest.print()) //
+				.andDo(MockTest.content())//
+				.andExpect(MockTest.isOk());
 	}
 
 	@Test
 	public void testView() throws Exception {
-		mockMvc.perform(this.get("/test/user/view"))//
-				.andDo(this.print()) //
-				.andDo(this.forwardedUrl()) //
-				.andExpect(this.isOk());
+		mockMvc.perform(MockTest.get("/test/user/view"))//
+				.andDo(MockTest.print()) //
+				.andDo(MockTest.forwardedUrl()) //
+				.andExpect(MockTest.isOk());
 	}
 
 	@Test
 	public void testFind() throws Exception {
-		mockMvc.perform(this.urlEncoded("/test/user/find")//
+		mockMvc.perform(MockTest.urlEncoded("/test/user/find")//
 				.param("username", "hualuomoli"))//
-				.andDo(this.print()) //
-				.andDo(this.content())//
-				.andExpect(this.isOk());
+				.andDo(MockTest.print()) //
+				.andDo(MockTest.content())//
+				.andExpect(MockTest.isOk());
 	}
 
 }
