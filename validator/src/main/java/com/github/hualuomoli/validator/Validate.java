@@ -1,5 +1,6 @@
 package com.github.hualuomoli.validator;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -8,7 +9,6 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
-import com.google.common.collect.Sets;
 
 /**
  * 验证器工具
@@ -30,9 +30,10 @@ public class Validate {
 			return;
 		}
 		// 设置错误信息
-		Set<String> errors = Sets.newHashSet();
+		Set<String> errors = new HashSet<String>();
 		for (ConstraintViolation<Object> constraintViolation : set) {
-			errors.add(constraintViolation.getMessage());
+			String fieldName = "[" + constraintViolation.getPropertyPath() + "]";
+			errors.add(fieldName + constraintViolation.getMessage());
 		}
 		throw new InvalidParameterException(errors);
 	}

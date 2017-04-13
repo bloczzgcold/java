@@ -1,8 +1,7 @@
 package com.github.hualuomoli.validator.lang;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 不合法的参数
@@ -11,33 +10,41 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class InvalidParameterException extends RuntimeException {
 
-	private static final long serialVersionUID = 4331915009425653751L;
+	private static final long serialVersionUID = -6131419253556355465L;
 
-	private Set<String> messages;
-
-	public InvalidParameterException() {
-		super();
-	}
-
-	public InvalidParameterException(String message, Throwable cause) {
-		super(message, cause);
-	}
+	private String message;
+	private Set<String> errors;
 
 	public InvalidParameterException(String message) {
-		super(message);
+		this.message = message;
+		this.errors = new HashSet<String>();
+		this.errors.add(message);
 	}
 
-	public InvalidParameterException(Throwable cause) {
-		super(cause);
+	public InvalidParameterException(Set<String> errors) {
+		if (errors == null || errors.size() == 0) {
+			return;
+		}
+		StringBuilder buffer = new StringBuilder();
+		for (String error : errors) {
+			buffer.append(", ").append(error);
+		}
+		this.message = buffer.toString().substring(2);
+		this.errors = errors;
 	}
 
-	public InvalidParameterException(Set<String> messages) {
-		super(StringUtils.join(messages, ","));
-		this.messages = messages;
+	public Set<String> getErrors() {
+		return errors;
 	}
 
-	public Set<String> getMessages() {
-		return messages;
+	@Override
+	public String getMessage() {
+		return this.message;
+	}
+
+	@Override
+	public String toString() {
+		return this.message;
 	}
 
 }

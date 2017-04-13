@@ -23,7 +23,7 @@ import com.github.hualuomoli.validator.constraintvalidation.ValuesIntegerValidat
 @Constraint(validatedBy = { IdentityValidator.class, ValuesIntegerValidator.class })
 public @interface Identity {
 
-	String message();
+	String message() default "{com.github.hualuomoli.validator.constraints.Identity.message}";
 
 	Class<?>[] groups() default {};
 
