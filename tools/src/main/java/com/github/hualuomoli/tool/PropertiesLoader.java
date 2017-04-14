@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,54 +29,60 @@ public final class PropertiesLoader {
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesLoader.class);
 
 	/**
-	 * 加载Properties配置文件,如果指定的运行环境文件存在,使用指定运行环境的配置,否则使用默认配置
-	 * @param filename 文件
-	 * @return 配置信息
+	 * 加载指定运行环境的配置文件
+	 * @param filenames 资源文件
+	 * @param environment 运行环境
+	 * @return 配置文件信息
 	 */
-	public static Properties loadProperties(String filename, String environment) {
-		int index = filename.indexOf(".");
+	public static Properties loadEnvironmentProperties(String filename, String environment) {
+		int index = filename.lastIndexOf(".properties");
+		Validate.isTrue(index > 0);
+
 		String envFilename = filename.substring(0, index) + "-" + environment + filename.substring(index);
-		Properties prop = null;
-		prop = loadProperties(envFilename);
-		if (prop == null) {
-			prop = loadProperties(filename);
-		}
-		return prop;
+
+		return PropertiesLoader.loadProperties(filename, envFilename);
 	}
 
 	/**
-	 * 加载Properties配置文件
-	 * @param filename 文件
-	 * @return 配置信息
+	 * 加载配置文件
+	 * @param filenames 资源文件
+	 * @return 配置文件信息
 	 */
 	public static Properties loadProperties(String filename) {
-		return loadProperties(filename, new Properties());
+		return PropertiesLoader.load(filename, null);
 	}
 
 	/**
-	 * 加载Properties配置文件
-	 * @param prop 配置信息
-	 * @param filenames 文件
-	 * @return 配置信息
+	 * 加载配置文件
+	 * @param filenames 资源文件
+	 * @return 配置文件信息
 	 */
-	public static Properties loadProperties(Properties prop, String... filenames) {
+	public static Properties loadProperties(String... filenames) {
+		Validate.notEmpty(filenames, "filenames is emtpy.");
+
+		Properties prop = new Properties();
+
 		for (String filename : filenames) {
-			loadProperties(filename, prop);
+			PropertiesLoader.load(filename, prop);
 		}
 		return prop;
 	}
 
 	/**
-	 * 加载Properties配置文件
-	 * @param filename 文件
-	 * @param prop 配置信息
-	 * @return 配置信息
+	 * 加载配置文件
+	 * @param filename 文件名
+	 * @param prop 加载器
+	 * @return 加载后的资源
 	 */
-	public static Properties loadProperties(String filename, Properties prop) {
+	public static Properties load(String filename, Properties prop) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
+		if (prop == null) {
+			prop = new Properties();
+		}
+
 		if (filename.startsWith("classpath:")) {
-			prop = loadProperties(prop, classLoader.getResource(filename.substring("classpath:".length())));
+			PropertiesLoader.loadResource(prop, classLoader.getResource(filename.substring("classpath:".length())));
 		} else if (filename.startsWith("classpath*:")) {
 			try {
 				Enumeration<URL> rs = classLoader.getResources(filename.substring("classpath*:".length()));
@@ -101,43 +108,31 @@ public final class PropertiesLoader {
 					}
 
 					private int compare(String s1, String s2) {
-						int len1 = s1.length();
-						int len2 = s2.length();
-						int len = len1 > len2 ? len2 : len1;
-						for (int i = 0; i < len; i++) {
-							int c = s1.charAt(i) - s2.charAt(i);
-							if (c == 0) {
-								continue;
-							}
-							return c;
-						}
-						return len1 - len2;
+						return s1.compareTo(s2);
 					}
 				});
 
 				for (URL url : urlList) {
-					prop = loadProperties(prop, url);
+					PropertiesLoader.loadResource(prop, url);
 				}
 			} catch (IOException e) {
 				logger.warn("", e);
 			}
 		} else {
-			prop = loadProperties(prop, classLoader.getResource(filename));
+			PropertiesLoader.loadResource(prop, classLoader.getResource(filename));
 		}
 
 		return prop;
 	}
 
 	/**
-	 * 加载Properties配置文件
-	 * @param prop 配置信息
-	 * @param url 配置文件资源
-	 * @param 配置信息,如果无法加载返回null
+	 * 加载配置文件
+	 * @param prop 加载器
+	 * @param url 资源URL
 	 */
-	private static Properties loadProperties(Properties prop, URL url) {
-		if (url == null || prop == null) {
-			return null;
-		}
+	private static void loadResource(Properties prop, URL url) {
+		Validate.notNull(prop, "prop is null.");
+		Validate.notNull(url, "url is null.");
 
 		InputStream is = null;
 
@@ -145,10 +140,8 @@ public final class PropertiesLoader {
 			logger.info("load properties file {}", url.getPath());
 			is = url.openStream();
 			prop.load(is);
-			return prop;
 		} catch (Exception e) {
 			logger.warn("can not load property {}", url.getPath(), e);
-			return null;
 		} finally {
 			if (is != null) {
 				try {
@@ -157,14 +150,15 @@ public final class PropertiesLoader {
 				}
 			}
 		}
+		// end
 	}
 
 	/**
-	 * 转换prop为Map
+	 * 转换properties为map
 	 * @param prop Properties
 	 * @return map
 	 */
-	public static Map<String, String> parse(Properties prop) {
+	public static Map<String, String> parse2Map(Properties prop) {
 		if (prop == null) {
 			return Maps.newHashMap();
 		}

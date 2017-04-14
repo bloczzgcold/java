@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import com.github.hualuomoli.validator.constraintvalidation.LessValidator;
+import com.github.hualuomoli.validator.constraintvalidation.LessValidatorForCharSequence;
+import com.github.hualuomoli.validator.constraintvalidation.LessValidatorForNumber;
 
 /**
  * 小于
@@ -19,7 +20,7 @@ import com.github.hualuomoli.validator.constraintvalidation.LessValidator;
 @Target(value = { ElementType.FIELD })
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = { LessValidator.class })
+@Constraint(validatedBy = { LessValidatorForNumber.class, LessValidatorForCharSequence.class })
 public @interface Less {
 
 	String message() default "{com.github.hualuomoli.validator.constraints.Less.message}";
@@ -28,6 +29,12 @@ public @interface Less {
 
 	Class<? extends Payload>[] payload() default {};
 
-	int value();
+	long value();
+
+	@interface List {
+
+		Greater[] value();
+
+	}
 
 }

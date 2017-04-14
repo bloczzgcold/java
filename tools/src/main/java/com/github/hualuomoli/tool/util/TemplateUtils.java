@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,13 +51,7 @@ public class TemplateUtils {
 	 * @param templateEncoding 模板编码
 	 */
 	public static void processByResource(String templateResourcePath, String templateName, Object data, File output, String templateEncoding) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("templateResourcePath {}", templateResourcePath);
-			logger.debug("templateName {}", templateName);
-			logger.debug("data {} ", ToStringBuilder.reflectionToString(data));
-			logger.debug("output {} ", output);
-			logger.debug("templateEncoding {}", templateEncoding);
-		}
+		logger.debug("template {}/{}", templateResourcePath, templateName);
 
 		try {
 			Template template = getResourceTemplate(templateResourcePath, templateName, templateEncoding);
@@ -88,14 +81,7 @@ public class TemplateUtils {
 	 * @param templateEncoding 模板编码
 	 */
 	public static void process(String templateAbsolutePath, String templateName, Object data, File output, String templateEncoding) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("templateAbsolutePath {}", templateAbsolutePath);
-			logger.debug("templateName {}", templateName);
-			logger.debug("data {} ", ToStringBuilder.reflectionToString(data));
-			logger.debug("output {} ", output);
-			logger.debug("templateEncoding {}", templateEncoding);
-		}
+		logger.debug("template {}/{}", templateAbsolutePath, templateName);
 
 		try {
 			Template template = getTemplate(templateAbsolutePath, templateName, templateEncoding);

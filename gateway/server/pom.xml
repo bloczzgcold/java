@@ -15,7 +15,6 @@
 
 	<properties>
 
-		<slf4j.version>1.7.7</slf4j.version>
 		<fastjson.version>1.2.11</fastjson.version>
 		<spring.version>4.0.8.RELEASE</spring.version>
 

@@ -21,12 +21,21 @@
 
 	<dependencies>
 
+		<!-- logger -->
+		<dependency>
+			<groupId>com.github.hualuomoli</groupId>
+			<artifactId>hualuomoli-logger</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
 		</dependency>
+
 
 		<!-- junit-test -->
 		<dependency>

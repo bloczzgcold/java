@@ -9,9 +9,6 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import com.github.hualuomoli.validator.constraintvalidation.ValuesIntegerValidator;
-import com.github.hualuomoli.validator.constraintvalidation.ValuesStringValidator;
-
 /**
  * 特定几个值验证器
  * @author lbq
@@ -20,7 +17,7 @@ import com.github.hualuomoli.validator.constraintvalidation.ValuesStringValidato
 @Target(value = { ElementType.FIELD })
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = { ValuesStringValidator.class, ValuesIntegerValidator.class })
+@Constraint(validatedBy = {})
 public @interface Values {
 
 	String message() default "{com.github.hualuomoli.validator.constraints.Values.message}";
