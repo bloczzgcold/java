@@ -21,14 +21,6 @@
 
 	<dependencies>
 
-		<!-- logger -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -37,6 +29,13 @@
 		</dependency>
 
 
+		<!-- logger -->
+		<dependency>
+			<groupId>com.github.hualuomoli</groupId>
+			<artifactId>hualuomoli-logger</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- junit-test -->
 		<dependency>
 			<groupId>junit</groupId>

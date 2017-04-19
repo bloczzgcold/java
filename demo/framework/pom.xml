@@ -32,11 +32,6 @@
 			<artifactId>hualuomoli-validator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-test</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
 
 		<!-- fileupload -->
 		<dependency>
