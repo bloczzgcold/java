@@ -44,9 +44,11 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 	private JSONParser jsonParser;
 	/** HTTP发起URL请求 */
 	private HttpClient httpClient;
+	/** 签名 */
+	private RSA rsa;
 
-	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset, JSONParser jsonParser, GatewayClient.ObejctParser obejctParser,
-			HttpClient httpClient) {
+	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset //
+	, JSONParser jsonParser, GatewayClient.ObejctParser obejctParser, HttpClient httpClient, RSA rsa) {
 		super(jsonParser, obejctParser);
 		this.serverURL = serverURL;
 		this.partnerId = partnerId;
@@ -55,6 +57,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 		this.charset = charset;
 		this.jsonParser = jsonParser;
 		this.httpClient = httpClient;
+		this.rsa = rsa;
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			logger.debug("请求签名原文={}", requestOrigin);
 
 			// 1.3、获取签名
-			req.sign = RSA.signBase64(this.privateKey, requestOrigin);
+			req.sign = rsa.sign(this.privateKey, requestOrigin);
 
 			// 1.4、世纪向服务器发发送的参数
 			Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -144,7 +147,7 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			logger.debug("响应签名原文={}", responseOrigin);
 
 			// 3.4、验证签名
-			Validate.isTrue(RSA.verify(this.publicKey, responseOrigin, res.sign), "签名不合法");
+			Validate.isTrue(rsa.verify(this.publicKey, responseOrigin, res.sign), "签名不合法");
 
 			// 3.5、验证业务处理是否正常
 			if (!"0000".equals(res.subCode)) {

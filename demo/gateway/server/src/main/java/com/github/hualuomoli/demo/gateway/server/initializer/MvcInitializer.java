@@ -15,7 +15,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
  * @author lbq
  *
  */
-@Order(2)
+@Order(3)
 public class MvcInitializer implements WebApplicationInitializer {
 
 	@Override

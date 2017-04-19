@@ -1,13 +1,15 @@
-package com.github.hualuomoli.gateway.client.json;
+package com.github.hualuomoli.gateway.client.java.json;
 
 import java.util.List;
+
+import com.github.hualuomoli.gateway.client.json.JSONParser;
 
 /**
  * JSON转换器
  * @author lbq
  *
  */
-public class JSON implements JSONParser {
+public class Fastjson implements JSONParser {
 
 	@Override
 	public String toJsonString(Object obj) {

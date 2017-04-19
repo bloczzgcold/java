@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.http;
+package com.github.hualuomoli.gateway.client.java.http;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

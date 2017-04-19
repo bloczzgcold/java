@@ -9,7 +9,6 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.github.hualuomoli.framework.base.config.Log4jInitializer;
 import com.github.hualuomoli.demo.gateway.server.config.BaseConfig;
 import com.github.hualuomoli.demo.gateway.server.config.GatewayServerConfig;
 import com.github.hualuomoli.demo.gateway.server.config.MvcConfig;
@@ -19,14 +18,11 @@ import com.github.hualuomoli.demo.gateway.server.config.MvcConfig;
  * @author lbq
  *
  */
-@Order(1)
+@Order(2)
 public class BaseInitializer implements WebApplicationInitializer {
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
-
-		// 设置log4j
-		Log4jInitializer.init();
 
 		AnnotationConfigWebApplicationContext rootContext = _getRootContext();
 

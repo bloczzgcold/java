@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.http;
+package com.github.hualuomoli.gateway.client.java.http;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.hualuomoli.gateway.client.http.HttpCleintAdaptor;
 import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 import com.github.hualuomoli.gateway.client.util.Validate;
 

@@ -28,7 +28,7 @@ public class Log4jInitializer {
 	}
 
 	private static void initLogger(String environment, String filename) {
-		PropertyConfigurator.configure(PropertiesLoader.loadProperties(filename, environment));
+		PropertyConfigurator.configure(PropertiesLoader.loadEnvironmentProperties(filename, environment));
 	}
 
 }

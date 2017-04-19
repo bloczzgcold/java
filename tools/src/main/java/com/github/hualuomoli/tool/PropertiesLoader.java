@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,11 @@ public final class PropertiesLoader {
 	 * @return 配置文件信息
 	 */
 	public static Properties loadEnvironmentProperties(String filename, String environment) {
+
+		if (StringUtils.isBlank(environment)) {
+			return PropertiesLoader.loadProperties(filename);
+		}
+
 		int index = filename.lastIndexOf(".properties");
 		Validate.isTrue(index > 0);
 
