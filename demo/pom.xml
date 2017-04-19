@@ -17,26 +17,8 @@
 		<module>./framework</module>
 		<module>./gateway</module>
 		<module>./plugin</module>
+		<module>./dubbo</module>
 	</modules>
-
-	<properties>
-
-	</properties>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-tools</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-	</dependencies>
 
 	<!-- 忽略所有的maven操作 -->
 	<build>
