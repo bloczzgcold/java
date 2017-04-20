@@ -29,7 +29,6 @@ import com.github.hualuomoli.tool.util.ReflectionUtils;
 
 /**
  * SQL工具类
- * @author lbq
  *
  */
 public class PaginationSQLHelper {

@@ -19,8 +19,6 @@ import com.github.hualuomoli.tool.util.ReflectionUtils;
 
 /**
  * 数据库分页插件，只拦截查询语句.
- * @author ThinkGem
- * @version 2015-1-14
  */
 @Intercepts({ @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
 public class PaginationInterceptor extends BaseInterceptor {

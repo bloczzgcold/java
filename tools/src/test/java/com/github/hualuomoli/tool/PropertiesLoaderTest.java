@@ -56,6 +56,7 @@ public class PropertiesLoaderTest {
 	@Test
 	@Ignore // add libs to configure
 	public void testLoadFromJarFile() {
+
 		Properties prop = PropertiesLoader.loadProperties("classpath*:config.properties", "classpath*:config1.properties");
 
 		String name = prop.getProperty("project.name");

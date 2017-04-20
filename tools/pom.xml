@@ -30,6 +30,8 @@
 		<guava.version>17.0</guava.version>
 		<freemarker.version>2.3.20</freemarker.version>
 
+		<slf4j.version>1.7.7</slf4j.version>
+
 	</properties>
 
 	<dependencies>
@@ -38,7 +40,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 		<!-- apache -->
@@ -132,7 +134,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
+			<version>${slf4j.version}</version>
 			<scope>test</scope>
 		</dependency>
 

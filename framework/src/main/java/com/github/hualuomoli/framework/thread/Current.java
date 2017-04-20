@@ -9,12 +9,32 @@ import java.util.Date;
  */
 public class Current {
 
+	// 应用
+	private static final ThreadLocal<String> LOCAL_APPLICATION = new ThreadLocal<>();
+	// 处理用户
 	private static final ThreadLocal<String> LOCAL_USERNAME = new ThreadLocal<>();
+	// 日期
 	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>();
 
 	/**
+	 * 设置当前线程应用
+	 * @param application 应用名称
+	 */
+	public static void setApplication(String application) {
+		LOCAL_APPLICATION.set(application);
+	}
+
+	/**
+	 * 获取当前线程应用名称
+	 * @return 应用名称
+	 */
+	public static String getApplication() {
+		return LOCAL_APPLICATION.get();
+	}
+
+	/**
 	 * 设置当前线程用户
-	 * @param username 当前线程用户
+	 * @param username 用户名
 	 */
 	public static void setUsername(String username) {
 		LOCAL_USERNAME.set(username);

@@ -12,7 +12,6 @@ import com.github.hualuomoli.framework.plugin.mybatis.dialect.Dialect;
 
 /**
  * Mybatis拦截器基类
- * @author lbq
  */
 public abstract class BaseInterceptor implements Interceptor, Serializable {
 

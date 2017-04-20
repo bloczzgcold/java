@@ -5,7 +5,6 @@ import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * 保存和获取SqlSource
- * @author lbq
  *
  */
 public class BoundSqlSqlSource implements SqlSource {

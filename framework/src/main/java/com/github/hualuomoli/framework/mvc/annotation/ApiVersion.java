@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 请求API版本号
- * @author lbq
+ * @author hualuomoli
  *
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
