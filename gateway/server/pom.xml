@@ -22,11 +22,11 @@
 
 	<dependencies>
 
-		<!-- hualuomoli -->
+		<!-- logger -->
 		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
 		</dependency>
 
 		<!-- fastjson -->

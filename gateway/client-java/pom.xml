@@ -22,10 +22,18 @@
 
 	<dependencies>
 
+		<!-- client -->
 		<dependency>
 			<groupId>com.github.hualuomoli</groupId>
 			<artifactId>hualuomoli-gateway-client</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- logger -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
 		</dependency>
 
 		<!-- fastjson -->

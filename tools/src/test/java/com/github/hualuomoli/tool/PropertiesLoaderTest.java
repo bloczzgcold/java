@@ -3,6 +3,7 @@ package com.github.hualuomoli.tool;
 import java.util.Properties;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PropertiesLoaderTest {
@@ -53,8 +54,8 @@ public class PropertiesLoaderTest {
 	}
 
 	@Test
+	@Ignore // add libs to configure
 	public void testLoadFromJarFile() {
-		// add libs/config.zip to build path
 		Properties prop = PropertiesLoader.loadProperties("classpath*:config.properties", "classpath*:config1.properties");
 
 		String name = prop.getProperty("project.name");

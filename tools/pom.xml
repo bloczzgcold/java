@@ -34,11 +34,11 @@
 
 	<dependencies>
 
-		<!-- logger -->
+		<!-- logging -->
 		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
 		</dependency>
 
 		<!-- apache -->
@@ -122,14 +122,20 @@
 			<version>${freemarker.version}</version>
 		</dependency>
 
-		<!-- junit -->
+		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.7</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

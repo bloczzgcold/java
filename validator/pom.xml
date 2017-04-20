@@ -28,19 +28,23 @@
 			<version>${hibernate-validator.version}</version>
 		</dependency>
 
-
-		<!-- logger -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- junit-test -->
+		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.7</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- servlet -->
@@ -56,7 +60,6 @@
 			<version>2.1</version>
 			<scope>test</scope>
 		</dependency>
-
 
 	</dependencies>
 
