@@ -104,7 +104,7 @@
 		<repository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.github.com:8081/nexus/content/groups/public/</url>
+			<url>http://nexus.hualuomoli.github.com/content/groups/public/</url>
 		</repository>
 
 	</repositories>
@@ -115,7 +115,7 @@
 		<pluginRepository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.github.com:8081/nexus/content/groups/public/</url>
+			<url>http://nexus.hualuomoli.github.com/content/groups/public/</url>
 		</pluginRepository>
 
 	</pluginRepositories>
@@ -123,14 +123,15 @@
 	<!-- 发布仓库 -->
 	<distributionManagement>
 		<repository>
-			<id>nexus-release</id>
+			<id>releases</id>
 			<name>Repository for nexus release</name>
-			<url>http://nexus.hualuomoli.github.com:8081/nexus/content/repositories/repo/</url>
+			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>nexus-snapshot</id>
+			<id>snapshots</id>
 			<name>Snapshot for nexus snapshot</name>
-			<url>http://nexus.hualuomoli.github.com:8081/nexus/content/repositories/repo-s/</url>
+			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
 
