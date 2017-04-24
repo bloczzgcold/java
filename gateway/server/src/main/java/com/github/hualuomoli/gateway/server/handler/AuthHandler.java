@@ -1,5 +1,10 @@
 package com.github.hualuomoli.gateway.server.handler;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,41 +54,65 @@ public interface AuthHandler {
 	// 权限请求公共信息
 	public static class AuthRequest {
 		/** 网关版本号 */
-		private static final String gatewayVersion = VERSION;
-
+		@NotBlank(message = "gatewayVersion is blank.")
+		protected String gatewayVersion;
 		/** 合作伙伴ID */
+		@NotBlank(message = "partnerId is blank.")
 		protected String partnerId;
 		/** 请求的业务方法 */
+		@NotBlank(message = "apiMethod is blank.")
 		protected String apiMethod;
+		@NotBlank(message = "timestamp is blank.")
+		@Pattern(regex = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}( \\d{0,4})?", message = "timestamp is invalid.")
 		/** 时间戳 yyyy-MM-dd HH:mm:ss S */
 		protected String timestamp;
 
 		/** 业务内容 */
 		protected String bizContent;
 
-		public static String getGatewayversion() {
+		public String getGatewayVersion() {
 			return gatewayVersion;
+		}
+
+		public void setGatewayVersion(String gatewayVersion) {
+			this.gatewayVersion = gatewayVersion;
 		}
 
 		public String getPartnerId() {
 			return partnerId;
 		}
 
+		public void setPartnerId(String partnerId) {
+			this.partnerId = partnerId;
+		}
+
 		public String getApiMethod() {
 			return apiMethod;
+		}
+
+		public void setApiMethod(String apiMethod) {
+			this.apiMethod = apiMethod;
 		}
 
 		public String getTimestamp() {
 			return timestamp;
 		}
 
+		public void setTimestamp(String timestamp) {
+			this.timestamp = timestamp;
+		}
+
 		public String getBizContent() {
 			return bizContent;
 		}
 
+		public void setBizContent(String bizContent) {
+			this.bizContent = bizContent;
+		}
+
 		@Override
 		public String toString() {
-			return "AuthRequest [partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp=" + timestamp + ", bizContent=" + bizContent + "]";
+			return "AuthRequest [gatewayVersion=" + gatewayVersion + ", partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp=" + timestamp + ", bizContent=" + bizContent + "]";
 		}
 
 	}
@@ -92,7 +121,7 @@ public interface AuthHandler {
 	public static class AuthResponse {
 
 		/** 网关版本号 */
-		private static final String gatewayVersion = VERSION;
+		protected String gatewayVersion;
 
 		/** 合作伙伴ID */
 		protected String partnerId;
@@ -102,9 +131,9 @@ public interface AuthHandler {
 		protected String timestamp;
 
 		/** 调用结果编码 #CodeEnum */
-		public String code;
+		protected String code;
 		/** 调用结果信息 */
-		public String message;
+		protected String message;
 		/** 业务处理编码 #CodeEnum */
 		protected String subCode;
 		/** 业务处理信息 */
@@ -113,48 +142,100 @@ public interface AuthHandler {
 		/** 响应内容 */
 		protected String result;
 
-		public static String getGatewayversion() {
+		public String getGatewayVersion() {
 			return gatewayVersion;
+		}
+
+		public void setGatewayVersion(String gatewayVersion) {
+			this.gatewayVersion = gatewayVersion;
 		}
 
 		public String getPartnerId() {
 			return partnerId;
 		}
 
+		public void setPartnerId(String partnerId) {
+			this.partnerId = partnerId;
+		}
+
 		public String getApiMethod() {
 			return apiMethod;
+		}
+
+		public void setApiMethod(String apiMethod) {
+			this.apiMethod = apiMethod;
 		}
 
 		public String getTimestamp() {
 			return timestamp;
 		}
 
+		public void setTimestamp(String timestamp) {
+			this.timestamp = timestamp;
+		}
+
 		public String getCode() {
 			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
 		}
 
 		public String getMessage() {
 			return message;
 		}
 
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
 		public String getSubCode() {
 			return subCode;
+		}
+
+		public void setSubCode(String subCode) {
+			this.subCode = subCode;
 		}
 
 		public String getSubMessage() {
 			return subMessage;
 		}
 
+		public void setSubMessage(String subMessage) {
+			this.subMessage = subMessage;
+		}
+
 		public String getResult() {
 			return result;
 		}
 
-		@Override
-		public String toString() {
-			return "AuthResponse [partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp=" + timestamp + ", code=" + code + ", message=" + message + ", subCode=" + subCode
-					+ ", subMessage=" + subMessage + ", result=" + result + "]";
+		public void setResult(String result) {
+			this.result = result;
 		}
 
+		@Override
+		public String toString() {
+			return "AuthResponse [gatewayVersion=" + gatewayVersion + ", partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp=" + timestamp + ", code=" + code + ", message=" + message
+					+ ", subCode=" + subCode + ", subMessage=" + subMessage + ", result=" + result + "]";
+		}
+
+	}
+
+	// 不能为空字符串
+	@Target({ FIELD })
+	@Retention(RUNTIME)
+	@interface NotBlank {
+		String message();
+	}
+
+	// 正则表达式
+	@Target({ FIELD })
+	@Retention(RUNTIME)
+	@interface Pattern {
+		String regex();
+
+		String message();
 	}
 
 	// 不合法的加密数据

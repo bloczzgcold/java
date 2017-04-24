@@ -9,10 +9,6 @@ public enum CodeEnum {
 
 	/** 处理成功 */
 	SUCCESS("0000", "处理成功"),
-	/** 合作伙伴未找到 */
-	NO_PARTNER("0001", "合作伙伴未找到"),
-	/** 网关执行者未找到 */
-	NO_AUTH_HANDLER("0002", "网关未找到"),
 	/** 签名不合法 */
 	INVALID_SIGNATURE("0003", "签名不合法"),
 	/** 加密不合法 */

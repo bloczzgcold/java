@@ -33,7 +33,7 @@ import com.github.hualuomoli.gateway.server.util.Utils;
  * @author lbq
  *
  */
-public class RSAAuthHandler implements AuthHandler {
+public class RSAAuthHandler extends AbstractAuthHandler implements AuthHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(RSAAuthHandler.class);
 
@@ -60,42 +60,30 @@ public class RSAAuthHandler implements AuthHandler {
 	public AuthResponse execute(HttpServletRequest req, HttpServletResponse res//
 	, Partner partner, JSONParser jsonParser//
 	, BusinessHandler businessHandler, List<BusinessHandler.HandlerInterceptor> interceptors //
-	, ExceptionProcessor exceptionProcessor) {
+	, ExceptionProcessor exceptionProcessor) throws InvalidSignatureException {
 
 		// 获取请求数据
-		RSAAuthRequest rsaReq = new RSAAuthRequest();
-		rsaReq.partnerId = req.getParameter("partnerId");
-		rsaReq.apiMethod = req.getParameter("apiMethod");
-		rsaReq.timestamp = req.getParameter("timestamp");
-		rsaReq.bizContent = req.getParameter("bizContent");
-		rsaReq.signType = req.getParameter("signType");
-		rsaReq.sign = req.getParameter("sign");
+		RSAAuthRequest rsaReq = this.parse(req, jsonParser, RSAAuthRequest.class);
 
 		// 验证请求参数
-		Utils.notBlank(rsaReq.partnerId, "partnerId is not blank.");
-		Utils.notBlank(rsaReq.apiMethod, "apiMethod is not blank.");
-		Utils.notBlank(rsaReq.timestamp, "timestamp is not blank.");
-		Utils.notBlank(rsaReq.signType, "signType is not blank.");
-		Utils.notBlank(rsaReq.sign, "sign is not blank.");
+		this.check(rsaReq);
 
-		Utils.isTrue(rsaReq.timestamp.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}( \\d{0,4})?"), "timestamp is invalid.");
-
-		logger.info("请求业务内容 = {}", rsaReq.bizContent);
+		logger.info("请求业务内容 = {}", rsaReq.getBizContent());
 
 		// 验证签名
 		String origin = this.getOrigin(rsaReq, "sign");
 		logger.debug("请求签名原文 = {}", origin);
 
-		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.sign)) {
+		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.getSign())) {
 			throw new InvalidSignatureException("不合法的签名");
 		}
 
 		// 响应数据
 		RSAAuthResponse rsaRes = new RSAAuthResponse();
-		rsaRes.partnerId = rsaReq.partnerId;
-		rsaRes.apiMethod = rsaReq.apiMethod;
-		rsaRes.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date());
-		rsaRes.signType = rsaReq.signType;
+		rsaRes.setPartnerId(rsaReq.getPartnerId());
+		rsaRes.setApiMethod(rsaReq.getApiMethod());
+		rsaRes.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date()));
+		rsaRes.setSignType(rsaReq.getSignType());
 
 		// 执行业务
 		String result = null;
@@ -130,7 +118,8 @@ public class RSAAuthHandler implements AuthHandler {
 		origin = this.getOrigin(rsaRes, "sign");
 		logger.debug("响应签名原文 = {}", origin);
 
-		rsaRes.sign = RSA.signBase64(privateKeyBase64, origin);
+		String sign = RSA.signBase64(privateKeyBase64, origin);
+		rsaRes.setSign(sign);
 
 		return rsaRes;
 	}
@@ -200,9 +189,24 @@ public class RSAAuthHandler implements AuthHandler {
 			return signType;
 		}
 
+		public void setSignType(String signType) {
+			this.signType = signType;
+		}
+
 		public String getSign() {
 			return sign;
 		}
+
+		public void setSign(String sign) {
+			this.sign = sign;
+		}
+
+		@Override
+		public String toString() {
+			return "RSAAuthRequest [signType=" + signType + ", sign=" + sign + ", gatewayVersion=" + gatewayVersion + ", partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp="
+					+ timestamp + ", bizContent=" + bizContent + "]";
+		}
+
 	}
 
 	// RSA权限响应
@@ -216,8 +220,23 @@ public class RSAAuthHandler implements AuthHandler {
 			return signType;
 		}
 
+		public void setSignType(String signType) {
+			this.signType = signType;
+		}
+
 		public String getSign() {
 			return sign;
 		}
+
+		public void setSign(String sign) {
+			this.sign = sign;
+		}
+
+		@Override
+		public String toString() {
+			return "RSAAuthResponse [signType=" + signType + ", sign=" + sign + ", gatewayVersion=" + gatewayVersion + ", partnerId=" + partnerId + ", apiMethod=" + apiMethod + ", timestamp="
+					+ timestamp + ", code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", result=" + result + "]";
+		}
+
 	}
 }

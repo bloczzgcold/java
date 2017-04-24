@@ -8,8 +8,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.server.enums.CodeEnum;
 import com.github.hualuomoli.gateway.server.handler.AuthHandler;
+import com.github.hualuomoli.gateway.server.handler.AuthHandler.InvalidEncryptionException;
+import com.github.hualuomoli.gateway.server.handler.AuthHandler.InvalidSignatureException;
 import com.github.hualuomoli.gateway.server.handler.BusinessHandler;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
@@ -51,27 +52,32 @@ public class GatewayServer {
 	 * 调用
 	 * @param req HTTP请求
 	 * @param res HTTP响应
+	 * @throws NoPartnerException 合作伙伴未找到
+	 * @throws NotSupportAuthException 不支持的权限验证
+	 * @throws InvalidSignatureException 不合法的签名
+	 * @throws InvalidEncryptionException 不合法的加密
+	 * 
 	 */
-	public String invoke(HttpServletRequest req, HttpServletResponse res) {
+	public String invoke(HttpServletRequest req, HttpServletResponse res)//
+			throws NoPartnerException, NotSupportAuthException, InvalidSignatureException, InvalidEncryptionException {
 
 		AuthHandler.AuthResponse authRes = null;
 
 		// 合作伙伴
-		Partner partner = getPartner(req.getParameter("partnerId"));
+		String partnerId = req.getParameter("partnerId");
+		if (partnerId == null || partnerId.trim().length() == 0) {
+			throw new IllegalArgumentException("请设置partnerId请求参数");
+		}
+
+		Partner partner = getPartner(partnerId);
 		if (partner == null) {
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.NO_PARTNER.value();
-			authRes.message = "合作伙伴未找到";
-			return jsonParser.toJsonString(authRes);
+			throw new NoPartnerException(partnerId);
 		}
 
 		// 权限执行者
 		AuthHandler authHandler = getAuthHandler(partner, req, res);
 		if (authHandler == null) {
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.NO_AUTH_HANDLER.value();
-			authRes.message = "网关执行者未找到";
-			return jsonParser.toJsonString(authRes);
+			throw new NotSupportAuthException(partner);
 		}
 
 		// 执行业务
@@ -113,6 +119,38 @@ public class GatewayServer {
 		}
 
 		return partner;
+	}
+
+	// 合作伙伴未找到
+	@SuppressWarnings("serial")
+	public static class NoPartnerException extends RuntimeException {
+
+		private String partnerId;
+
+		public NoPartnerException(String partnerId) {
+			super();
+			this.partnerId = partnerId;
+		}
+
+		public String getPartnerId() {
+			return partnerId;
+		}
+	}
+
+	// 不支持的权限认证
+	@SuppressWarnings("serial")
+	public static class NotSupportAuthException extends RuntimeException {
+
+		private Partner partner;
+
+		public NotSupportAuthException(Partner partner) {
+			super();
+			this.partner = partner;
+		}
+
+		public Partner getPartner() {
+			return partner;
+		}
 	}
 
 }
