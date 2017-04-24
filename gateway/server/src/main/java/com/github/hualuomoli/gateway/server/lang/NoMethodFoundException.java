@@ -5,7 +5,7 @@ package com.github.hualuomoli.gateway.server.lang;
  * @author lbq
  *
  */
-public class NoMethodFoundException extends Exception {
+public class NoMethodFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -8013811701401811489L;
 

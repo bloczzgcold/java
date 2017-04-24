@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.github.hualuomoli.gateway.server.lang.NoMethodFoundException;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 
 /**
@@ -49,8 +48,9 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 	@SuppressWarnings("restriction")
 	@Override
-	public String handle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
-	, List<HandlerInterceptor> interceptors) throws Throwable {
+	public String handle(HttpServletRequest req, HttpServletResponse res//
+	, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
+	, List<HandlerInterceptor> interceptors) throws NoMethodFoundException, NoAuthorityException, Throwable {
 		String version = this.getVersion(req);
 
 		String apiUrl = "/" + apiMethod.replaceAll("[.]", "/");
@@ -75,6 +75,10 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			} else if (HttpServletResponse.class.isAssignableFrom(parameterType)) {
 				params[i] = res;
 			} else {
+				if (bizContent == null || bizContent.trim().length() == 0) {
+					continue;
+				}
+
 				// list
 				if (List.class.isAssignableFrom(parameterType)) {
 

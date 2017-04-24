@@ -11,14 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.hualuomoli.gateway.server.enums.CodeEnum;
 import com.github.hualuomoli.gateway.server.handler.AuthHandler;
 import com.github.hualuomoli.gateway.server.handler.BusinessHandler;
-import com.github.hualuomoli.gateway.server.lang.InvalidEncryptionException;
-import com.github.hualuomoli.gateway.server.lang.InvalidSignatureException;
-import com.github.hualuomoli.gateway.server.lang.NoMethodFoundException;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader;
 import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor;
-import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor.Message;
 
 /**
  * 网关服务器
@@ -79,36 +75,8 @@ public class GatewayServer {
 		}
 
 		// 执行业务
-		try {
-			authRes = authHandler.execute(req, res, partner, jsonParser, businessHandler, interceptors);
-			return jsonParser.toJsonString(authRes);
-		} catch (InvalidSignatureException ise) {
-			// 签名不合法
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.INVALID_SIGNATURE.value();
-			authRes.message = "不合法的签名数据";
-			return jsonParser.toJsonString(authRes);
-		} catch (InvalidEncryptionException iee) {
-			// 加密不合法
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.INVALID_ENCRYPTION.value();
-			authRes.message = "不合法的加密数据";
-			return jsonParser.toJsonString(authRes);
-		} catch (NoMethodFoundException nmfe) {
-			// 请求方法未找到
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.NO_BUSINESS_HANDLER_METHOD.value();
-			authRes.message = nmfe.getMessage();
-			return jsonParser.toJsonString(authRes);
-		} catch (Throwable e) {
-			// 其他错误
-			Message message = exceptionProcessor.process(e);
-			authRes = new AuthHandler.AuthResponse();
-			authRes.code = CodeEnum.SUCCESS.value();
-			authRes.subCode = message.getCode();
-			authRes.subMessage = message.getMessage();
-			return jsonParser.toJsonString(authRes);
-		}
+		authRes = authHandler.execute(req, res, partner, jsonParser, businessHandler, interceptors, exceptionProcessor);
+		return jsonParser.toJsonString(authRes);
 	}
 
 	/**

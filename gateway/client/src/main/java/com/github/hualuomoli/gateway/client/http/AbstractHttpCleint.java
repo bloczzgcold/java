@@ -13,28 +13,23 @@ import org.slf4j.LoggerFactory;
 import com.github.hualuomoli.gateway.client.util.Utils;
 import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 
-public abstract class HttpCleintAdaptor implements HttpClient {
+/**
+ * 抽象
+ * @author hualuomoli
+ *
+ */
+public abstract class AbstractHttpCleint implements HttpClient {
 
-	private final Logger logger = LoggerFactory.getLogger(HttpCleintAdaptor.class);
+	private final Logger logger = LoggerFactory.getLogger(AbstractHttpCleint.class);
 	private DateFormat dateFormat;
 
-	public HttpCleintAdaptor(DateFormat dateFormat) {
+	public AbstractHttpCleint(DateFormat dateFormat) {
 		super();
 		this.dateFormat = dateFormat;
 	}
 
 	@Override
 	public String urlencoded(String url, Charset charset, Object object) throws IOException {
-		return this.urlencoded(url, charset, object, null, null);
-	}
-
-	@Override
-	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException {
-		return this.urlencoded(url, charset, paramMap, null, null);
-	}
-
-	@Override
-	public String urlencoded(String url, Charset charset, Object object, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
 		// 发送的内容
 		String content = null;
@@ -58,20 +53,15 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 		}
 
 		// headers(添加Content-Type)
-		if (requestHeaders == null) {
-			requestHeaders = new ArrayList<Header>();
-		}
-		if (responseHeaders == null) {
-			requestHeaders = new ArrayList<Header>();
-		}
-		requestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
+		List<Header> addRequestHeaders = new ArrayList<Header>();
+		addRequestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
 
 		// 执行
-		return this.execute(url, content, charset, Method.POST, requestHeaders, responseHeaders);
+		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
 	}
 
 	@Override
-	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException {
 		// 发送的内容
 		String content = null;
 		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(paramMap, dateFormat);
@@ -94,38 +84,23 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 		}
 
 		// headers(添加Content-Type)
-		if (requestHeaders == null) {
-			requestHeaders = new ArrayList<Header>();
-		}
-		if (responseHeaders == null) {
-			requestHeaders = new ArrayList<Header>();
-		}
-		requestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
+		List<Header> addRequestHeaders = new ArrayList<Header>();
+		addRequestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
 
 		// 执行
-		return this.execute(url, content, charset, Method.POST, requestHeaders, responseHeaders);
+		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
 	}
 
 	@Override
 	public String json(String url, Charset charset, String content) throws IOException {
-		return this.json(url, charset, content, null, null);
-	}
-
-	@Override
-	public String json(String url, Charset charset, String content, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
 		logger.debug("[json] content={}", content);
 
 		// headers(添加Content-Type)
-		if (requestHeaders == null) {
-			requestHeaders = new ArrayList<Header>();
-		}
-		if (responseHeaders == null) {
-			responseHeaders = new ArrayList<Header>();
-		}
-		requestHeaders.add(new Header("Content-Type", "application/json"));
+		List<Header> addRequestHeaders = new ArrayList<Header>();
+		addRequestHeaders.add(new Header("Content-Type", "application/json"));
 
-		return this.execute(url, content, charset, Method.POST, requestHeaders, responseHeaders);
+		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
 	}
 
 	/**
@@ -134,12 +109,11 @@ public abstract class HttpCleintAdaptor implements HttpClient {
 	 * @param content 请求内容
 	 * @param charset 编码集
 	 * @param method 请求方法
-	 * @param requestHeaders 请求header信息
-	 * @param responseHeaders 响应的header信息,将响应的header信息放到这个集合中.如果集合为空不放置
+	 * @param addRequestHeaders 增加的请求header信息
 	 * @return 执行结果
 	 * @throws IOException 处理异常
 	 */
-	protected abstract String execute(String urlStr, String content, Charset charset, Method method, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException;
+	protected abstract String execute(String urlStr, String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException;
 
 	// 调用方式
 	public static enum Method {

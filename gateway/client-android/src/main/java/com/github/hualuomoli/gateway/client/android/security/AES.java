@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.java.security;
+package com.github.hualuomoli.gateway.client.android.security;
 
 import java.nio.charset.Charset;
 import java.security.Key;

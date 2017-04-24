@@ -1,7 +1,6 @@
 package com.github.hualuomoli.gateway.client;
 
 import java.util.List;
-import java.util.Map;
 
 import com.github.hualuomoli.gateway.client.entity.Page;
 import com.github.hualuomoli.gateway.client.lang.DealException;
@@ -115,19 +114,6 @@ public interface GatewayClient {
 	 * @param callback 也处理回调
 	 */
 	void call(Object object, Callback callback);
-
-	/**
-	 * 添加header信息
-	 * @param name header的名称
-	 * @param value header的值
-	 */
-	void addHeader(String name, String value);
-
-	/**
-	 * 获取header
-	 * @return header
-	 */
-	Map<String, String> getHeaders();
 
 	// 回调
 	interface Callback {

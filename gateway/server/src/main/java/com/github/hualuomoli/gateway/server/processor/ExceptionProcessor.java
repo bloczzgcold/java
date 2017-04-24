@@ -40,6 +40,18 @@ public interface ExceptionProcessor {
 		public String getDescription() {
 			return description;
 		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
 	}
 
 }

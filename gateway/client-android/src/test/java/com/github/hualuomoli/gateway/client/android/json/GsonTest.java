@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.java.json;
+package com.github.hualuomoli.gateway.client.android.json;
 
 import java.util.ArrayList;
 import java.util.List;

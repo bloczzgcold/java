@@ -8,8 +8,8 @@ package com.github.hualuomoli.gateway.server.enums;
 public enum SignatureTypeEnum {
 
 	/** RSA签名 */
-	RSA(),
+	RSA,
 	/** MD5签名 */
-	MD5();
+	MD5;
 
 }

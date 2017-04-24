@@ -1,11 +1,16 @@
 package com.github.hualuomoli.gateway.client;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +21,7 @@ import com.github.hualuomoli.gateway.client.json.JSONParser;
 import com.github.hualuomoli.gateway.client.lang.DealException;
 import com.github.hualuomoli.gateway.client.lang.GatewayException;
 import com.github.hualuomoli.gateway.client.security.RSA;
+import com.github.hualuomoli.gateway.client.util.Utils;
 import com.github.hualuomoli.gateway.client.util.Validate;
 
 /**
@@ -23,12 +29,9 @@ import com.github.hualuomoli.gateway.client.util.Validate;
  * @author lbq
  *
  */
-public class RSAGatewayClient extends GatewayClientAdaptor {
+public class RSAGatewayClient extends AbstractGatewayClient {
 
 	private static final Logger logger = LoggerFactory.getLogger(RSAGatewayClient.class);
-
-	// header信息
-	private Map<String, String> headers = new HashMap<String, String>();
 
 	/** 服务端URL */
 	private String serverURL;
@@ -76,21 +79,13 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			req.signType = SignType.RSA.name();
 
 			// 1.2、获取请求参数签名原文
-			StringBuilder requestBuffer = new StringBuilder();
-			requestBuffer.append("&apiMethod=").append(req.apiMethod);
-			requestBuffer.append("&bizContent=").append(req.bizContent);
-			requestBuffer.append("&gatewayVersion=").append(req.gatewayVersion);
-			requestBuffer.append("&partnerId=").append(req.partnerId);
-			requestBuffer.append("&signType=").append(req.signType);
-			requestBuffer.append("&timestamp=").append(req.timestamp);
-
-			String requestOrigin = requestBuffer.toString().substring(1);
+			String requestOrigin = this.getOrigin(req, "sign");
 			logger.debug("请求签名原文={}", requestOrigin);
 
 			// 1.3、获取签名
 			req.sign = rsa.sign(this.privateKey, requestOrigin);
 
-			// 1.4、世纪向服务器发发送的参数
+			// 1.4、实际向服务器发发送的参数
 			Map<String, Object> paramMap = new HashMap<String, Object>();
 			paramMap.put("partnerId", req.partnerId);
 			paramMap.put("apiMethod", req.apiMethod);
@@ -99,52 +94,25 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 			paramMap.put("signType", req.signType);
 			paramMap.put("sign", req.sign);
 
-			// 2、执行盗用
-
-			List<HttpClient.Header> requestHeaders = new ArrayList<HttpClient.Header>();
-			List<HttpClient.Header> responseHeaders = new ArrayList<HttpClient.Header>();
-
-			// 2.1、header信息
-			for (String headerName : headers.keySet()) {
-				String headerValue = headers.get(headerName);
-				requestHeaders.add(new HttpClient.Header(headerName, headerValue));
-			}
+			// 2、执行调用
 
 			// 2.2、执行http调用
 			logger.debug("向服务器发送的数据request={}", req);
-			String result = httpClient.urlencoded(this.serverURL, this.charset, paramMap, requestHeaders, responseHeaders);
+			String result = httpClient.urlencoded(this.serverURL, this.charset, paramMap);
 			logger.debug("服务器返回的数据response={}", result);
-
-			// 2.3、设置响应header
-			for (HttpClient.Header header : responseHeaders) {
-				headers.put(header.getName(), header.getValue());
-			}
 
 			// 3、响应
 
 			// 3.1、获取响应内容
 			RSAResponse res = jsonParser.parseObject(result, RSAResponse.class);
 
+			String responseOrigin = this.getOrigin(res, "sign");
+			logger.debug("响应签名原文={}", responseOrigin);
+
 			// 3.2、验证网关
 			if (!"0000".equals(res.code)) {
 				throw new GatewayException(res.code, res.message);
 			}
-
-			// 3.3、获取响应参数签名原文
-			StringBuilder responseBuffer = new StringBuilder();
-			responseBuffer.append("&apiMethod=").append(res.apiMethod);
-			responseBuffer.append("&code=").append(res.code);
-			responseBuffer.append("&gatewayVersion=").append(res.gatewayVersion);
-			responseBuffer.append("&message=").append(res.message);
-			responseBuffer.append("&partnerId=").append(res.partnerId);
-			responseBuffer.append("&result=").append(res.result);
-			responseBuffer.append("&signType=").append(res.signType);
-			responseBuffer.append("&subCode=").append(res.subCode);
-			responseBuffer.append("&subMessage=").append(res.subMessage);
-			responseBuffer.append("&timestamp=").append(res.timestamp);
-
-			String responseOrigin = responseBuffer.toString().substring(1);
-			logger.debug("响应签名原文={}", responseOrigin);
 
 			// 3.4、验证签名
 			Validate.isTrue(rsa.verify(this.publicKey, responseOrigin, res.sign), "签名不合法");
@@ -163,42 +131,65 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 	}
 
 	/**
-	 * 添加header
-	 * @param name
-	 * @param value
+	 * 获取签名原文
+	 * @param obj 数据
+	 * @return 签名原文
 	 */
-	@Override
-	public void addHeader(String name, String value) {
-		headers.put(name, value);
-	}
-
-	/**
-	 * 获取header
-	 * @return header
-	 */
-	@Override
-	public Map<String, String> getHeaders() {
-
-		Map<String, String> headerMap = new HashMap<String, String>();
-
-		for (String headerName : headers.keySet()) {
-			String headerValue = headers.get(headerName);
-
-			if (headerName == null || headerValue == null) {
-				continue;
-			}
-
-			headerMap.put(headerName, headerValue);
+	private String getOrigin(Object obj, String... ignores) {
+		Set<String> set = new HashSet<String>();
+		for (String ignore : ignores) {
+			set.add(ignore);
 		}
 
-		return headerMap;
+		List<Field> fields = Utils.getFields(obj.getClass());
+		List<Field> array = new ArrayList<Field>();
+
+		// 移除忽略
+		for (Field field : fields) {
+			String name = field.getName();
+			if (set.contains(name)) {
+				continue;
+			}
+			array.add(field);
+		}
+
+		// 排序
+		Collections.sort(array, new Comparator<Field>() {
+
+			@Override
+			public int compare(Field o1, Field o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+
+		// 获取签名原文
+		Class<?> clazz = obj.getClass();
+		StringBuilder buffer = new StringBuilder();
+		for (Field field : array) {
+			String name = field.getName();
+			String methodName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+			try {
+				String value = (String) clazz.getMethod(methodName, new Class[0]).invoke(obj, new Object[0]);
+				// 空值不参与签名
+				if (value == null || value.trim().length() == 0) {
+					continue;
+				}
+				buffer.append("&").append(name).append("=").append(value);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+
+		return buffer.toString().substring(1);
 	}
 
 	/** RSA请求 */
 	public static final class RSARequest {
 
 		/** 网关版本号 */
-		private final String gatewayVersion = GATEWAY_VERSION;
+		private static final String gatewayVersion = GATEWAY_VERSION;
+
 		/** 合作伙伴ID */
 		private String partnerId;
 		/** 请求的业务方法 */
@@ -208,10 +199,39 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 
 		/** 业务内容 */
 		private String bizContent;
+
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
 		private String sign;
+
+		public String getGatewayVersion() {
+			return gatewayVersion;
+		}
+
+		public String getPartnerId() {
+			return partnerId;
+		}
+
+		public String getApiMethod() {
+			return apiMethod;
+		}
+
+		public String getTimestamp() {
+			return timestamp;
+		}
+
+		public String getBizContent() {
+			return bizContent;
+		}
+
+		public String getSignType() {
+			return signType;
+		}
+
+		public String getSign() {
+			return sign;
+		}
 
 		@Override
 		public String toString() {
@@ -224,7 +244,8 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 	public static final class RSAResponse {
 
 		/** 网关版本号 */
-		private final String gatewayVersion = GATEWAY_VERSION;
+		private static final String gatewayVersion = GATEWAY_VERSION;
+
 		/** 合作伙伴ID */
 		private String partnerId;
 		/** 请求的业务方法 */
@@ -243,45 +264,90 @@ public class RSAGatewayClient extends GatewayClientAdaptor {
 
 		/** 响应内容 */
 		private String result;
+
 		/** 签名类型 */
 		private String signType;
 		/** 签名数据 */
 		private String sign;
 
+		public String getGatewayVersion() {
+			return gatewayVersion;
+		}
+
+		public String getPartnerId() {
+			return partnerId;
+		}
+
 		public void setPartnerId(String partnerId) {
 			this.partnerId = partnerId;
+		}
+
+		public String getApiMethod() {
+			return apiMethod;
 		}
 
 		public void setApiMethod(String apiMethod) {
 			this.apiMethod = apiMethod;
 		}
 
+		public String getTimestamp() {
+			return timestamp;
+		}
+
 		public void setTimestamp(String timestamp) {
 			this.timestamp = timestamp;
+		}
+
+		public String getCode() {
+			return code;
 		}
 
 		public void setCode(String code) {
 			this.code = code;
 		}
 
+		public String getMessage() {
+			return message;
+		}
+
 		public void setMessage(String message) {
 			this.message = message;
+		}
+
+		public String getSubCode() {
+			return subCode;
 		}
 
 		public void setSubCode(String subCode) {
 			this.subCode = subCode;
 		}
 
+		public String getSubMessage() {
+			return subMessage;
+		}
+
 		public void setSubMessage(String subMessage) {
 			this.subMessage = subMessage;
+		}
+
+		public String getResult() {
+			return result;
 		}
 
 		public void setResult(String result) {
 			this.result = result;
 		}
 
+		public String getSignType() {
+			return signType;
+		}
+
 		public void setSignType(String signType) {
 			this.signType = signType;
+		}
+
+		public String getSign() {
+			return sign;
 		}
 
 		public void setSign(String sign) {

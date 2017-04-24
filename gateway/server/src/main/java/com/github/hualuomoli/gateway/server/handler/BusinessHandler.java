@@ -24,10 +24,57 @@ public interface BusinessHandler {
 	 * @param jsonParser JSON转换器
 	 * @param interceptors 拦截器
 	 * @return 业务处理结果
+	 * @throws NoMethodFoundException 请求方法未找到
+	 * @throws NoAuthorityException 没有访问权限
 	 * @throws Throwable 业务处理发生的异常
 	 */
-	String handle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
-	, List<HandlerInterceptor> interceptors) throws Throwable;
+	String handle(HttpServletRequest req, HttpServletResponse res//
+	, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
+	, List<HandlerInterceptor> interceptors) throws NoMethodFoundException, NoAuthorityException, Throwable;
+
+	// 方法未找到
+	public static final class NoMethodFoundException extends RuntimeException {
+		private static final long serialVersionUID = -4837058503357011640L;
+
+		public NoMethodFoundException() {
+			super();
+		}
+
+		public NoMethodFoundException(String message, Throwable cause) {
+			super(message, cause);
+		}
+
+		public NoMethodFoundException(String message) {
+			super(message);
+		}
+
+		public NoMethodFoundException(Throwable cause) {
+			super(cause);
+		}
+	}
+
+	// 没有访问权限
+	public static final class NoAuthorityException extends RuntimeException {
+
+		private static final long serialVersionUID = -7872913865614349550L;
+
+		public NoAuthorityException() {
+			super();
+		}
+
+		public NoAuthorityException(String message, Throwable cause) {
+			super(message, cause);
+		}
+
+		public NoAuthorityException(String message) {
+			super(message);
+		}
+
+		public NoAuthorityException(Throwable cause) {
+			super(cause);
+		}
+
+	}
 
 	// 拦截器
 	interface HandlerInterceptor {

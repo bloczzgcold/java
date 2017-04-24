@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.java.json;
+package com.github.hualuomoli.gateway.client.android.json;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

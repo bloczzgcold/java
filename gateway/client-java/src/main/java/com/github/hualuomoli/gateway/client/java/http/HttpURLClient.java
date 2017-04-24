@@ -23,7 +23,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hualuomoli.gateway.client.http.HttpCleintAdaptor;
+import com.github.hualuomoli.gateway.client.http.AbstractHttpCleint;
+import com.github.hualuomoli.gateway.client.http.HttpCurrent;
 import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 import com.github.hualuomoli.gateway.client.util.Validate;
 
@@ -32,7 +33,7 @@ import com.github.hualuomoli.gateway.client.util.Validate;
  * @author lbq
  *
  */
-public class HttpURLClient extends HttpCleintAdaptor {
+public class HttpURLClient extends AbstractHttpCleint {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpURLClient.class);
 
@@ -41,19 +42,14 @@ public class HttpURLClient extends HttpCleintAdaptor {
 	}
 
 	@Override
-	protected String execute(String urlStr, String content, Charset charset, Method method, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+	protected String execute(String urlStr, String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException {
 		Validate.notBlank(urlStr, "urlStr is blank.");
 		Validate.notNull(charset, "charset is null.");
 		Validate.notNull(method, "method is null.");
-		Validate.notNull(requestHeaders, "requestHeaders is null.");
-
-		if (responseHeaders == null) {
-			responseHeaders = new ArrayList<Header>();
-		}
 
 		logger.debug("发送数据={}", content);
 
-		byte[] result = this.execute(urlStr, content.getBytes(), method.name(), requestHeaders, responseHeaders);
+		byte[] result = this.execute(urlStr, content.getBytes(), method.name(), addRequestHeaders);
 
 		String res = new String(result, charset);
 
@@ -67,11 +63,11 @@ public class HttpURLClient extends HttpCleintAdaptor {
 	 * @param urlStr 请求URL
 	 * @param content 请求内容
 	 * @param method 请求方法
-	 * @param headers 请求header信息
+	 * @param addRequestHeaders 增加的请求header信息
 	 * @return 执行结果
 	 * @throws IOException 处理异常
 	 */
-	private byte[] execute(String urlStr, byte[] content, String method, List<Header> headers, List<Header> responseHeaders) throws IOException {
+	private byte[] execute(String urlStr, byte[] content, String method, List<Header> addRequestHeaders) throws IOException {
 
 		logger.info("请求的URL={}", urlStr);
 
@@ -93,14 +89,19 @@ public class HttpURLClient extends HttpCleintAdaptor {
 			conn.setDoOutput(true); // output
 
 			// header
-			for (Header header : headers) {
-				String headerName = header.getName();
-				String headerValue = header.getValue();
+			List<Header> reqHeaders = HttpCurrent.getReqHeaders();
+			reqHeaders.addAll(addRequestHeaders);
 
-				if (headerName == null || headerValue == null) {
+			for (Header header : reqHeaders) {
+				String headerName = header.getName();
+				String[] headerValues = header.getValue();
+
+				if (headerName == null || headerValues == null || headerValues.length == 0) {
 					continue;
 				}
-				conn.setRequestProperty(headerName, headerValue);
+				for (String headerValue : headerValues) {
+					conn.addRequestProperty(headerName, headerValue);
+				}
 			}
 
 			// output data
@@ -109,12 +110,13 @@ public class HttpURLClient extends HttpCleintAdaptor {
 
 			// get response header
 			Map<String, List<String>> map = conn.getHeaderFields();
+			List<Header> resHeaders = new ArrayList<Header>();
 			for (String headerName : map.keySet()) {
 				List<String> values = map.get(headerName);
 				if (values == null || values.size() == 0) {
 					continue;
 				}
-				responseHeaders.add(new Header(headerName, values.get(0)));
+				resHeaders.add(new Header(headerName, values.toArray(new String[]{})));
 			}
 
 			// get response
