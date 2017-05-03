@@ -6,9 +6,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.hualuomoli.env.EnvUtils.Env;
 
 public class PropUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(PropUtils.class);
 
 	/**
 	 * 转换
@@ -43,7 +48,7 @@ public class PropUtils {
 			String value = prop.getProperty(name);
 
 			// 使用制定环境的配置覆盖默认配置
-			System.out.println("覆盖默认配置configName=" + configName);
+			logger.debug("覆盖默认配置configName={}", configName);
 			prop.put(configName, value);
 		}
 
@@ -60,11 +65,14 @@ public class PropUtils {
 			}
 		}
 
-		names = prop.stringPropertyNames();
-		List<String> list = new ArrayList<String>(names);
-		Collections.sort(list);
-		for (String name : list) {
-			System.out.println(name + "=" + prop.getProperty(name));
+		if (logger.isInfoEnabled()) {
+
+			names = prop.stringPropertyNames();
+			List<String> list = new ArrayList<String>(names);
+			Collections.sort(list);
+			for (String name : list) {
+				logger.info("{}={}", name, prop.getProperty(name));
+			}
 		}
 
 		return prop;
