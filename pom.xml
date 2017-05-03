@@ -12,6 +12,7 @@
 		<module>./logger</module>
 		<module>./tools</module>
 		<module>./validator</module>
+		<module>./env</module>
 		<module>./framework</module>
 		<module>./gateway</module>
 		<module>./plugin</module>
