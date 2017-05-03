@@ -126,12 +126,12 @@
 		<repository>
 			<id>releases</id>
 			<name>Repository for nexus release</name>
-			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
+			<url>http://nexus.hualuomoli.github.com/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Snapshot for nexus snapshot</name>
-			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+			<url>http://nexus.hualuomoli.github.com/content/repositories/snapshots/</url>
 			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
