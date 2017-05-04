@@ -42,13 +42,13 @@ public class EnvUtils {
 
 			String runtime = getRuntime(keys);
 			if (runtime != null && runtime.length() > 0) {
-				System.out.println("runtime=" + runtime);
+				System.err.println("runtime=" + runtime);
 				env = Env.valueOf(Env.class, runtime);
 			} else {
 				env = Env.product;
 			}
 		} finally {
-			System.out.println("运行环境env=" + env);
+			System.err.println("运行环境env=" + env);
 			// unlock
 			LOCK.unlock();
 		}
