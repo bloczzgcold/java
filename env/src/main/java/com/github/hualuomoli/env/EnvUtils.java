@@ -75,12 +75,18 @@ public class EnvUtils {
 	}
 
 	private static final String getRuntime(String key) {
-		// read from environment configure
-		String value = System.getenv(key);
+		String value = null;
 
-		// read from -d parameter
+		// read from -D parameter. 
+		// such as java -Denv=test Main
 		if (value == null || value.trim().length() == 0) {
 			value = System.getProperty(key);
+		}
+
+		// read from environment configure.
+		// such as export env=test & java Main
+		if (value == null || value.trim().length() == 0) {
+			System.getenv(key);
 		}
 
 		return value;
