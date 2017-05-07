@@ -24,7 +24,7 @@ public class EnvUtils {
 
 	/**
 	 * 获取环境变量
-	 * @return
+	 * @return 环境变量
 	 */
 	public static final Env getEnv() {
 
@@ -41,14 +41,15 @@ public class EnvUtils {
 			}
 
 			String runtime = getRuntime(keys);
+			System.out.println("runtime=" + runtime);
+
 			if (runtime != null && runtime.length() > 0) {
-				System.err.println("runtime=" + runtime);
 				env = Env.valueOf(Env.class, runtime);
 			} else {
 				env = Env.product;
 			}
 		} finally {
-			System.err.println("运行环境env=" + env);
+			System.out.println("运行环境env=" + env);
 			// unlock
 			LOCK.unlock();
 		}
@@ -57,6 +58,11 @@ public class EnvUtils {
 
 	}
 
+	/**
+	 * 获取运行环境
+	 * @param keys 参数名称
+	 * @return 参数值
+	 */
 	private static final String getRuntime(String... keys) {
 		if (keys == null || keys.length == 0) {
 			return null;
@@ -74,6 +80,13 @@ public class EnvUtils {
 		return value;
 	}
 
+	/**
+	 * 获取运行环境
+	 * 1、获取-D的参数
+	 * 2、获取export的环境变量
+	 * @param key 参数名称
+	 * @return 参数值
+	 */
 	private static final String getRuntime(String key) {
 		String value = null;
 
@@ -86,12 +99,13 @@ public class EnvUtils {
 		// read from environment configure.
 		// such as export env=test & java Main
 		if (value == null || value.trim().length() == 0) {
-			System.getenv(key);
+			value = System.getenv(key);
 		}
 
 		return value;
 	}
 
+	// 运行环境
 	public static enum Env {
 		/** 开发环境 */
 		development,
