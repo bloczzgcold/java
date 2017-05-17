@@ -1,4 +1,4 @@
-package com.github.hualuomoli.tool;
+package com.github.hualuomoli.tool.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +20,9 @@ import com.google.common.collect.Lists;
 /**
  * 配置文件加载器
  */
-public final class PropertiesLoader {
+public final class PropertyUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(PropertiesLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(PropertyUtils.class);
 
 	/**
 	 * 加载第一个可加载的配置文件
@@ -35,7 +35,7 @@ public final class PropertiesLoader {
 		Validate.notEmpty(filenames, "filenames is emtpy.");
 
 		for (String filename : filenames) {
-			Properties prop = PropertiesLoader.load(filename);
+			Properties prop = PropertyUtils.load(filename);
 			if (prop != null) {
 				return prop;
 			}
@@ -56,8 +56,8 @@ public final class PropertiesLoader {
 		Properties p = null;
 
 		for (String filename : filenames) {
-			Properties prop = PropertiesLoader.load(filename);
-			p = PropertiesLoader.copy(prop, p);
+			Properties prop = PropertyUtils.load(filename);
+			p = PropertyUtils.copy(prop, p);
 		}
 		return p;
 	}
@@ -75,13 +75,13 @@ public final class PropertiesLoader {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		if (filename.startsWith("classpath:")) {
-			return PropertiesLoader._loadClasspathFile(filename, classLoader);
+			return PropertyUtils._loadClasspathFile(filename, classLoader);
 		}
 		if (filename.startsWith("classpath*:")) {
-			return PropertiesLoader._loadClasspathsFile(filename, classLoader);
+			return PropertyUtils._loadClasspathsFile(filename, classLoader);
 		}
 
-		return PropertiesLoader._loadFile(filename, classLoader);
+		return PropertyUtils._loadFile(filename, classLoader);
 	}
 
 	/**
@@ -149,8 +149,8 @@ public final class PropertiesLoader {
 		Properties p = null;
 
 		for (URL url : urlList) {
-			Properties prop = PropertiesLoader.loadFromUrl(url);
-			p = PropertiesLoader.copy(prop, p);
+			Properties prop = PropertyUtils.loadFromUrl(url);
+			p = PropertyUtils.copy(prop, p);
 		}
 
 		return p;
@@ -166,7 +166,7 @@ public final class PropertiesLoader {
 	private static Properties _loadClasspathFile(String classpathFilename, ClassLoader classLoader) {
 		String filename = classpathFilename.substring("classpath:".length());
 		URL url = classLoader.getResource(filename);
-		return PropertiesLoader.loadFromUrl(url);
+		return PropertyUtils.loadFromUrl(url);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public final class PropertiesLoader {
 	 */
 	private static Properties _loadFile(String filename, ClassLoader classLoader) {
 		URL url = classLoader.getResource(filename);
-		return PropertiesLoader.loadFromUrl(url);
+		return PropertyUtils.loadFromUrl(url);
 	}
 
 	/**
@@ -186,7 +186,9 @@ public final class PropertiesLoader {
 	 * @return 资源配置信息,如果资源不存在或格式错误返回null
 	 */
 	public static Properties loadFromUrl(URL url) {
-		Validate.notNull(url, "url is null.");
+		if(url == null){
+			return null;
+		}
 		logger.info("load properties file {}", url.getPath());
 
 		InputStream is = null;

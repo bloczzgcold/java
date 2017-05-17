@@ -4,9 +4,9 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.github.hualuomoli.tool.PropertiesLoader;
 import com.github.hualuomoli.tool.util.EnvUtils;
 import com.github.hualuomoli.tool.util.EnvUtils.Env;
+import com.github.hualuomoli.tool.util.PropertyUtils;
 
 /**
  * 初始化配置文件
@@ -32,7 +32,7 @@ public class Log4jInitializer {
 		String envLog4jFilename = log4jFilename.substring(0, log4jFilename.lastIndexOf(".")) //
 				+ "-" + env.name().toLowerCase() //
 				+ log4jFilename.substring(log4jFilename.lastIndexOf("."));
-		Properties prop = PropertiesLoader.loadFirst(envLog4jFilename, log4jFilename);
+		Properties prop = PropertyUtils.loadFirst(envLog4jFilename, log4jFilename);
 		PropertyConfigurator.configure(prop);
 	}
 
