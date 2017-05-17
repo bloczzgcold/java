@@ -87,6 +87,7 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 
 			// 1.4、实际向服务器发发送的参数
 			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("gatewayVersion", req.gatewayVersion);
 			paramMap.put("partnerId", req.partnerId);
 			paramMap.put("apiMethod", req.apiMethod);
 			paramMap.put("timestamp", req.timestamp);
@@ -188,7 +189,7 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 	public static final class RSARequest {
 
 		/** 网关版本号 */
-		private static final String gatewayVersion = GATEWAY_VERSION;
+		private final String gatewayVersion = GATEWAY_VERSION;
 
 		/** 合作伙伴ID */
 		private String partnerId;
