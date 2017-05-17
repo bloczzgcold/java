@@ -1,18 +1,13 @@
-package com.github.hualuomoli.env;
+package com.github.hualuomoli.tool.util;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * 运行环境工具
- * @author lbq
- *
- */
 public class EnvUtils {
 
 	private static final Lock LOCK = new ReentrantLock();
 	private static String[] keys = new String[] { "environment", "env" };
-	private static Env env;
+	private static Env env = null;
 
 	/**
 	 * 初始化环境变量的名称,默认为environment,env
@@ -44,12 +39,12 @@ public class EnvUtils {
 			System.out.println("runtime=" + runtime);
 
 			if (runtime != null && runtime.length() > 0) {
-				env = Env.valueOf(Env.class, runtime);
+				env = Env.valueOf(Env.class, runtime.toUpperCase());
 			} else {
-				env = Env.product;
+				env = Env.PRODUCT;
 			}
 		} finally {
-			System.out.println("运行环境env=" + env);
+			System.out.println("运行环境env=" + env.name().toLowerCase());
 			// unlock
 			LOCK.unlock();
 		}
@@ -108,13 +103,15 @@ public class EnvUtils {
 	// 运行环境
 	public static enum Env {
 		/** 开发环境 */
-		development,
+		DEVELOPMENT,
 		/** 测试环境 */
-		test,
+		TEST,
+		/** 集成测试 */
+		INTEGRATE,
 		/** 准生产环境 */
-		prepare,
+		PREPARE,
 		/** 生产环境 */
-		product;
+		PRODUCT;
 	}
 
 }

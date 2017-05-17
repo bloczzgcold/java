@@ -105,7 +105,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 			// 业务调用前执行
 			for (HandlerInterceptor interceptor : interceptors) {
-				interceptor.preHandle(req, res, partnerId, apiMethod, method);
+				interceptor.preHandle(req, res, partnerId, apiMethod, method,controller, params);
 			}
 
 			// 执行业务操作
@@ -113,7 +113,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 			// 业务调用后执行
 			for (HandlerInterceptor interceptor : interceptors) {
-				interceptor.postHandle(req, res, method);
+				interceptor.postHandle(req, res);
 			}
 
 		} catch (InvocationTargetException e) {
@@ -122,7 +122,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 		} finally {
 			// 完成调用
 			for (HandlerInterceptor interceptor : interceptors) {
-				interceptor.afterCompletion(req, res, method, t);
+				interceptor.afterCompletion(req, res, t);
 			}
 		}
 

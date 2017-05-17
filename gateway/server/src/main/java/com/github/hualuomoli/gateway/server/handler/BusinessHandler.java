@@ -1,5 +1,6 @@
 package com.github.hualuomoli.gateway.server.handler;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public interface BusinessHandler {
 		 * @param handler 具体业务处理
 		 * @throws Exception 异常
 		 */
-		void preHandle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, Object handler) throws Exception;
+		void preHandle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, Method method, Object handler,Object[] params) throws Exception;
 
 		/**
 		 * 后处理
@@ -97,7 +98,7 @@ public interface BusinessHandler {
 		 * @param handler 具体业务处理
 		 * @throws Exception 异常
 		 */
-		void postHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception;
+		void postHandle(HttpServletRequest req, HttpServletResponse res) throws Exception;
 
 		/**
 		 * 业务执行完成后调用
@@ -107,7 +108,7 @@ public interface BusinessHandler {
 		 * @param t 异常信息
 		 * @throws Exception 异常
 		 */
-		void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Throwable t) throws Exception;
+		void afterCompletion(HttpServletRequest req, HttpServletResponse res, Throwable t) throws Exception;
 
 	}
 

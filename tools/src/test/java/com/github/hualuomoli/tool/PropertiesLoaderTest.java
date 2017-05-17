@@ -10,7 +10,7 @@ public class PropertiesLoaderTest {
 
 	@Test
 	public void testForCover() {
-		Properties prop = PropertiesLoader.loadProperties("config2.properties", "config3.properties");
+		Properties prop = PropertiesLoader.loadCover("config2.properties", "config3.properties");
 
 		String name = prop.getProperty("project.name");
 		String version = prop.getProperty("project.version");
@@ -22,7 +22,7 @@ public class PropertiesLoaderTest {
 
 	@Test
 	public void testForCoverReverse() {
-		Properties prop = PropertiesLoader.loadProperties("config3.properties", "config2.properties");
+		Properties prop = PropertiesLoader.loadCover("config3.properties", "config2.properties");
 
 		String name = prop.getProperty("project.name");
 		String version = prop.getProperty("project.version");
@@ -34,7 +34,7 @@ public class PropertiesLoaderTest {
 
 	@Test
 	public void test03AddResource() {
-		Properties prop = PropertiesLoader.loadProperties("config2.properties", "config3.properties");
+		Properties prop = PropertiesLoader.loadCover("config2.properties", "config3.properties");
 
 		String name = prop.getProperty("project.name");
 		String version = prop.getProperty("project.version");
@@ -44,7 +44,8 @@ public class PropertiesLoaderTest {
 		Assert.assertEquals("1.5.0", version);
 
 		// add
-		prop = PropertiesLoader.load("config4.properties", prop);
+		Properties p = PropertiesLoader.load("config4.properties");
+		PropertiesLoader.copy(p, prop);
 		name = prop.getProperty("project.name");
 		version = prop.getProperty("project.version");
 		Assert.assertNotNull(name);
@@ -57,7 +58,7 @@ public class PropertiesLoaderTest {
 	@Ignore // add libs to configure
 	public void testLoadFromJarFile() {
 
-		Properties prop = PropertiesLoader.loadProperties("classpath*:config.properties", "classpath*:config1.properties");
+		Properties prop = PropertiesLoader.loadCover("classpath*:config.properties", "classpath*:config1.properties");
 
 		String name = prop.getProperty("project.name");
 		String version = prop.getProperty("project.version");

@@ -1,18 +1,16 @@
-package com.github.hualuomoli.framework.thread;
+package com.github.hualuomoli.framework;
 
 import java.util.Date;
 
 /**
  * 当前线程数据
- * @author lbq
- *
  */
-public class Current {
+public class CurrentThread {
 
 	// 应用
 	private static final ThreadLocal<String> LOCAL_APPLICATION = new ThreadLocal<>();
-	// 处理用户
-	private static final ThreadLocal<String> LOCAL_USERNAME = new ThreadLocal<>();
+	// 操作用户
+	private static final ThreadLocal<String> LOCAL_OPERATOR = new ThreadLocal<>();
 	// 日期
 	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>();
 
@@ -33,19 +31,19 @@ public class Current {
 	}
 
 	/**
-	 * 设置当前线程用户
-	 * @param username 用户名
+	 * 设置当前线程操作用户
+	 * @param operator 操作用户
 	 */
-	public static void setUsername(String username) {
-		LOCAL_USERNAME.set(username);
+	public static void setOperator(String operator) {
+		LOCAL_OPERATOR.set(operator);
 	}
 
 	/**
-	 * 获取当前线程用户
-	 * @return 当前线程用户
+	 * 获取当前线程操作用户
+	 * @return 当前线程操作用户
 	 */
-	public static String getUsername() {
-		return LOCAL_USERNAME.get();
+	public static String getOperator() {
+		return LOCAL_OPERATOR.get();
 	}
 
 	/**

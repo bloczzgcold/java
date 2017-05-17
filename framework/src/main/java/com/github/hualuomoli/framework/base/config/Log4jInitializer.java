@@ -1,8 +1,12 @@
 package com.github.hualuomoli.framework.base.config;
 
+import java.util.Properties;
+
 import org.apache.log4j.PropertyConfigurator;
 
 import com.github.hualuomoli.tool.PropertiesLoader;
+import com.github.hualuomoli.tool.util.EnvUtils;
+import com.github.hualuomoli.tool.util.EnvUtils.Env;
 
 /**
  * 初始化配置文件
@@ -23,12 +27,13 @@ public class Log4jInitializer {
 	 * @param log4jFilename log4j文件名
 	 */
 	public static void init(String log4jFilename) {
-		String environment = System.getenv("environment");
-		initLogger(environment, log4jFilename);
-	}
-
-	private static void initLogger(String environment, String filename) {
-		PropertyConfigurator.configure(PropertiesLoader.loadEnvironmentProperties(filename, environment));
+		Env env = EnvUtils.getEnv();
+		// 指定环境变量的文件
+		String envLog4jFilename = log4jFilename.substring(0, log4jFilename.lastIndexOf(".")) //
+				+ "-" + env.name().toLowerCase() //
+				+ log4jFilename.substring(log4jFilename.lastIndexOf("."));
+		Properties prop = PropertiesLoader.loadFirst(envLog4jFilename, log4jFilename);
+		PropertyConfigurator.configure(prop);
 	}
 
 }

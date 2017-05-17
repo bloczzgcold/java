@@ -12,11 +12,9 @@
 		<module>./logger</module>
 		<module>./tools</module>
 		<module>./validator</module>
-		<module>./env</module>
 		<module>./framework</module>
 		<module>./gateway</module>
 		<module>./plugin</module>
-		<module>./test</module>
 	</modules>
 
 	<properties>
@@ -24,6 +22,9 @@
 		<!-- 编译环境 -->
 		<jdk.version>1.7</jdk.version>
 		<project.encoding>UTF-8</project.encoding>
+		
+		<slf4j.version>1.7.7</slf4j.version>
+		<spring.version>4.0.8.RELEASE</spring.version>
 
 	</properties>
 
@@ -105,7 +106,7 @@
 		<repository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.github.com/content/groups/public/</url>
+			<url>http://192.168.1.60:8081/nexus/content/groups/public/</url>
 		</repository>
 
 	</repositories>
@@ -116,7 +117,7 @@
 		<pluginRepository>
 			<id>nexus</id>
 			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.github.com/content/groups/public/</url>
+			<url>http://192.168.1.60:8081/nexus/content/groups/public/</url>
 		</pluginRepository>
 
 	</pluginRepositories>
@@ -126,12 +127,12 @@
 		<repository>
 			<id>releases</id>
 			<name>Repository for nexus release</name>
-			<url>http://nexus.hualuomoli.github.com/content/repositories/releases/</url>
+			<url>http://192.168.1.60:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Snapshot for nexus snapshot</name>
-			<url>http://nexus.hualuomoli.github.com/content/repositories/snapshots/</url>
+			<url>http://192.168.1.60:8081/nexus/content/repositories/snapshots/</url>
 			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
