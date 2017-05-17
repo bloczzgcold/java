@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>./mq</module>
+		<module>./dubbo</module>
 	</modules>
 
 
