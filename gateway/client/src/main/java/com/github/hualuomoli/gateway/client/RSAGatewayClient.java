@@ -245,7 +245,7 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 	public static final class RSAResponse {
 
 		/** 网关版本号 */
-		private static final String gatewayVersion = GATEWAY_VERSION;
+		private final String gatewayVersion = GATEWAY_VERSION;
 
 		/** 合作伙伴ID */
 		private String partnerId;

@@ -80,6 +80,7 @@ public class RSAAuthHandler extends AbstractAuthHandler implements AuthHandler {
 
 		// 响应数据
 		RSAAuthResponse rsaRes = new RSAAuthResponse();
+		rsaRes.setGatewayVersion(rsaReq.getGatewayVersion());
 		rsaRes.setPartnerId(rsaReq.getPartnerId());
 		rsaRes.setApiMethod(rsaReq.getApiMethod());
 		rsaRes.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(new Date()));
