@@ -29,8 +29,8 @@ public class GreaterValidatorForNumber implements ConstraintValidator<Greater, N
 		} else if (value instanceof BigInteger) {
 			return ((BigInteger) value).compareTo(BigInteger.valueOf(greater)) == 1;
 		} else {
-			long longValue = value.longValue();
-			return longValue > greater;
+			double doubleValue = value.doubleValue();
+			return doubleValue > greater;
 		}
 	}
 
