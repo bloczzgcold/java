@@ -74,7 +74,7 @@ public class RSAAuthHandler extends AbstractAuthHandler implements AuthHandler {
 		String origin = this.getOrigin(rsaReq, "sign");
 		logger.debug("请求签名原文 = {}", origin);
 
-		if (!RSA.verify(partner.getConfigs().get(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.getSign())) {
+		if (!RSA.verify(partner.getConfigValue(Key.SIGNATURE_RSA_PUBLIC_KEY), origin, rsaReq.getSign())) {
 			throw new InvalidSignatureException("不合法的签名");
 		}
 

@@ -1,6 +1,5 @@
 package com.github.hualuomoli.gateway.server.loader;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,9 +38,13 @@ public interface PartnerLoader {
 		public String getName() {
 			return name;
 		}
-
-		public Map<Key, String> getConfigs() {
-			return new HashMap<Key, String>(configs);
+		
+		public String getConfigValue(Key key){
+			if(configs == null || configs.isEmpty()){
+				return null;
+			}
+			String value = configs.get(key);
+			return value;
 		}
 
 	}
