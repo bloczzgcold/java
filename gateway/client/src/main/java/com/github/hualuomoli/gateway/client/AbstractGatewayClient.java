@@ -125,7 +125,28 @@ public abstract class AbstractGatewayClient implements GatewayClient {
 	 * @param callback 字符串回调函数
 	 * @param result 数据
 	 */
-	protected <T> void onSuccess(CallbackString callback, String result) {
+	@SuppressWarnings("unchecked")
+	protected <T> void onSuccess(Callback callback, String result) {
+		Class<?> clazz = callback.getClass();
+		if (CallbackString.class.isAssignableFrom(clazz)) {
+			this.onStringSuccess((CallbackString) callback, result);
+		} else if (CallbackObject.class.isAssignableFrom(clazz)) {
+			this.onObjectSuccess((CallbackObject<T>) callback, result);
+		} else if (CallbackArray.class.isAssignableFrom(clazz)) {
+			this.onArraySuccess((CallbackArray<T>) callback, result);
+		} else if (CallbackPage.class.isAssignableFrom(clazz)) {
+			this.onPageSuccess((CallbackPage<T>) callback, result);
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	/**
+	 * 调用成功 - 字符串
+	 * @param callback 字符串回调函数
+	 * @param result 数据
+	 */
+	protected <T> void onStringSuccess(CallbackString callback, String result) {
 		callback.onSuccess(result);
 	}
 
@@ -134,7 +155,7 @@ public abstract class AbstractGatewayClient implements GatewayClient {
 	 * @param callback Object回调函数
 	 * @param result 数据
 	 */
-	protected <T> void onSuccess(CallbackObject<T> callback, String result) {
+	protected <T> void onObjectSuccess(CallbackObject<T> callback, String result) {
 		Class<T> clazz = this.getGenericClass(callback.getClass());
 		callback.onSuccess(jSONParser.parseObject(result, clazz));
 	}
@@ -144,7 +165,7 @@ public abstract class AbstractGatewayClient implements GatewayClient {
 	 * @param callback 数组回调函数
 	 * @param result 数据
 	 */
-	protected <T> void onSuccess(CallbackArray<T> callback, String result) {
+	protected <T> void onArraySuccess(CallbackArray<T> callback, String result) {
 		Class<T> clazz = this.getGenericClass(callback.getClass());
 		callback.onSuccess(jSONParser.parseArray(result, clazz));
 	}
@@ -155,21 +176,12 @@ public abstract class AbstractGatewayClient implements GatewayClient {
 	 * @param result 数据
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> void onSuccess(CallbackPage<T> callback, String result) {
+	protected <T> void onPageSuccess(CallbackPage<T> callback, String result) {
 		Class<T> clazz = this.getGenericClass(callback.getClass());
 		Page<T> page = new Page<T>();
 		page = jSONParser.parseObject(result, page.getClass());
 		page.setDataList(jSONParser.parseArray(jSONParser.toJsonString(page.getDataList()), clazz));
 		callback.onSuccess(page.getPageNo(), page.getPageSize(), page.getCount(), page.getDataList());
-	}
-
-	/**
-	 * 调用成功 - 字符串
-	 * @param callback 字符串回调函数
-	 * @param result 数据
-	 */
-	protected <T> void onSuccess(Callback callback, String result) {
-		throw new RuntimeException();
 	}
 
 	/**
