@@ -16,7 +16,6 @@
 	<properties>
 
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
-		<slf4j.version>1.7.7</slf4j.version>
 
 	</properties>
 

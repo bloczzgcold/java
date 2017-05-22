@@ -19,8 +19,6 @@
 		<!-- ActiveMQ -->
 		<activemq.version>5.11.0</activemq.version>
 
-		<spring.version>4.0.8.RELEASE</spring.version>
-
 	</properties>
 
 	<dependencies>
