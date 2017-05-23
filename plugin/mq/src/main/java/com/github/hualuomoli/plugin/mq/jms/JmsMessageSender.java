@@ -47,7 +47,7 @@ public class JmsMessageSender implements MessageSender {
 			break;
 		}
 
-		logger.debug("发送数据到MQ,destinationName={},data={}", destinationName, data);
+		logger.debug("发送数据到MQ,type={},destinationName={},data={}", type, destinationName, data);
 
 		try {
 			jmsTemplate.send(destinationName, new MessageCreator() {
