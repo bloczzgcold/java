@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,7 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.github.hualuomoli.gateway.server.parser.JSONParser;
 
@@ -63,7 +66,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			throw new NoMethodFoundException("没有执行方法" + apiMethod);
 		}
 
-		Object controller = context.getBean(function.clazz);
+		Object controller = context.getBean(function.handlerClazz);
 		Method method = function.method;
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
@@ -105,7 +108,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 			// 业务调用前执行
 			for (HandlerInterceptor interceptor : interceptors) {
-				interceptor.preHandle(req, res, partnerId, apiMethod, method,controller, params);
+				interceptor.preHandle(req, res, partnerId, apiMethod, method, controller, params);
 			}
 
 			// 执行业务操作
@@ -264,15 +267,12 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 			Tool tool = new Tool(functionMap, apiAnnotation);
 
-			Map<String, Object> controllerMap = context.getBeansWithAnnotation(RequestMapping.class);
-			for (String controllerName : controllerMap.keySet()) {
+			Map<String, Object> controllerMap = context.getBeansWithAnnotation(Controller.class);
+			Map<String, Object> restControllerMap = context.getBeansWithAnnotation(RestController.class);
 
-				Object controller = controllerMap.get(controllerName);
-				Class<? extends Object> controllerClazz = controller.getClass();
-				RequestMapping requestMapping = controllerClazz.getAnnotation(RequestMapping.class);
-
-				tool.initController(controllerClazz, requestMapping.value());
-			}
+			// 初始化
+			tool.init(controllerMap.values());
+			tool.init(restControllerMap.values());
 		}
 
 	}
@@ -293,25 +293,37 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 		/**
 		 * 初始化类
-		 * @param controllerClazz 	类
-		 * @param controllerUrls 	请求URL
+		 * @param handlers 处理类
 		 */
-		void initController(Class<?> controllerClazz, String[] controllerUrls) {
-			if (controllerUrls == null || controllerUrls.length == 0) {
-				return;
+		void init(Collection<Object> handlers) {
+			// controller
+			for (Object handler : handlers) {
+				Class<? extends Object> handlerClazz = handler.getClass();
+				RequestMapping requestMapping = handlerClazz.getAnnotation(RequestMapping.class);
+
+				this.initController(handlerClazz, requestMapping == null ? new String[] { "" } : requestMapping.value());
 			}
-			for (String controllerUrl : controllerUrls) {
-				this.initController(controllerClazz, controllerUrl);
+			// end
+		}
+
+		/**
+		 * 初始化类
+		 * @param handlerClazz 处理类
+		 * @param parentUrls 父请求URL
+		 */
+		void initController(Class<?> handlerClazz, String[] parentUrls) {
+			for (String parentUrl : parentUrls) {
+				this.initController(handlerClazz, parentUrl);
 			}
 		}
 
 		/**
 		 * 初始化类
-		 * @param controllerClazz 	类
-		 * @param controllerUrl 	请求URL
+		 * @param handlerClazz 处理类
+		 * @param parentUrl 父请求URL
 		 */
-		void initController(Class<?> controllerClazz, String controllerUrl) {
-			Method[] methods = controllerClazz.getMethods();
+		void initController(Class<?> handlerClazz, String parentUrl) {
+			Method[] methods = handlerClazz.getMethods();
 			if (methods == null || methods.length == 0) {
 				return;
 			}
@@ -324,44 +336,49 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 				}
 				// 请求url注解
 				RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+				// 没有请求url注解
 				if (requestMapping == null) {
 					continue;
 				}
-
-				this.initMethod(controllerClazz, controllerUrl, method, requestMapping.value());
+				// 请求URL为空集合
+				if (requestMapping.value().length == 0) {
+					continue;
+				}
+				// 初始化方法
+				this.initMethod(handlerClazz, parentUrl, method, requestMapping.value());
 			}
 		}
 
 		/**
 		 * 初始化方法
-		 * @param controllerClazz　	类
-		 * @param controllerUrl　	类的请求URL
-		 * @param method　			方法
-		 * @param methodUrls 		方法的URL
+		 * @param handlerClazz 处理类
+		 * @param parentUrl 父请求URL
+		 * @param method 执行方法
+		 * @param urls 方法URL
 		 */
-		void initMethod(Class<?> controllerClazz, String controllerUrl, Method method, String[] methodUrls) {
-			if (methodUrls == null) {
+		void initMethod(Class<?> handlerClazz, String parentUrl, Method method, String[] urls) {
+			if (urls == null || urls.length == 0) {
 				return;
 			}
-			for (String methodUrl : methodUrls) {
-				this.initMethod(controllerClazz, controllerUrl, method, methodUrl);
+			for (String url : urls) {
+				this.initMethod(handlerClazz, parentUrl, method, url);
 			}
 		}
 
 		/**
 		 * 初始化方法
-		 * @param controllerClazz　	类
-		 * @param controllerUrl　	类的请求URL
-		 * @param method　			方法
-		 * @param methodUrl 		方法的URL
+		 * @param handlerClazz 处理类
+		 * @param parentUrl 父请求URL
+		 * @param method 执行方法
+		 * @param url 方法URL
 		 */
-		void initMethod(Class<?> controllerClazz, String controllerUrl, Method method, String methodUrl) {
+		void initMethod(Class<?> handlerClazz, String parentUrl, Method method, String url) {
 
-			// /user/loadUserMessage
-			String apiUrl = "/" + controllerUrl + "/" + methodUrl + "/";
-			apiUrl = apiUrl.replaceAll("//", "/");
-			apiUrl = apiUrl.substring(0, apiUrl.length() - 1);
-
+			// API请求url
+			// /user/login
+			String apiUrl = this.getApiUrl(parentUrl, url);
+			// API请求方法
+			// user.login
 			String apiMethod = apiUrl.substring(1).replaceAll("/", ".");
 
 			Function function = new Function();
@@ -369,8 +386,8 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			function.apiMethod = apiMethod;
 			function.apiRegex = this.getApiUrlRegex(apiUrl);
 			function.method = method;
-			function.clazz = controllerClazz;
-			function.version = this.getApiVersion(controllerClazz, method);
+			function.handlerClazz = handlerClazz;
+			function.version = this.getApiVersion(handlerClazz, method);
 
 			logger.debug("init function {}", function);
 
@@ -381,6 +398,55 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			}
 
 			functions.add(function);
+		}
+
+		/**
+		 * 获取API的访问URL
+		 * getApiUrl(null, "")			= ""
+		 * getApiUrl(null, "login")		= /login
+		 * getApiUrl(null, "/login")	= /login
+		 * getApiUrl(null, "login/")	= /login
+		 * getApiUrl(null, "/login/")	= /login
+		 * getApiUrl("user", "")		= /user
+		 * getApiUrl("user", "login")	= /user/login
+		 * getApiUrl("user/", "login")	= /user/login
+		 * getApiUrl("/user", "login")	= /user/login
+		 * getApiUrl("/user/", "login")	= /user/login
+		 * getApiUrl("/user", "/login")	= /user/login
+		 * @param parentUrl 父URL
+		 * @param url 方法URL
+		 * @return 访问URL
+		 */
+		private String getApiUrl(String parentUrl, String url) {
+			if (url == null) {
+				throw new RuntimeException();
+			}
+			return this.parseUrl(parentUrl) + this.parseUrl(url);
+		}
+
+		/**
+		 * 转换URL为 /user/login
+		 * parseUrl("")				= ""
+		 * parseUrl("user/login")	= /user/login
+		 * parseUrl("user/login/")	= /user/login
+		 * parseUrl("/user/login")	= /user/login
+		 * parseUrl("/user/login/")	= /user/login
+		 * @param url 待转换的URL
+		 * @return 转换后的URL
+		 */
+		private String parseUrl(String url) {
+			if (url == null || url.length() == 0) {
+				return "";
+			}
+			// parentUrl
+			if (!url.startsWith("/")) {
+				url = "/" + url;
+			}
+			if (url.endsWith("/")) {
+				url = url.substring(0, url.length() - 1);
+			}
+
+			return url;
 		}
 
 		/**
@@ -451,12 +517,13 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 		/** 请求的方法 */
 		private Method method;
 		/** 请求的功能类 */
-		private Class<?> clazz;
+		private Class<?> handlerClazz;
 
 		@Override
 		public String toString() {
-			return "Function [apiUrl=" + apiUrl + ", apiMethod=" + apiMethod + ", apiRegex=" + apiRegex + ", version=" + version + "]";
+			return "Function [apiUrl=" + apiUrl + ", apiMethod=" + apiMethod + ", apiRegex=" + apiRegex + ", version=" + version + ", method=" + method + ", handlerClazz=" + handlerClazz + "]";
 		}
+
 	}
 
 	@Override
