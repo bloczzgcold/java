@@ -389,6 +389,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			function.handlerClazz = handlerClazz;
 			function.version = this.getApiVersion(handlerClazz, method);
 
+			logger.info("register url {}", apiUrl);
 			logger.debug("init function {}", function);
 
 			List<Function> functions = functionMap.get(apiUrl);
@@ -402,7 +403,8 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 
 		/**
 		 * 获取API的访问URL
-		 * getApiUrl(null, "")			= ""
+		 * getApiUrl(null, "")			= "/"
+		 * getApiUrl("", "")			= "/"
 		 * getApiUrl(null, "login")		= /login
 		 * getApiUrl(null, "/login")	= /login
 		 * getApiUrl(null, "login/")	= /login
@@ -421,7 +423,8 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 			if (url == null) {
 				throw new RuntimeException();
 			}
-			return this.parseUrl(parentUrl) + this.parseUrl(url);
+			String apiUrl = this.parseUrl(parentUrl) + this.parseUrl(url);
+			return apiUrl.length() == 0 ? "/" : apiUrl;
 		}
 
 		/**

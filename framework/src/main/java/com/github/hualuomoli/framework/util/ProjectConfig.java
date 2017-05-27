@@ -24,7 +24,15 @@ public class ProjectConfig {
 	 * @param resources 资源
 	 */
 	public synchronized static void init(String... resources) {
-		if (init) {
+		init(false, resources);
+	}
+
+	/**
+	 * 初始化,需要初始化后才可使用
+	 * @param resources 资源
+	 */
+	public synchronized static void init(boolean force, String... resources) {
+		if (init && !force) {
 			throw new RuntimeException("there is already init.");
 		}
 
