@@ -11,7 +11,6 @@ public class Utils {
 	/**
 	 * 获取类的所有属性及所有父属性
 	 * @param clazz 类
-	 * @param names 已经存在的属性
 	 * @return 类的属性及所有父属性
 	 */
 	public static List<Field> getFields(Class<?> clazz) {
@@ -52,7 +51,7 @@ public class Utils {
 	/**
 	 * 是否为空
 	 * @param value 值
-	 * @return 提示信息
+	 * @param message 提示信息
 	 */
 	public static void notNull(Object value, String message) {
 		if (value == null) {
@@ -63,7 +62,7 @@ public class Utils {
 	/**
 	 * 是否为空
 	 * @param value 值
-	 * @return 提示信息
+	 * @param message 提示信息
 	 */
 	public static void notBlank(String value, String message) {
 		if (value == null) {

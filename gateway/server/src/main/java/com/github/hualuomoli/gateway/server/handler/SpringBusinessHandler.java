@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +50,6 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 		this.packageName = packageName;
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public String handle(HttpServletRequest req, HttpServletResponse res//
 	, String partnerId, String apiMethod, String bizContent, JSONParser jsonParser//
@@ -85,8 +85,7 @@ public class SpringBusinessHandler implements BusinessHandler, ApplicationContex
 				// list
 				if (List.class.isAssignableFrom(parameterType)) {
 
-					sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl genericParameterTypes = (sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl) method
-							.getGenericParameterTypes()[i];
+					ParameterizedType genericParameterTypes = (ParameterizedType) method.getGenericParameterTypes()[i];
 					Class<?> clazz = (Class<?>) genericParameterTypes.getActualTypeArguments()[0];
 
 					params[i] = jsonParser.parseArray(bizContent, clazz);

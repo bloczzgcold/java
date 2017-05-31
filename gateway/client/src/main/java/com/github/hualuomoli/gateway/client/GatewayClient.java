@@ -30,6 +30,7 @@ public interface GatewayClient {
 	 * 调用
 	 * @param method 请求的方法
 	 * @param bizContent 请求的业务内容
+	 * @param clazz 返回的数据类型
 	 * @return 返回的业务结果
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网关错误
@@ -40,6 +41,7 @@ public interface GatewayClient {
 	 * 调用
 	 * @param method 请求的方法
 	 * @param bizContent 请求的业务内容
+	 * @param clazz 返回的数据类型
 	 * @return 返回的业务结果
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网关错误
@@ -50,6 +52,7 @@ public interface GatewayClient {
 	 * 调用
 	 * @param method 请求的方法
 	 * @param bizContent 请求的业务内容
+	 * @param clazz 返回的数据类型
 	 * @return 返回的业务结果
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网关错误
@@ -67,7 +70,6 @@ public interface GatewayClient {
 	/**
 	 * 调用
 	 * @param object 请求参数
-	 * @param parser 参数解析器
 	 * @return 调用结果
 	 * @throws DealException 业务处理错误
 	 * @throws GatewayException 网管错误
@@ -77,7 +79,6 @@ public interface GatewayClient {
 	/**
 	 * 调用
 	 * @param object 请求参数
-	 * @param parser 参数解析器
 	 * @param clazz 返回的数据类型
 	 * @return 调用结果
 	 * @throws DealException 业务处理错误
@@ -88,7 +89,6 @@ public interface GatewayClient {
 	/**
 	 * 调用
 	 * @param object 请求参数
-	 * @param parser 参数解析器
 	 * @param clazz 返回的数据类型
 	 * @return 调用结果
 	 * @throws DealException 业务处理错误
@@ -99,7 +99,6 @@ public interface GatewayClient {
 	/**
 	 * 调用
 	 * @param object 请求参数
-	 * @param parser 参数解析器
 	 * @param clazz 返回的数据类型
 	 * @return 调用结果
 	 * @throws DealException 业务处理错误
@@ -110,7 +109,6 @@ public interface GatewayClient {
 	/**
 	 * 调用
 	 * @param object 请求参数
-	 * @param parser 参数解析器
 	 * @param callback 也处理回调
 	 */
 	void call(Object object, Callback callback);
@@ -183,23 +181,22 @@ public interface GatewayClient {
 
 	}
 
-	// 转换器
-	interface ObejctParser {
+	// 请求Object转换器
+	interface ObjectParser {
 
 		/**
 		 * 获取请求方法
-		 * @param object obj
+		 * @param object 请求参数
 		 * @return 请求方法
 		 */
 		String getMethod(Object object);
 
 		/**
 		 * 获取请求内容
-		 * @param object obj
+		 * @param object 请求参数
 		 * @return 请求内容
 		 */
 		String getBizContent(Object object);
-
 	}
 
 }

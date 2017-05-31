@@ -14,33 +14,30 @@ public interface HttpClient {
 
 	/**
 	 * 执行http请求(urlencoded)
-	 * @param url 请求的url
 	 * @param charset 数据编码集
 	 * @param object 请求的参数
 	 * @return 执行结果
 	 * @throws IOException 执行错误
 	 */
-	String urlencoded(String url, Charset charset, Object object) throws IOException;
+	String urlencoded(Charset charset, Object object) throws IOException;
 
 	/**
 	 * 执行http请求(urlencoded)
-	 * @param url 请求的url
 	 * @param charset 数据编码集
 	 * @param paramMap 请求的参数
 	 * @return 执行结果
 	 * @throws IOException 执行错误
 	 */
-	String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException;
+	String urlencoded(Charset charset, Map<String, Object> paramMap) throws IOException;
 
 	/**
 	 * 执行http请求(urlencoded)
-	 * @param url 请求的url
 	 * @param charset 数据编码集
 	 * @param content 请求的内容
 	 * @return 执行结果
 	 * @throws IOException 执行错误
 	 */
-	String json(String url, Charset charset, String content) throws IOException;
+	String json(Charset charset, String content) throws IOException;
 
 	// HTTP header
 	class Header {

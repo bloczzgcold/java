@@ -37,19 +37,26 @@ public class HttpURLClient extends AbstractHttpCleint {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpURLClient.class);
 
-	public HttpURLClient(DateFormat dateFormat) {
+	private String[] urls;
+
+	public HttpURLClient(String[] urls) {
+		super();
+		this.urls = urls;
+	}
+
+	public HttpURLClient(String[] urls, DateFormat dateFormat) {
 		super(dateFormat);
+		this.urls = urls;
 	}
 
 	@Override
-	protected String execute(String urlStr, String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException {
-		Validate.notBlank(urlStr, "urlStr is blank.");
+	protected String execute(String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException {
 		Validate.notNull(charset, "charset is null.");
 		Validate.notNull(method, "method is null.");
 
 		logger.debug("发送数据={}", content);
 
-		byte[] result = this.execute(urlStr, content.getBytes(), method.name(), addRequestHeaders);
+		byte[] result = this.execute(content.getBytes(), method.name(), addRequestHeaders);
 
 		String res = new String(result, charset);
 
@@ -67,13 +74,81 @@ public class HttpURLClient extends AbstractHttpCleint {
 	 * @return 执行结果
 	 * @throws IOException 处理异常
 	 */
-	private byte[] execute(String urlStr, byte[] content, String method, List<Header> addRequestHeaders) throws IOException {
+	private byte[] execute(byte[] content, String method, List<Header> addRequestHeaders) throws IOException {
 
-		logger.info("请求的URL={}", urlStr);
+		List<String> urls = this.getUrls();
+
+		for (String url : urls) {
+			HttpURLConnection conn = this.getConnection(url);
+
+			// 无法获取连接
+			if (conn == null) {
+				this.urlReset(url);
+				continue;
+			}
+
+			// 执行
+			try {
+				return this.execute(conn, content, method, addRequestHeaders);
+			} catch (NotFoundException e) {
+				this.urlReset(url);
+			}
+			// end
+		}
+		// 无法连接
+		throw new IOException("404");
+	}
+
+	/**
+	 * 获取URL集合
+	 * @return URL集合
+	 */
+	private List<String> getUrls() {
+		List<String> list = new ArrayList<String>();
+		for (int i = 0, len = urls.length; i < len; i++) {
+			list.add(urls[i]);
+		}
+		return list;
+	}
+
+	/**
+	 * 重设URL.当前URL无法连接,排序到最后
+	 * @param url 无法连接的URL
+	 */
+	private void urlReset(String url) {
+
+		// copy
+		String[] bakUrls = new String[urls.length];
+		for (int i = 0, len = urls.length; i < len; i++) {
+			bakUrls[i] = urls[i];
+		}
+
+		// 重新排序
+		String[] array = new String[bakUrls.length];
+		boolean found = false;
+		for (int i = 0, len = bakUrls.length, j = 0; i < len; i++) {
+			// 找到
+			if (!found && url.equals(bakUrls[i])) {
+				found = true;
+				continue;
+			}
+			array[j] = bakUrls[i];
+			j++;
+		}
+		array[array.length - 1] = url;
+
+		// reset
+		this.urls = array;
+	}
+
+	/**
+	 * 获取HTTP连接
+	 * @param urlStr URL地址
+	 * @return HTTP连接
+	 */
+	private HttpURLConnection getConnection(String urlStr) {
 
 		HttpURLConnection conn = null;
-		OutputStream os = null;
-		InputStream is = null;
 
 		try {
 
@@ -81,6 +156,33 @@ public class HttpURLClient extends AbstractHttpCleint {
 
 			URL url = new URL(urlStr);
 			conn = (HttpURLConnection) url.openConnection();
+			if (conn == null) {
+				logger.debug("can not connect to {}", urlStr);
+				return null;
+			}
+
+			return conn;
+		} catch (Exception e) {
+			logger.warn("can not connect to {}", urlStr, e);
+		}
+		return null;
+	}
+
+	/**
+	 * 执行
+	 * @param urlStr 请求URL
+	 * @param content 请求内容
+	 * @param method 请求方法
+	 * @param addRequestHeaders 增加的请求header信息
+	 * @return 执行结果
+	 * @throws IOException 处理异常
+	 */
+	private byte[] execute(HttpURLConnection conn, byte[] content, String method, List<Header> addRequestHeaders) throws IOException {
+
+		OutputStream os = null;
+		InputStream is = null;
+
+		try {
 
 			// method
 			conn.setRequestMethod(method);
@@ -118,6 +220,7 @@ public class HttpURLClient extends AbstractHttpCleint {
 				}
 				resHeaders.add(new Header(headerName, values.toArray(new String[] {})));
 			}
+			HttpCurrent.setResHeaders(resHeaders); // add to current
 
 			// get response
 			if (conn.getResponseCode() == 200) {
@@ -126,7 +229,7 @@ public class HttpURLClient extends AbstractHttpCleint {
 				return IOUtils.toByteArray(is);
 			} else if (conn.getResponseCode() == 404) {
 				// 未找到
-				throw new IOException("404");
+				throw new NotFoundException();
 			} else if (conn.getResponseCode() == 500) {
 				// 失败
 				is = conn.getErrorStream();
@@ -135,9 +238,6 @@ public class HttpURLClient extends AbstractHttpCleint {
 				// 其他错误
 				throw new IOException(conn.getResponseCode() + "");
 			}
-
-		} catch (Exception e) {
-			throw new IOException(e);
 		} finally {
 			if (is != null) {
 				try {
@@ -153,10 +253,14 @@ public class HttpURLClient extends AbstractHttpCleint {
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				conn.disconnect();
-			}
 		}
+	}
+
+	// 404
+	private class NotFoundException extends RuntimeException {
+
+		private static final long serialVersionUID = 8351438051204079988L;
+
 	}
 
 	/**

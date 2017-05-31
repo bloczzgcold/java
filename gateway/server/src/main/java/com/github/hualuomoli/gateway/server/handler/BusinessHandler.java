@@ -86,16 +86,18 @@ public interface BusinessHandler {
 		 * @param res HTTP响应
 		 * @param partnerId 合作或按id
 		 * @param apiMethod API方法名
+		 * @param method 方法
 		 * @param handler 具体业务处理
+		 * @param params 方法参数
 		 * @throws Exception 异常
 		 */
-		void preHandle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod, Method method, Object handler,Object[] params) throws Exception;
+		void preHandle(HttpServletRequest req, HttpServletResponse res, String partnerId, String apiMethod//
+		, Method method, Object handler, Object[] params) throws Exception;
 
 		/**
 		 * 后处理
 		 * @param req HTTP请求
 		 * @param res HTTP响应
-		 * @param handler 具体业务处理
 		 * @throws Exception 异常
 		 */
 		void postHandle(HttpServletRequest req, HttpServletResponse res) throws Exception;
@@ -104,7 +106,6 @@ public interface BusinessHandler {
 		 * 业务执行完成后调用
 		 * @param req HTTP请求
 		 * @param res HTTP响应
-		 * @param handler 具体业务处理
 		 * @param t 异常信息
 		 * @throws Exception 异常
 		 */

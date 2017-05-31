@@ -33,8 +33,6 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 
 	private static final Logger logger = LoggerFactory.getLogger(RSAGatewayClient.class);
 
-	/** 服务端URL */
-	private String serverURL;
 	/** 合作伙伴ID */
 	private String partnerId;
 	/** 公钥 */
@@ -50,10 +48,9 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 	/** 签名 */
 	private RSA rsa;
 
-	public RSAGatewayClient(String serverURL, String partnerId, String publicKey, String privateKey, Charset charset //
-	, JSONParser jsonParser, GatewayClient.ObejctParser obejctParser, HttpClient httpClient, RSA rsa) {
-		super(jsonParser, obejctParser);
-		this.serverURL = serverURL;
+	public RSAGatewayClient(String partnerId, String publicKey, String privateKey, Charset charset //
+	, JSONParser jsonParser, GatewayClient.ObjectParser objectParser, HttpClient httpClient, RSA rsa) {
+		super(jsonParser, objectParser);
 		this.partnerId = partnerId;
 		this.publicKey = publicKey;
 		this.privateKey = privateKey;
@@ -99,7 +96,7 @@ public class RSAGatewayClient extends AbstractGatewayClient {
 
 			// 2.2、执行http调用
 			logger.debug("向服务器发送的数据request={}", req);
-			String result = httpClient.urlencoded(this.serverURL, this.charset, paramMap);
+			String result = httpClient.urlencoded(this.charset, paramMap);
 			logger.debug("服务器返回的数据response={}", result);
 
 			// 3、响应

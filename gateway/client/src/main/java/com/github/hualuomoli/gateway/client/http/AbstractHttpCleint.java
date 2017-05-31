@@ -1,9 +1,12 @@
 package com.github.hualuomoli.gateway.client.http;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +24,13 @@ import com.github.hualuomoli.gateway.client.util.Utils.DateFormat;
 public abstract class AbstractHttpCleint implements HttpClient {
 
 	private final Logger logger = LoggerFactory.getLogger(AbstractHttpCleint.class);
+
 	private DateFormat dateFormat;
+
+	public AbstractHttpCleint() {
+		super();
+		dateFormat = new DefaultDateFormat();
+	}
 
 	public AbstractHttpCleint(DateFormat dateFormat) {
 		super();
@@ -29,7 +38,7 @@ public abstract class AbstractHttpCleint implements HttpClient {
 	}
 
 	@Override
-	public String urlencoded(String url, Charset charset, Object object) throws IOException {
+	public String urlencoded(Charset charset, Object object) throws IOException {
 
 		// 发送的内容
 		String content = null;
@@ -57,11 +66,11 @@ public abstract class AbstractHttpCleint implements HttpClient {
 		addRequestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
 
 		// 执行
-		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
+		return this.execute(content, charset, Method.POST, addRequestHeaders);
 	}
 
 	@Override
-	public String urlencoded(String url, Charset charset, Map<String, Object> paramMap) throws IOException {
+	public String urlencoded(Charset charset, Map<String, Object> paramMap) throws IOException {
 		// 发送的内容
 		String content = null;
 		List<Utils.UrlencodedParam> paramList = Utils.getUrlencodedParams(paramMap, dateFormat);
@@ -88,11 +97,11 @@ public abstract class AbstractHttpCleint implements HttpClient {
 		addRequestHeaders.add(new Header("Content-Type", "application/x-www-form-urlencoded"));
 
 		// 执行
-		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
+		return this.execute(content, charset, Method.POST, addRequestHeaders);
 	}
 
 	@Override
-	public String json(String url, Charset charset, String content) throws IOException {
+	public String json(Charset charset, String content) throws IOException {
 
 		logger.debug("[json] content={}", content);
 
@@ -100,12 +109,11 @@ public abstract class AbstractHttpCleint implements HttpClient {
 		List<Header> addRequestHeaders = new ArrayList<Header>();
 		addRequestHeaders.add(new Header("Content-Type", "application/json"));
 
-		return this.execute(url, content, charset, Method.POST, addRequestHeaders);
+		return this.execute(content, charset, Method.POST, addRequestHeaders);
 	}
 
 	/**
 	 * 执行
-	 * @param urlStr 请求URL
 	 * @param content 请求内容
 	 * @param charset 编码集
 	 * @param method 请求方法
@@ -113,7 +121,21 @@ public abstract class AbstractHttpCleint implements HttpClient {
 	 * @return 执行结果
 	 * @throws IOException 处理异常
 	 */
-	protected abstract String execute(String urlStr, String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException;
+	protected abstract String execute(String content, Charset charset, Method method, List<Header> addRequestHeaders) throws IOException;
+
+	// 默认日期转换
+	private static class DefaultDateFormat implements Utils.DateFormat {
+
+		private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		@Override
+		public String format(Date date, Field field) {
+			if (date == null) {
+				return null;
+			}
+			return sdf.format(date);
+		}
+	};
 
 	// 调用方式
 	public static enum Method {

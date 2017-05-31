@@ -5,7 +5,7 @@ public class Validate {
 	/**
 	 * 是否为空
 	 * @param value 值
-	 * @return 提示信息
+	 * @param message 提示信息
 	 */
 	public static void notNull(Object value, String message) {
 		if (value == null) {
@@ -16,7 +16,7 @@ public class Validate {
 	/**
 	 * 是否为空
 	 * @param value 值
-	 * @return 提示信息
+	 * @param message 提示信息
 	 */
 	public static void notBlank(String value, String message) {
 		if (value == null) {

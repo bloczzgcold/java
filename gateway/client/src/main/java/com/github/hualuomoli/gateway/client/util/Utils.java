@@ -21,7 +21,6 @@ public class Utils {
 	/**
 	 * 获取类的所有属性及所有父属性
 	 * @param clazz 类
-	 * @param names 已经存在的属性
 	 * @return 类的属性及所有父属性
 	 */
 	public static List<Field> getFields(Class<?> clazz) {
@@ -62,7 +61,7 @@ public class Utils {
 	/**
 	 * 获取urlencoded放肆请求的参数
 	 * @param object 参数
-	 * @param datePattern 日期格式化方式
+	 * @param dateFormat 日期格式化方式
 	 * @return 参数信息
 	 */
 	public static List<UrlencodedParam> getUrlencodedParams(Object object, DateFormat dateFormat) {
@@ -86,8 +85,8 @@ public class Utils {
 
 	/**
 	 * 获取urlencoded放肆请求的参数
-	 * @param object 参数
-	 * @param datePattern 日期格式化方式
+	 * @param map 参数
+	 * @param dateFormat 日期格式化方式
 	 * @return 参数信息
 	 */
 	public static List<UrlencodedParam> getUrlencodedParams(Map<String, Object> map, DateFormat dateFormat) {
@@ -109,7 +108,7 @@ public class Utils {
 	 * 获取urlencoded放肆请求的参数
 	 * @param name 名称
 	 * @param value 值
-	 * @param field 属性
+	 * @param f 属性
 	 * @param dateFormat 日期格式化
 	 * @return 参数列表
 	 */
