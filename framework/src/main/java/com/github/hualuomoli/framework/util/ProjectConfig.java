@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.hualuomoli.tool.util.EnvUtils;
 import com.github.hualuomoli.tool.util.PropertyUtils;
 import com.google.common.collect.Lists;
 
@@ -16,98 +17,81 @@ import com.google.common.collect.Lists;
  */
 public class ProjectConfig {
 
-	private static boolean init = false;
-	private static Properties prop = null;
+    private static Properties prop = new Properties();
 
-	/**
-	 * 初始化,需要初始化后才可使用
-	 * @param resources 资源
-	 */
-	public synchronized static void init(String... resources) {
-		init(false, resources);
-	}
+    /**
+     * 初始化,需要初始化后才可使用
+     * @param resources 资源
+     */
+    public synchronized static void init(String... resources) {
+        Properties p = PropertyUtils.loadCover(EnvUtils.parse(resources));
 
-	/**
-	 * 初始化,需要初始化后才可使用
-	 * @param resources 资源
-	 */
-	public synchronized static void init(boolean force, String... resources) {
-		if (init && !force) {
-			throw new RuntimeException("there is already init.");
-		}
+        // 打印输出
+        Set<Object> set = p.keySet();
+        List<String> lists = Lists.newArrayList();
+        for (Object obj : set) {
+            String key = String.valueOf(obj);
+            lists.add(key);
+        }
 
-		init = true;
-		prop = PropertyUtils.loadCover(resources);
+        // 排序
+        Collections.sort(lists, new Comparator<String>() {
 
-		// 打印输出
-		Set<Object> set = prop.keySet();
-		List<String> lists = Lists.newArrayList();
-		for (Object obj : set) {
-			String key = String.valueOf(obj);
-			lists.add(key);
-		}
+            @Override
+            public int compare(String o1, String o2) {
+                int i1 = StringUtils.split(o1, ".").length;
+                int i2 = StringUtils.split(o2, ".").length;
+                int c = i1 - i2;
+                return c == 0 ? o1.compareTo(o2) : c;
+            }
+        });
+        for (String key : lists) {
+            String value = p.getProperty(key);
+            System.out.println(key + " = " + value);
+        }
 
-		// 排序
-		Collections.sort(lists, new Comparator<String>() {
+        ProjectConfig.prop = p;
+    }
 
-			@Override
-			public int compare(String o1, String o2) {
-				int i1 = StringUtils.split(o1, ".").length;
-				int i2 = StringUtils.split(o2, ".").length;
-				int c = i1 - i2;
-				return c == 0 ? o1.compareTo(o2) : c;
-			}
-		});
-		for (String key : lists) {
-			String value = prop.getProperty(key);
-			System.out.println(key + " = " + value);
-		}
+    /**
+     * 获取字符串
+     * @param key Key
+     * @return 值
+     */
+    public static final String getString(String key) {
+        return prop.getProperty(key);
+    }
 
-	}
+    /**
+     * 获取字符串
+     * @param key Key
+     * @param defaultValue 默认值
+     * @return 值
+     */
+    public static final String getString(String key, String defaultValue) {
+        String value = getString(key);
+        return value == null ? defaultValue : value;
+    }
 
-	/**
-	 * 获取字符串
-	 * @param key Key
-	 * @return 值
-	 */
-	public static final String getString(String key) {
-		if (prop == null) {
-			throw new RuntimeException("please use PropertiesUtils.init(String...) to instance.");
-		}
+    /**
+     * 获取整数
+     * @param key Key
+     * @return 值
+     */
+    public static final Integer getInteger(String key) {
+        String value = getString(key);
+        return value == null ? null : Integer.parseInt(value);
+    }
 
-		return prop.getProperty(key);
-	}
-
-	/**
-	 * 获取字符串
-	 * @param key Key
-	 * @param defaultValue 默认值
-	 * @return 值
-	 */
-	public static final String getString(String key, String defaultValue) {
-		String value = getString(key);
-		return value == null ? defaultValue : value;
-	}
-
-	/**
-	 * 获取整数
-	 * @param key Key
-	 * @return 值
-	 */
-	public static final Integer getInteger(String key) {
-		String value = getString(key);
-		return value == null ? null : Integer.parseInt(value);
-	}
-
-	/**
-	 * 获取整数
-	 * @param key Key
-	 * @param defaultValue 默认值
-	 * @return 值
-	 */
-	public static final Integer getInteger(String key, Integer defaultValue) {
-		Integer value = getInteger(key);
-		return value == null ? defaultValue : value;
-	}
+    /**
+     * 获取整数
+     * @param key Key
+     * @param defaultValue 默认值
+     * @return 值
+     */
+    public static final Integer getInteger(String key, Integer defaultValue) {
+        Integer value = getInteger(key);
+        return value == null ? defaultValue : value;
+    }
 
 }
