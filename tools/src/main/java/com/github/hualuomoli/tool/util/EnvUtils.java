@@ -174,6 +174,8 @@ public class EnvUtils {
 
     // 运行环境
     public static enum Env {
+        /** 本地环境 */
+        LOCAL,
         /** 开发环境 */
         DEV,
         /** 测试环境 */
