@@ -69,10 +69,10 @@ public class HttpDefault extends AbstractHttpCleint implements HttpClient {
             // method
             switch (httpMethod) {
             case POST:
-                conn.setRequestMethod("post");
+                conn.setRequestMethod("POST");
                 break;
             case GET:
-                conn.setRequestMethod("get");
+                conn.setRequestMethod("GET");
                 break;
             }
 
