@@ -98,12 +98,15 @@ public class SignatureInterceptor implements Interceptor {
             }
             String methodName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
             try {
-                String value = (String) clazz.getMethod(methodName).invoke(object);
+                Object value = clazz.getMethod(methodName).invoke(object);
                 if (value == null) {
                     continue;
                 }
-                datas.add(new Data(name, value));
+                datas.add(new Data(name, value.toString()));
             } catch (Exception e) {
+                if (logger.isLoggable(Level.WARNING)) {
+                    logger.warning(e.getMessage());
+                }
             }
         }
 
