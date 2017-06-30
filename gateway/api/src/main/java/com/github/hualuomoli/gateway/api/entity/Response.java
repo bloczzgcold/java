@@ -8,8 +8,6 @@ public class Response {
     private CodeEnum code;
     /** 网关处理信息 */
     private String message;
-    /** 请求时间戳 */
-    private String timestamp;
     /** 业务处理编码 */
     private String subCode;
     /** 业务处理信息 */
@@ -33,14 +31,6 @@ public class Response {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getSubCode() {
@@ -73,11 +63,6 @@ public class Response {
 
     public void setSign(String sign) {
         this.sign = sign;
-    }
-
-    @Override
-    public String toString() {
-        return "Response [code=" + code + ", message=" + message + ", timestamp=" + timestamp + ", subCode=" + subCode + ", subMessage=" + subMessage + ", result=" + result + ", sign=" + sign + "]";
     }
 
 }

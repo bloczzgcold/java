@@ -50,9 +50,6 @@ public class SignatureInterceptor implements Interceptor {
 
     @Override
     public void postHandle(Request request, Response response) throws InvalidDataException {
-        if (!request.getTimestamp().equals(response.getTimestamp())) {
-            throw new InvalidDataException("not security network.");
-        }
         // 获取类型
         SignatureEnum signature = this.getType(request);
         // 获取处理类

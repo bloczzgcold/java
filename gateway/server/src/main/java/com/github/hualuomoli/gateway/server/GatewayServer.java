@@ -51,8 +51,6 @@ public class GatewayServer {
         Request request = this.parse(req);
 
         Response response = new Response();
-        // 设置时间戳为请求时间戳
-        response.setTimestamp(request.getTimestamp());
         try {
             // 前置拦截
             for (int i = 0, size = interceptors.size(); i < size; i++) {
