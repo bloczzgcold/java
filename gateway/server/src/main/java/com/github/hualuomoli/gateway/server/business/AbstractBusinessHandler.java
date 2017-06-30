@@ -103,6 +103,7 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
             if (logger.isLoggable(Level.WARNING)) {
                 logger.warning("there is not support type" + name);
             }
+            paramList.add(null);
 
         }
 
