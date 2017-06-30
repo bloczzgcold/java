@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
+import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
@@ -101,9 +102,8 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
 
             // end
             if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("there is not support type" + name);
+                throw new InvalidDataException("there is not support type " + name);
             }
-            paramList.add(null);
 
         }
 
@@ -176,8 +176,6 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
 
     protected abstract JSONParser jsonParser();
 
-    protected String[] packageNames() {
-        return new String[] { "com.github.hualuomoli" };
-    };
+    protected abstract String[] packageNames();
 
 }
