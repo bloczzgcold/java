@@ -10,23 +10,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>hualuomoli-gateway-client</artifactId>
+	<artifactId>hualuomoli-gateway-api</artifactId>
 	<packaging>jar</packaging>
-
-	<properties>
-
-	</properties>
-
-	<dependencies>
-
-		<!-- api -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-gateway-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
-	</dependencies>
-
 
 </project>

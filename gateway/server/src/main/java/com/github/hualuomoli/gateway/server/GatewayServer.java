@@ -1,156 +1,127 @@
 package com.github.hualuomoli.gateway.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.server.handler.AuthHandler;
-import com.github.hualuomoli.gateway.server.handler.AuthHandler.InvalidEncryptionException;
-import com.github.hualuomoli.gateway.server.handler.AuthHandler.InvalidSignatureException;
-import com.github.hualuomoli.gateway.server.handler.BusinessHandler;
-import com.github.hualuomoli.gateway.server.loader.PartnerLoader;
-import com.github.hualuomoli.gateway.server.loader.PartnerLoader.Partner;
-import com.github.hualuomoli.gateway.server.parser.JSONParser;
-import com.github.hualuomoli.gateway.server.processor.ExceptionProcessor;
+import com.github.hualuomoli.gateway.api.entity.Request;
+import com.github.hualuomoli.gateway.api.entity.Response;
+import com.github.hualuomoli.gateway.api.enums.CodeEnum;
+import com.github.hualuomoli.gateway.api.lang.BusinessException;
+import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
+import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
+import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
+import com.github.hualuomoli.gateway.api.lang.NoRouterException;
+import com.github.hualuomoli.gateway.server.business.BusinessHandler;
+import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
+import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
+import com.github.hualuomoli.gateway.server.dealer.EncryptionDealer;
+import com.github.hualuomoli.gateway.server.dealer.SignatureDealer;
+import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 
 /**
  * 网关服务器
- * @author lbq
- *
  */
 public class GatewayServer {
 
-	private Map<String, Partner> partners = new HashMap<String, Partner>();
+    private BusinessHandler businessHandler;
+    private AuthorityInterceptor authorityInterceptor;
+    private List<Interceptor> interceptors;
+    private List<BusinessInterceptor> businessInterceptors;
 
-	private PartnerLoader partnerLoader;
-	private ExceptionProcessor exceptionProcessor;
-	private BusinessHandler businessHandler;
-	private JSONParser jsonParser;
-	private List<AuthHandler> authHandlers = new ArrayList<AuthHandler>();
-	private List<BusinessHandler.HandlerInterceptor> interceptors = new ArrayList<BusinessHandler.HandlerInterceptor>();
+    public void setBusinessHandler(BusinessHandler businessHandler) {
+        this.businessHandler = businessHandler;
+    }
 
-	public GatewayServer(PartnerLoader partnerLoader//
-	, ExceptionProcessor exceptionProcessor//
-	, BusinessHandler businessHandler //
-	, JSONParser jsonParser //
-	, List<AuthHandler> authHandlers //
-	, List<BusinessHandler.HandlerInterceptor> interceptors) {
+    public void setAuthorityInterceptor(AuthorityInterceptor authorityInterceptor) {
+        this.authorityInterceptor = authorityInterceptor;
+    }
 
-		this.partnerLoader = partnerLoader;
-		this.exceptionProcessor = exceptionProcessor;
-		this.businessHandler = businessHandler;
-		this.jsonParser = jsonParser;
-		this.authHandlers = authHandlers;
-		this.interceptors = interceptors;
-	}
+    public void setInterceptors(List<Interceptor> interceptors) {
+        this.interceptors = interceptors;
+    }
 
-	/**
-	 * 调用
-	 * @param req HTTP请求
-	 * @param res HTTP响应
-	 * @throws NoPartnerException 合作伙伴未找到
-	 * @throws NotSupportAuthException 不支持的权限验证
-	 * @throws InvalidSignatureException 不合法的签名
-	 * @throws InvalidEncryptionException 不合法的加密
-	 * 
-	 */
-	public String invoke(HttpServletRequest req, HttpServletResponse res)//
-			throws NoPartnerException, NotSupportAuthException, InvalidSignatureException, InvalidEncryptionException {
+    public void setBusinessInterceptors(List<BusinessInterceptor> businessInterceptors) {
+        this.businessInterceptors = businessInterceptors;
+    }
 
-		AuthHandler.AuthResponse authRes = null;
+    public Response execute(HttpServletRequest req, HttpServletResponse res) {
+        Request request = this.parse(req);
 
-		// 合作伙伴
-		String partnerId = req.getParameter("partnerId");
-		if (partnerId == null || partnerId.trim().length() == 0) {
-			throw new IllegalArgumentException("请设置partnerId请求参数");
-		}
+        Response response = new Response();
+        // 设置时间戳为请求时间戳
+        response.setTimestamp(request.getTimestamp());
+        try {
+            // 前置拦截
+            for (int i = 0, size = interceptors.size(); i < size; i++) {
+                interceptors.get(i).preHandle(req, res, request);
+            }
 
-		Partner partner = getPartner(partnerId);
-		if (partner == null) {
-			throw new NoPartnerException(partnerId);
-		}
+            // 执行业务 
+            String result = businessHandler.execute(req, res//
+                    , request.getPartnerId(), request.getMethod(), request.getBizContent()//
+                    , authorityInterceptor, businessInterceptors);
 
-		// 权限执行者
-		AuthHandler authHandler = getAuthHandler(partner, req, res);
-		if (authHandler == null) {
-			throw new NotSupportAuthException(partner);
-		}
+            // 设置返回信息
+            response.setCode(CodeEnum.SUCCESS);
+            response.setMessage("处理成功");
+            response.setResult(result);
 
-		// 执行业务
-		authRes = authHandler.execute(req, res, partner, jsonParser, businessHandler, interceptors, exceptionProcessor);
-		return jsonParser.toJsonString(authRes);
-	}
+        } catch (InvalidDataException e) {
+            response.setCode(CodeEnum.INVALID_DATA);
+            response.setMessage(e.getMessage());
+        } catch (NoPartnerException e) {
+            response.setCode(CodeEnum.NO_PARTNER);
+            response.setMessage(e.getMessage());
+        } catch (NoAuthorityException e) {
+            response.setCode(CodeEnum.NO_AUTHORITY);
+            response.setMessage(e.getMessage());
+        } catch (NoRouterException e) {
+            response.setCode(CodeEnum.NO_ROUTER);
+            response.setMessage(e.getMessage());
+        } catch (BusinessException e) {
+            response.setCode(CodeEnum.BUSINESS);
+            response.setMessage("业务处理错误");
+            response.setSubCode(e.getSubCode());
+            response.setSubMessage(e.getSubMessage());
+        } catch (Exception e) {
+            response.setCode(CodeEnum.ERROR);
+            response.setMessage(e.getMessage());
+        } finally {
+            // 后置拦截
+            for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
+                interceptors.get(i).postHandle(req, res, request, response);
+            }
+        }
 
-	/**
-	 * 获取权限执行者
-	 * @param partner 合作伙伴
-	 * @param req HTTP请求
-	 * @param res HTTP响应
-	 * @return 权限执行者,如果没有找到返回null
-	 */
-	private AuthHandler getAuthHandler(Partner partner, HttpServletRequest req, HttpServletResponse res) {
-		for (AuthHandler authHandler : authHandlers) {
-			if (authHandler.support(req, res, partner)) {
-				return authHandler;
-			}
-		}
-		return null;
-	}
+        return response;
+    }
 
-	/**
-	 * 获取合作伙伴信息 
-	 * @param partnerId 合作伙伴ID
-	 * @return 合作伙伴信息,如果合作伙伴不存在,返回null
-	 */
-	private Partner getPartner(String partnerId) {
-		Partner partner = partners.get(partnerId);
+    public void setEncryptionDealers(List<EncryptionDealer> encryptionDealers) {
+        DealerUtils.setEncryptionDealers(encryptionDealers);
+    }
 
-		if (partner != null) {
-			return partner;
-		}
+    public void setSignatureDealers(List<SignatureDealer> signatureDealers) {
+        DealerUtils.setSignatureDealers(signatureDealers);
+    }
 
-		partner = partnerLoader.load(partnerId);
-		if (partner != null) {
-			partners.put(partnerId, partner);
-		}
-
-		return partner;
-	}
-
-	// 合作伙伴未找到
-	@SuppressWarnings("serial")
-	public static class NoPartnerException extends RuntimeException {
-
-		private String partnerId;
-
-		public NoPartnerException(String partnerId) {
-			super();
-			this.partnerId = partnerId;
-		}
-
-		public String getPartnerId() {
-			return partnerId;
-		}
-	}
-
-	// 不支持的权限认证
-	@SuppressWarnings("serial")
-	public static class NotSupportAuthException extends RuntimeException {
-
-		private Partner partner;
-
-		public NotSupportAuthException(Partner partner) {
-			super();
-			this.partner = partner;
-		}
-
-		public Partner getPartner() {
-			return partner;
-		}
-	}
+    /**
+     * 解析HTTP请求
+     * @param req HTTP请求
+     * @return 请求信息
+     */
+    private Request parse(HttpServletRequest req) {
+        Request request = new Request();
+        request.setVersion(req.getParameter("version"));
+        request.setPartnerId(req.getParameter("partnerId"));
+        request.setMethod(req.getParameter("method"));
+        request.setTimestamp(req.getParameter("timestamp"));
+        request.setBizContent(req.getParameter("bizContent"));
+        request.setSignType(req.getParameter("signType"));
+        request.setSign(req.getParameter("sign"));
+        request.setEncryptType(req.getParameter("encryptType"));
+        return request;
+    }
 
 }
