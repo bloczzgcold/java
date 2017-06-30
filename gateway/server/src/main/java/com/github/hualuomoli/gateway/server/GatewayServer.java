@@ -1,5 +1,6 @@
 package com.github.hualuomoli.gateway.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +28,8 @@ public class GatewayServer {
 
     private BusinessHandler businessHandler;
     private AuthorityInterceptor authorityInterceptor;
-    private List<Interceptor> interceptors;
-    private List<BusinessInterceptor> businessInterceptors;
+    private List<Interceptor> interceptors = new ArrayList<Interceptor>();
+    private List<BusinessInterceptor> businessInterceptors = new ArrayList<BusinessInterceptor>();
 
     public void setBusinessHandler(BusinessHandler businessHandler) {
         this.businessHandler = businessHandler;
