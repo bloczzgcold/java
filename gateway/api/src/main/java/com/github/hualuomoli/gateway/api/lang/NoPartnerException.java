@@ -5,27 +5,27 @@ package com.github.hualuomoli.gateway.api.lang;
  */
 public class NoPartnerException extends RuntimeException {
 
-    private static final long serialVersionUID = 7115566411057573557L;
+  private static final long serialVersionUID = 7115566411057573557L;
 
-    private String partnerId;
+  private String partnerId;
 
-    public NoPartnerException(String partnerId) {
-        super();
-        this.partnerId = partnerId;
-    }
+  public NoPartnerException(String partnerId) {
+    super();
+    this.partnerId = partnerId;
+  }
 
-    public NoPartnerException(String partnerId, Throwable e) {
-        super(e);
-        this.partnerId = partnerId;
-    }
+  public NoPartnerException(String partnerId, Throwable e) {
+    super(e);
+    this.partnerId = partnerId;
+  }
 
-    public String getPartnerId() {
-        return partnerId;
-    }
+  public String getPartnerId() {
+    return partnerId;
+  }
 
-    @Override
-    public String getMessage() {
-        return "合作伙伴" + partnerId + "未注册";
-    }
+  @Override
+  public String getMessage() {
+    return "合作伙伴" + partnerId + "未注册";
+  }
 
 }

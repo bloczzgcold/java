@@ -9,19 +9,19 @@ import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
  */
 public interface Interceptor {
 
-    /**
-     * 执行业务前置处理
-     * @param request 网关请求
-     * @throws InvalidDataException 不合法的数据
-     */
-    void preHandle(Request request);
+  /**
+   * 执行业务前置处理
+   * @param request 网关请求
+   * @throws InvalidDataException 不合法的数据
+   */
+  void preHandle(Request request);
 
-    /**
-     * 执行业务后置处理
-     * @param request 网关请求
-     * @param response 网关响应
-     * @throws InvalidDataException 不合法的数据
-     */
-    void postHandle(Request request, Response response) throws InvalidDataException;
+  /**
+   * 执行业务后置处理
+   * @param request 网关请求
+   * @param response 网关响应
+   * @throws InvalidDataException 不合法的数据
+   */
+  void postHandle(Request request, Response response) throws InvalidDataException;
 
 }

@@ -7,22 +7,22 @@ import com.github.hualuomoli.gateway.api.enums.CodeEnum;
  */
 public class ClientException extends RuntimeException {
 
-    private static final long serialVersionUID = -6529281280421689975L;
+  private static final long serialVersionUID = -6529281280421689975L;
 
-    private CodeEnum code;
+  private CodeEnum code;
 
-    public ClientException(CodeEnum code, String message) {
-        super(message);
-        this.code = code;
-    }
+  public ClientException(CodeEnum code, String message) {
+    super(message);
+    this.code = code;
+  }
 
-    public ClientException(CodeEnum code, Exception e) {
-        super(e);
-        this.code = code;
-    }
+  public ClientException(CodeEnum code, Exception e) {
+    super(e);
+    this.code = code;
+  }
 
-    public CodeEnum getCode() {
-        return code;
-    }
+  public CodeEnum getCode() {
+    return code;
+  }
 
 }

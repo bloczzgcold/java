@@ -10,12 +10,12 @@ import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
  */
 public interface AuthorityInterceptor {
 
-    /**
-     * 验证权限
-     * @param req HTTP请求
-     * @param res HTTP响应
-     * @throws NoAuthorityException 没有访问权限
-     */
-    void handle(HttpServletRequest req, HttpServletResponse res) throws NoAuthorityException;
+  /**
+   * 验证权限
+   * @param req HTTP请求
+   * @param res HTTP响应
+   * @throws NoAuthorityException 没有访问权限
+   */
+  void handle(HttpServletRequest req, HttpServletResponse res) throws NoAuthorityException;
 
 }

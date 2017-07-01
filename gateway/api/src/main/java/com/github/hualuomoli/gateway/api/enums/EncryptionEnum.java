@@ -5,7 +5,7 @@ package com.github.hualuomoli.gateway.api.enums;
  */
 public enum EncryptionEnum {
 
-    /** AES加密 */
-    AES;
+  /** AES加密 */
+  AES;
 
 }

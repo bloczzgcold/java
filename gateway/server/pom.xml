@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.github.hualuomoli</groupId>
-		<artifactId>hualuomoli-gateway</artifactId>
-		<version>1.0.5.2</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+  <parent>
+    <groupId>com.github.hualuomoli</groupId>
+    <artifactId>hualuomoli-gateway</artifactId>
+    <version>1.0.5.2</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-	<artifactId>hualuomoli-gateway-server</artifactId>
-	<packaging>jar</packaging>
+  <artifactId>hualuomoli-gateway-server</artifactId>
+  <packaging>jar</packaging>
 
-	<dependencies>
+  <dependencies>
 
-		<!-- api -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-gateway-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+    <!-- api -->
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-gateway-api</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
-		<!-- servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>
+    <!-- servlet -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 
 </project>

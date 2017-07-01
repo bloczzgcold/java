@@ -5,9 +5,9 @@ package com.github.hualuomoli.gateway.api.enums;
  */
 public enum SignatureEnum {
 
-    /** RSA签名 */
-    RSA,
-    /** MD5签名 */
-    MD5;
+  /** RSA签名 */
+  RSA,
+  /** MD5签名 */
+  MD5;
 
 }
