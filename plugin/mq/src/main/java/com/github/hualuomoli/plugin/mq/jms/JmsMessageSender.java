@@ -15,52 +15,50 @@ import com.github.hualuomoli.plugin.mq.lang.MessageQueueException;
 
 /**
  * 使用Spring的JMS发送消息队列
- * @author lbq
- *
  */
 public class JmsMessageSender implements MessageSender {
 
-	private static final Logger logger = LoggerFactory.getLogger(JmsMessageSender.class);
+  private static final Logger logger = LoggerFactory.getLogger(JmsMessageSender.class);
 
-	private JmsTemplate jmsTemplate;
+  private JmsTemplate jmsTemplate;
 
-	public void setJmsTemplate(JmsTemplate jmsTemplate) {
-		this.jmsTemplate = jmsTemplate;
-	}
+  public void setJmsTemplate(JmsTemplate jmsTemplate) {
+    this.jmsTemplate = jmsTemplate;
+  }
 
-	@Override
-	public void send(String destinationName, String data) throws MessageQueueException {
-		this.send(destinationName, data, Type.QUEUE);
-	}
+  @Override
+  public void send(String destinationName, String data) throws MessageQueueException {
+    this.send(destinationName, data, Type.QUEUE);
+  }
 
-	@Override
-	public void send(String destinationName, final String data, Type type) throws MessageQueueException {
+  @Override
+  public void send(String destinationName, final String data, Type type) throws MessageQueueException {
 
-		switch (type) {
-		case QUEUE:
-			jmsTemplate.setPubSubDomain(false);
-			break;
-		case TOPIC:
-			jmsTemplate.setPubSubDomain(true);
-			break;
-		default:
-			break;
-		}
+    switch (type) {
+    case QUEUE:
+      jmsTemplate.setPubSubDomain(false);
+      break;
+    case TOPIC:
+      jmsTemplate.setPubSubDomain(true);
+      break;
+    default:
+      break;
+    }
 
-		logger.debug("发送数据到MQ,type={},destinationName={},data={}", type, destinationName, data);
+    logger.debug("发送数据到MQ,type={},destinationName={},data={}", type, destinationName, data);
 
-		try {
-			jmsTemplate.send(destinationName, new MessageCreator() {
+    try {
+      jmsTemplate.send(destinationName, new MessageCreator() {
 
-				@Override
-				public Message createMessage(Session session) throws JMSException {
-					return session.createTextMessage(data);
-				}
-			});
-		} catch (JmsException e) {
-			throw new MessageQueueException(e);
-		}
+        @Override
+        public Message createMessage(Session session) throws JMSException {
+          return session.createTextMessage(data);
+        }
+      });
+    } catch (JmsException e) {
+      throw new MessageQueueException(e);
+    }
 
-	}
+  }
 
 }

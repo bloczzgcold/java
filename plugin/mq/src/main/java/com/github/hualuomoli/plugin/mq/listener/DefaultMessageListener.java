@@ -12,36 +12,34 @@ import com.github.hualuomoli.plugin.mq.lang.MessageQueueException;
 
 /**
  * 默认消息监听器
- * @author lbq
- *
  */
 public class DefaultMessageListener extends DefaultMessageListenerContainer {
 
-	private MessageDealer messageDealer;
+  private MessageDealer messageDealer;
 
-	public void setMessageDealer(MessageDealer messageDealer) {
-		this.messageDealer = messageDealer;
-	}
+  public void setMessageDealer(MessageDealer messageDealer) {
+    this.messageDealer = messageDealer;
+  }
 
-	public DefaultMessageListener() {
-		this.init();
-	}
+  public DefaultMessageListener() {
+    this.init();
+  }
 
-	// 初始化
-	private void init() {
+  // 初始化
+  private void init() {
 
-		this.setMessageListener(new SessionAwareMessageListener<TextMessage>() {
+    this.setMessageListener(new SessionAwareMessageListener<TextMessage>() {
 
-			@Override
-			public void onMessage(TextMessage message, Session session) throws JMSException {
-				try {
-					messageDealer.onMessage(message.getText());
-				} catch (MessageQueueException e) {
-					throw new JMSException(e.getMessage());
-				}
-			}
-		});
+      @Override
+      public void onMessage(TextMessage message, Session session) throws JMSException {
+        try {
+          messageDealer.onMessage(message.getText());
+        } catch (MessageQueueException e) {
+          throw new JMSException(e.getMessage());
+        }
+      }
+    });
 
-	}
+  }
 
 }

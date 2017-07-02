@@ -5,18 +5,17 @@ import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * 保存和获取SqlSource
- *
  */
 public class BoundSqlSqlSource implements SqlSource {
 
-	BoundSql boundSql;
+  BoundSql boundSql;
 
-	public BoundSqlSqlSource(BoundSql boundSql) {
-		this.boundSql = boundSql;
-	}
+  public BoundSqlSqlSource(BoundSql boundSql) {
+    this.boundSql = boundSql;
+  }
 
-	public BoundSql getBoundSql(Object parameterObject) {
-		return boundSql;
-	}
+  public BoundSql getBoundSql(Object parameterObject) {
+    return boundSql;
+  }
 
 }

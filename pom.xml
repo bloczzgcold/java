@@ -1,140 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.hualuomoli</groupId>
-	<artifactId>hualuomoli</artifactId>
-	<version>1.0.5.2</version>
-	<packaging>pom</packaging>
+  <groupId>com.github.hualuomoli</groupId>
+  <artifactId>hualuomoli</artifactId>
+  <version>1.0.5.2</version>
+  <packaging>pom</packaging>
 
-	<modules>
-		<module>./logger</module>
-		<module>./tools</module>
-		<module>./validator</module>
-		<module>./framework</module>
-		<module>./gateway</module>
-		<module>./plugin</module>
-	</modules>
+  <modules>
+    <module>./logger</module>
+    <module>./tools</module>
+    <module>./validator</module>
+    <module>./framework</module>
+    <module>./gateway</module>
+    <module>./plugin</module>
+  </modules>
 
-	<properties>
+  <properties>
 
-		<!-- 编译环境 -->
-		<jdk.version>1.7</jdk.version>
-		<project.encoding>UTF-8</project.encoding>
-		
-		<slf4j.version>1.7.7</slf4j.version>
-		<spring.version>4.0.8.RELEASE</spring.version>
+    <!-- 编译环境 -->
+    <jdk.version>1.7</jdk.version>
+    <project.encoding>UTF-8</project.encoding>
 
-	</properties>
+    <slf4j.version>1.7.7</slf4j.version>
+    <spring.version>4.0.8.RELEASE</spring.version>
 
-	<dependencies>
+  </properties>
 
-	</dependencies>
+  <dependencies>
 
-	<build>
-		<plugins>
-			<!-- 编译 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-					<encoding>utf8</encoding>
-					<showWarnings>true</showWarnings>
-				</configuration>
-			</plugin>
-			<!-- 源码 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<includePom>true</includePom>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- 文档 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.2</version>
-				<configuration>
-					<aggregate>true</aggregate>
-					<charset>UTF-8</charset>
-					<encoding>UTF-8</encoding>
-					<docencoding>UTF-8</docencoding>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- 单元测试 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<!-- 跳过测试 -->
-					<skip>true</skip>
-					<!-- 测试失败忽略 -->
-					<testFailureIgnore>true</testFailureIgnore>
-				</configuration>
-			</plugin>
+  </dependencies>
 
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <!-- 编译 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+          <encoding>utf8</encoding>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+      <!-- 源码 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <includePom>true</includePom>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- 文档 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.2</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <charset>UTF-8</charset>
+          <encoding>UTF-8</encoding>
+          <docencoding>UTF-8</docencoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- 单元测试 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- 跳过测试 -->
+          <skip>true</skip>
+          <!-- 测试失败忽略 -->
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </plugin>
 
-	<!-- 资源库 -->
-	<repositories>
+    </plugins>
+  </build>
 
-		<repository>
-			<id>nexus</id>
-			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
-		</repository>
+  <!-- 资源库 -->
+  <repositories>
 
-	</repositories>
+    <repository>
+      <id>nexus</id>
+      <name>Repository for nexus</name>
+      <url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+    </repository>
 
-	<!-- 设定插件仓库 -->
-	<pluginRepositories>
+  </repositories>
 
-		<pluginRepository>
-			<id>nexus</id>
-			<name>Repository for nexus</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
-		</pluginRepository>
+  <!-- 设定插件仓库 -->
+  <pluginRepositories>
 
-	</pluginRepositories>
+    <pluginRepository>
+      <id>nexus</id>
+      <name>Repository for nexus</name>
+      <url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+    </pluginRepository>
 
-	<!-- 发布仓库 -->
-	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<name>Repository for nexus release</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>Snapshot for nexus snapshot</name>
-			<url>http://nexus.hualuomoli.cn/nexus/content/repositories/snapshots/</url>
-			<uniqueVersion>true</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
+  </pluginRepositories>
+
+  <!-- 发布仓库 -->
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <name>Repository for nexus release</name>
+      <url>http://nexus.hualuomoli.cn/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>Snapshot for nexus snapshot</name>
+      <url>http://nexus.hualuomoli.cn/nexus/content/repositories/snapshots/</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>

@@ -9,21 +9,21 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import com.github.hualuomoli.validator.constraintvalidation.IdentityValidator;
+
 /**
  * 身份证
- * @author lbq
- *
  */
 @Target(value = { ElementType.FIELD })
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {})
+@Constraint(validatedBy = { IdentityValidator.class })
 public @interface Identity {
 
-	String message() default "{com.github.hualuomoli.validator.constraints.Identity.message}";
+  String message() default "{com.github.hualuomoli.validator.constraints.Identity.message}";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
 }

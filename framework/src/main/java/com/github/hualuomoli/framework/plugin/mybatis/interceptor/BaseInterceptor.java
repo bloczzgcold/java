@@ -15,29 +15,29 @@ import com.github.hualuomoli.framework.plugin.mybatis.dialect.Dialect;
  */
 public abstract class BaseInterceptor implements Interceptor, Serializable {
 
-	private static final long serialVersionUID = -3796861402381050088L;
+  private static final long serialVersionUID = -3796861402381050088L;
 
-	protected static final Logger logger = LoggerFactory.getLogger(BaseInterceptor.class);
+  protected static final Logger logger = LoggerFactory.getLogger(BaseInterceptor.class);
 
-	protected static final String DIALECT = "dialect";
-	protected static final String DELEGATE = "delegate";
-	protected static final String MAPPED_STATEMENT = "mappedStatement";
+  protected static final String DIALECT = "dialect";
+  protected static final String DELEGATE = "delegate";
+  protected static final String MAPPED_STATEMENT = "mappedStatement";
 
-	protected Properties properties;
-	protected Dialect dialect;
+  protected Properties properties;
+  protected Dialect dialect;
 
-	@Override
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
+  @Override
+  public void setProperties(Properties properties) {
+    this.properties = properties;
+  }
 
-	public void setDialect(Dialect dialect) {
-		this.dialect = dialect;
-	}
+  public void setDialect(Dialect dialect) {
+    this.dialect = dialect;
+  }
 
-	@Override
-	public Object plugin(Object target) {
-		return Plugin.wrap(target, this);
-	}
+  @Override
+  public Object plugin(Object target) {
+    return Plugin.wrap(target, this);
+  }
 
 }

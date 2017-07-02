@@ -14,8 +14,6 @@ import com.github.hualuomoli.validator.constraintvalidation.GreaterValidatorForN
 
 /**
  * 大于
- * @author lbq
- *
  */
 @Target(value = { ElementType.FIELD })
 @Retention(value = RetentionPolicy.RUNTIME)
@@ -23,18 +21,18 @@ import com.github.hualuomoli.validator.constraintvalidation.GreaterValidatorForN
 @Constraint(validatedBy = { GreaterValidatorForNumber.class, GreaterValidatorForCharSequence.class })
 public @interface Greater {
 
-	String message() default "{com.github.hualuomoli.validator.constraints.Greater.message}";
+  String message() default "{com.github.hualuomoli.validator.constraints.Greater.message}";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-	long value();
+  long value();
 
-	@interface List {
+  @interface List {
 
-		Greater[] value();
+    Greater[] value();
 
-	}
+  }
 
 }
