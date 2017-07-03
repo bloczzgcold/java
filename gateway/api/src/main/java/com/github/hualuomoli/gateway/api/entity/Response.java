@@ -12,6 +12,8 @@ public class Response {
   private String subCode;
   /** 业务处理信息 */
   private String subMessage;
+  /** 随机字符串 */
+  private String nonceStr;
   /** 响应结果 */
   private String result;
   /** 签名 */
@@ -49,6 +51,14 @@ public class Response {
     this.subMessage = subMessage;
   }
 
+  public String getNonceStr() {
+    return nonceStr;
+  }
+
+  public void setNonceStr(String nonceStr) {
+    this.nonceStr = nonceStr;
+  }
+
   public String getResult() {
     return result;
   }
@@ -67,8 +77,7 @@ public class Response {
 
   @Override
   public String toString() {
-    return "Response [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", result=" + result + ", sign=" + sign
-        + "]";
+    return "Response [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", nonceStr=" + nonceStr + ", result=" + result + ", sign=" + sign + "]";
   }
 
 }

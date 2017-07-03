@@ -3,6 +3,7 @@ package com.github.hualuomoli.gateway.client;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
@@ -74,6 +75,7 @@ public class GatewayClient {
     request.setPartnerId(partnerId);
     request.setMethod(method);
     request.setTimestamp(new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()));
+    request.setNonceStr(UUID.randomUUID().toString().substring(0, 12));
     request.setBizContent(bizContent);
     request.setSignType(signature.name());
     request.setEncryptType(encryption == null ? null : encryption.name());

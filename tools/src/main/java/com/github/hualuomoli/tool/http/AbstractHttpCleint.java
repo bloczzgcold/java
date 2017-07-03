@@ -18,7 +18,8 @@ import com.github.hualuomoli.tool.util.ClassUtils;
  */
 public abstract class AbstractHttpCleint implements HttpClient {
 
-  private static final ThreadLocal<List<Header>> LOCAL_HEADERS = new ThreadLocal<>();
+  // 请求header
+  private List<Header> headers = new ArrayList<Header>();
 
   private Parser parser = new DefaultParser();
 
@@ -28,27 +29,27 @@ public abstract class AbstractHttpCleint implements HttpClient {
 
   @Override
   public String get(Object object) throws IOException {
-    return this.get(parser.parse(object), this.getHeaders());
+    return this.get(parser.parse(object), headers);
   }
 
   @Override
   public String urlencoded(Object object) throws IOException {
-    return this.urlencoded(parser.parse(object), this.getHeaders());
+    return this.urlencoded(parser.parse(object), headers);
   }
 
   @Override
   public String json(String content) throws IOException {
-    return this.json(content, this.getHeaders());
+    return this.json(content, headers);
   }
 
   @Override
   public String upload(Object object, FileParam[] fileParams) throws IOException {
-    return this.upload(parser.parse(object), fileParams, this.getHeaders());
+    return this.upload(parser.parse(object), fileParams, headers);
   }
 
   @Override
   public String upload(Object object, UploadParam[] uploadParams) throws IOException {
-    return this.upload(parser.parse(object), uploadParams, this.getHeaders());
+    return this.upload(parser.parse(object), uploadParams, headers);
   }
 
   /**
@@ -106,8 +107,7 @@ public abstract class AbstractHttpCleint implements HttpClient {
 
   @Override
   public void addHeader(String name, String value) {
-    List<Header> list = this.getHeaders();
-    for (Header header : list) {
+    for (Header header : headers) {
       if (header.name.equals(value)) {
         String[] values = header.value;
         int len = values.length;
@@ -116,32 +116,18 @@ public abstract class AbstractHttpCleint implements HttpClient {
         return;
       }
     }
-    list.add(new Header(name, value));
+    headers.add(new Header(name, value));
   }
 
   @Override
   public void setHeader(String name, String value) {
-    List<Header> list = this.getHeaders();
-    for (Header header : list) {
+    for (Header header : headers) {
       if (header.name.equals(value)) {
         header.value = new String[] { value };
         return;
       }
     }
-    list.add(new Header(name, value));
-  }
-
-  /**
-   * 获取请求的header
-   * @return 请求的header
-   */
-  private List<Header> getHeaders() {
-    List<Header> list = LOCAL_HEADERS.get();
-    if (list == null) {
-      list = new ArrayList<Header>();
-      LOCAL_HEADERS.set(list);
-    }
-    return list;
+    headers.add(new Header(name, value));
   }
 
   /**
@@ -190,6 +176,12 @@ public abstract class AbstractHttpCleint implements HttpClient {
 
       Class<?> clazz = object.getClass();
 
+      // String
+      if (String.class.isAssignableFrom(clazz)) {
+        params.add(new Param(prefix, (String) object));
+        return params;
+      }
+
       // Integer
       if (Integer.class.isAssignableFrom(clazz) || int.class.isAssignableFrom(clazz)) {
         params.add(new Param(prefix, String.valueOf(object)));
@@ -204,6 +196,12 @@ public abstract class AbstractHttpCleint implements HttpClient {
 
       // Double
       if (Double.class.isAssignableFrom(clazz) || double.class.isAssignableFrom(clazz)) {
+        params.add(new Param(prefix, String.valueOf(object)));
+        return params;
+      }
+
+      // Boolean
+      if (Boolean.class.isAssignableFrom(clazz) || boolean.class.isAssignableFrom(clazz)) {
         params.add(new Param(prefix, String.valueOf(object)));
         return params;
       }

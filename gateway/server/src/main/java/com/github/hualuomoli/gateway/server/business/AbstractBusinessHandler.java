@@ -5,11 +5,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
@@ -25,7 +26,7 @@ import com.github.hualuomoli.gateway.server.business.local.Local;
  */
 public abstract class AbstractBusinessHandler implements BusinessHandler {
 
-  private static final Logger logger = Logger.getLogger(AbstractBusinessHandler.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(AbstractBusinessHandler.class);
 
   private Tool tool;
   private static boolean init = false;
@@ -36,9 +37,7 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
     }
     tool = new Tool(this.parser());
     init = true;
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("init tool.");
-    }
+    logger.info("init tool.");
   }
 
   @Override
@@ -101,9 +100,7 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
       }
 
       // end
-      if (logger.isLoggable(Level.WARNING)) {
-        throw new InvalidDataException("there is not support type " + name);
-      }
+      throw new InvalidDataException("there is not support type " + name);
 
     }
 

@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
@@ -25,7 +26,7 @@ import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
  */
 public class SignatureInterceptor implements Interceptor {
 
-  private static final Logger logger = Logger.getLogger(SignatureInterceptor.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SignatureInterceptor.class);
 
   @Override
   public void preHandle(HttpServletRequest req, HttpServletResponse res, Request request) throws NoPartnerException, InvalidDataException {
@@ -49,10 +50,7 @@ public class SignatureInterceptor implements Interceptor {
       buffer.append("&").append(data.name).append("=").append(data.value);
     }
     String origin = buffer.toString().substring(1);
-
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("请求签名原文=" + origin);
-    }
+    logger.debug("请求签名原文={}", origin);
 
     boolean success = dealer.verify(origin, request.getSign(), request.getPartnerId());
     if (!success) {
@@ -81,10 +79,7 @@ public class SignatureInterceptor implements Interceptor {
       buffer.append("&").append(data.name).append("=").append(data.value);
     }
     String origin = buffer.toString().substring(1);
-
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("响应签名原文=" + origin);
-    }
+    logger.debug("响应签名原文={}", origin);
 
     String sign = dealer.sign(origin, request.getPartnerId());
     response.setSign(sign);
@@ -108,9 +103,7 @@ public class SignatureInterceptor implements Interceptor {
         }
         datas.add(new Data(name, value.toString()));
       } catch (Exception e) {
-        if (logger.isLoggable(Level.WARNING)) {
-          logger.warning(e.getMessage());
-        }
+        logger.debug(e.getMessage(), e);
       }
     }
 

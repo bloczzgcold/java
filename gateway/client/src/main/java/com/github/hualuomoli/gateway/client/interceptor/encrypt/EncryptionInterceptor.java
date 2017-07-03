@@ -1,7 +1,7 @@
 package com.github.hualuomoli.gateway.client.interceptor.encrypt;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
@@ -16,7 +16,7 @@ import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
  */
 public class EncryptionInterceptor implements Interceptor {
 
-  private static final Logger logger = Logger.getLogger(EncryptionInterceptor.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(EncryptionInterceptor.class);
 
   @Override
   public void preHandle(Request request) {
@@ -38,13 +38,10 @@ public class EncryptionInterceptor implements Interceptor {
     // 合作伙伴ID
     String partnerId = request.getPartnerId();
 
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("请求明文=" + bizContent);
-    }
+    logger.debug("请求明文={}", bizContent);
     bizContent = dealer.encrypt(bizContent, partnerId);
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("请求密文=" + bizContent);
-    }
+    logger.debug("请求密文={}", bizContent);
+
     // 重新设置请求数据
     request.setBizContent(bizContent);
   }
@@ -68,13 +65,9 @@ public class EncryptionInterceptor implements Interceptor {
     // 合作伙伴ID
     String partnerId = request.getPartnerId();
 
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("响应密文=" + result);
-    }
+    logger.debug("响应密文={}", result);
     result = dealer.decrypt(result, partnerId);
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("响应明文=" + result);
-    }
+    logger.debug("响应明文={}", result);
 
     // 重新设置响应数据
     response.setResult(result);

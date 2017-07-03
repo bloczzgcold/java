@@ -13,6 +13,8 @@ public class Request {
   private String method;
   /** 时间戳 yyyyMMdd HH:mm:ss */
   private String timestamp;
+  /** 随机字符串 */
+  private String nonceStr;
   /** 请求业务内容 */
   private String bizContent;
   /** 签名类型 */
@@ -54,6 +56,14 @@ public class Request {
     this.timestamp = timestamp;
   }
 
+  public String getNonceStr() {
+    return nonceStr;
+  }
+
+  public void setNonceStr(String nonceStr) {
+    this.nonceStr = nonceStr;
+  }
+
   public String getBizContent() {
     return bizContent;
   }
@@ -88,8 +98,8 @@ public class Request {
 
   @Override
   public String toString() {
-    return "Request [version=" + version + ", partnerId=" + partnerId + ", method=" + method + ", timestamp=" + timestamp + ", bizContent=" + bizContent
-        + ", signType=" + signType + ", sign=" + sign + ", encryptType=" + encryptType + "]";
+    return "Request [version=" + version + ", partnerId=" + partnerId + ", method=" + method + ", timestamp=" + timestamp + ", nonceStr=" + nonceStr + ", bizContent=" + bizContent + ", signType="
+        + signType + ", sign=" + sign + ", encryptType=" + encryptType + "]";
   }
 
 }

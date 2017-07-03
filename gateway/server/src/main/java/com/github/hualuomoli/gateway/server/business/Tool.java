@@ -7,12 +7,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Tool {
 
-  private static final Logger logger = Logger.getLogger(Tool.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(Tool.class);
 
   // 功能map
   private final Map<String, List<Function>> functionMap = new HashMap<String, List<Function>>();
@@ -36,9 +37,7 @@ final class Tool {
         String version = parser.loadVersion(clazz, method);
         Function function = new Function(gatewayMethod, version, method, clazz);
 
-        if (logger.isLoggable(Level.INFO)) {
-          logger.info("load method " + gatewayMethod + ",version=" + version);
-        }
+        logger.info("load method " + gatewayMethod + ",version=" + version);
 
         List<Function> functions = functionMap.get(gatewayMethod);
         if (functions == null) {

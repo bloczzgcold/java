@@ -51,6 +51,7 @@ public class GatewayServer {
     Request request = this.parse(req);
 
     Response response = new Response();
+    response.setNonceStr(request.getNonceStr());
     try {
       // 前置拦截
       for (int i = 0, size = interceptors.size(); i < size; i++) {
@@ -116,6 +117,7 @@ public class GatewayServer {
     request.setPartnerId(req.getParameter("partnerId"));
     request.setMethod(req.getParameter("method"));
     request.setTimestamp(req.getParameter("timestamp"));
+    request.setNonceStr(req.getParameter("nonceStr"));
     request.setBizContent(req.getParameter("bizContent"));
     request.setSignType(req.getParameter("signType"));
     request.setSign(req.getParameter("sign"));

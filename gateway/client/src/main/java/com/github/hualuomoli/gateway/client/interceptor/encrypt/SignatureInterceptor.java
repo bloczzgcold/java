@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
@@ -21,7 +22,7 @@ import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
  */
 public class SignatureInterceptor implements Interceptor {
 
-  private static final Logger logger = Logger.getLogger(SignatureInterceptor.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SignatureInterceptor.class);
 
   @Override
   public void preHandle(Request request) {
@@ -39,9 +40,7 @@ public class SignatureInterceptor implements Interceptor {
     }
     String origin = buffer.toString().substring(1);
 
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("请求签名原文=" + origin);
-    }
+    logger.debug("请求签名原文={}", origin);
 
     // 设置签名
     String sign = dealer.sign(origin, request.getPartnerId());
@@ -55,6 +54,11 @@ public class SignatureInterceptor implements Interceptor {
     // 获取处理类
     SignatureDealer dealer = DealerUtils.getSignatureDealer(signature);
 
+    // 验证请求的字符串与返回的字符串是否一致
+    if (!request.getNonceStr().equals(response.getNonceStr())) {
+      throw new InvalidDataException("request nonce not same response nonce, please check your network.");
+    }
+
     // 获取签名原文
     StringBuilder buffer = new StringBuilder();
     List<Data> datas = this.getDatas(response);
@@ -63,9 +67,7 @@ public class SignatureInterceptor implements Interceptor {
     }
     String origin = buffer.toString().substring(1);
 
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("响应签名原文=" + origin);
-    }
+    logger.debug("响应签名原文={}", origin);
 
     // 验证签名
     boolean success = dealer.verify(origin, response.getSign(), request.getPartnerId());
@@ -92,9 +94,7 @@ public class SignatureInterceptor implements Interceptor {
         }
         datas.add(new Data(name, value.toString()));
       } catch (Exception e) {
-        if (logger.isLoggable(Level.WARNING)) {
-          logger.warning(e.getMessage());
-        }
+        logger.debug(e.getMessage(), e);
       }
     }
 

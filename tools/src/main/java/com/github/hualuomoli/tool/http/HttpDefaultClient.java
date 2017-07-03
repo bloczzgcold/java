@@ -25,9 +25,10 @@ import org.apache.commons.io.IOUtils;
 /**
  * 默认客户端
  */
-public class HttpDefault extends AbstractHttpCleint implements HttpClient {
+public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient {
 
-  private static final ThreadLocal<List<Header>> LOCAL_HEADERS = new ThreadLocal<>();
+  // 请求header
+  private List<Header> headers = new ArrayList<Header>();
 
   // 链接时长
   private Integer connectTimeout = 1000 * 2;
@@ -36,7 +37,7 @@ public class HttpDefault extends AbstractHttpCleint implements HttpClient {
 
   private String url;
 
-  public HttpDefault(String url) {
+  public HttpDefaultClient(String url) {
     this.url = url;
   }
 
@@ -177,12 +178,10 @@ public class HttpDefault extends AbstractHttpCleint implements HttpClient {
    * @param conn 连接
    */
   private void readHttpResponseHeader(HttpURLConnection conn) {
-    List<Header> headers = new ArrayList<Header>();
     Map<String, List<String>> resHeaderMap = conn.getHeaderFields();
     for (String name : resHeaderMap.keySet()) {
       headers.add(new Header(name, resHeaderMap.get(name).toArray(new String[] {})));
     }
-    LOCAL_HEADERS.set(headers);
   }
 
   /**
@@ -233,8 +232,6 @@ public class HttpDefault extends AbstractHttpCleint implements HttpClient {
   @Override
   public Set<String> getHeaderNames() {
     Set<String> names = new HashSet<String>();
-
-    List<Header> headers = LOCAL_HEADERS.get();
     for (Header header : headers) {
       names.add(header.name);
     }
@@ -243,17 +240,11 @@ public class HttpDefault extends AbstractHttpCleint implements HttpClient {
 
   @Override
   public Header getHeader(String name) {
-    List<Header> headers = LOCAL_HEADERS.get();
-    if (headers == null || headers.size() == 0) {
-      return null;
-    }
-
     for (Header header : headers) {
       if (header.name.equals(name)) {
         return header;
       }
     }
-
     return null;
   }
 

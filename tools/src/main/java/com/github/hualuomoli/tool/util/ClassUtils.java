@@ -143,7 +143,7 @@ public class ClassUtils {
       String methodName = null;
       switch (type) {
       case GETTER:
-        if (Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType())) {
+        if (boolean.class.isAssignableFrom(field.getType())) {
           methodName = "is" + upper;
         } else {
           methodName = "get" + upper;
