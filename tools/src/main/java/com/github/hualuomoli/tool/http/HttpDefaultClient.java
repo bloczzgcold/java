@@ -8,11 +8,8 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -26,9 +23,6 @@ import org.apache.commons.io.IOUtils;
  * 默认客户端
  */
 public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient {
-
-  // 请求header
-  private List<Header> headers = new ArrayList<Header>();
 
   // 链接时长
   private Integer connectTimeout = 1000 * 2;
@@ -50,7 +44,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  protected String get(List<Param> params, List<Header> headers) throws IOException {
+  public String get(List<Param> params, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
     HttpURLConnection conn = null;
 
@@ -73,10 +67,10 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       conn.setUseCaches(false);// 不使用缓存
 
       // set request header
-      this.writeHttpRequestHeader(conn, headers);
+      this.writeHttpRequestHeader(conn, requestHeaders);
 
       // get response header
-      this.readHttpResponseHeader(conn);
+      this.readHttpResponseHeader(conn, responseHeaders);
 
       // read data
       return this.readHttpResponseData(conn);
@@ -87,7 +81,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  protected String urlencoded(List<Param> params, List<Header> headers) throws IOException {
+  public String urlencoded(List<Param> params, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
     HttpURLConnection conn = null;
     OutputStream os = null;
@@ -101,7 +95,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       conn.setUseCaches(false);// 不使用缓存
 
       // set request header
-      this.writeHttpRequestHeader(conn, headers);
+      this.writeHttpRequestHeader(conn, requestHeaders);
 
       // flush data
       if (params != null && params.size() > 0) {
@@ -110,7 +104,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       }
 
       // get response header
-      this.readHttpResponseHeader(conn);
+      this.readHttpResponseHeader(conn, responseHeaders);
 
       // read data
       return this.readHttpResponseData(conn);
@@ -122,7 +116,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  protected String json(String content, List<Header> headers) throws IOException {
+  public String json(String content, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
     HttpURLConnection conn = null;
     OutputStream os = null;
@@ -136,7 +130,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       conn.setUseCaches(false);// 不使用缓存
 
       // set request header
-      this.writeHttpRequestHeader(conn, headers);
+      this.writeHttpRequestHeader(conn, requestHeaders);
 
       // flush data
       if (content != null && content.length() > 0) {
@@ -145,7 +139,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       }
 
       // get response header
-      this.readHttpResponseHeader(conn);
+      this.readHttpResponseHeader(conn, responseHeaders);
 
       // read data
       return this.readHttpResponseData(conn);
@@ -177,7 +171,10 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
    * 读取响应Header
    * @param conn 连接
    */
-  private void readHttpResponseHeader(HttpURLConnection conn) {
+  private void readHttpResponseHeader(HttpURLConnection conn, List<Header> headers) {
+    if (headers == null) {
+      return;
+    }
     Map<String, List<String>> resHeaderMap = conn.getHeaderFields();
     for (String name : resHeaderMap.keySet()) {
       headers.add(new Header(name, resHeaderMap.get(name).toArray(new String[] {})));
@@ -215,37 +212,8 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  protected String upload(List<Param> params, FileParam[] fileParams, List<Header> headers) throws IOException {
-    throw new IOException();
-  }
-
-  @Override
-  protected String upload(List<Param> params, UploadParam[] uploadParams, List<Header> headers) throws IOException {
-    throw new IOException();
-  }
-
-  @Override
   protected String charset() {
     return "UTF-8";
-  }
-
-  @Override
-  public Set<String> getHeaderNames() {
-    Set<String> names = new HashSet<String>();
-    for (Header header : headers) {
-      names.add(header.name);
-    }
-    return names;
-  }
-
-  @Override
-  public Header getHeader(String name) {
-    for (Header header : headers) {
-      if (header.name.equals(name)) {
-        return header;
-      }
-    }
-    return null;
   }
 
   /**

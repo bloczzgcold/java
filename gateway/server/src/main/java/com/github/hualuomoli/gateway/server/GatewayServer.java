@@ -17,8 +17,6 @@ import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.dealer.EncryptionDealer;
-import com.github.hualuomoli.gateway.server.dealer.SignatureDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 
 /**
@@ -96,14 +94,6 @@ public class GatewayServer {
     }
 
     return response;
-  }
-
-  public void setEncryptionDealers(List<EncryptionDealer> encryptionDealers) {
-    DealerUtils.setEncryptionDealers(encryptionDealers);
-  }
-
-  public void setSignatureDealers(List<SignatureDealer> signatureDealers) {
-    DealerUtils.setSignatureDealers(signatureDealers);
   }
 
   /**

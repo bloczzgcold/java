@@ -1,8 +1,9 @@
 package com.github.hualuomoli.gateway.client.invoker;
 
+import java.io.IOException;
+import java.util.Set;
+
 import com.github.hualuomoli.gateway.api.entity.Request;
-import com.github.hualuomoli.gateway.api.lang.BusinessException;
-import com.github.hualuomoli.gateway.client.lang.ClientException;
 
 /**
  * 客户端
@@ -11,11 +12,37 @@ public interface ClientInvoker {
 
   /**
    * 调用
-   * @param request 请求
-   * @return 返回的业务结果
-   * @throws BusinessException 业务处理错误
-   * @throws ClientException 客户端调用错误
+   * @param request 请求信息
+   * @return invoker
+   * @throws IOException 调用错误
    */
-  String call(Request request) throws BusinessException, ClientException;
+  ClientInvoker call(Request request) throws IOException;
+
+  /**
+   * 添加请求头
+   * @param name 名称
+   * @param value 值
+   * @return invoker
+   */
+  ClientInvoker addRequestHeader(String name, String value);
+
+  /**
+   * 获取响应结果
+   * @return 响应结果
+   */
+  String getResult();
+
+  /**
+   * 获取响应头名称
+   * @return 响应头名称
+   */
+  Set<String> getReponseHeaders();
+
+  /**
+   * 获取响应头
+   * @param name 头名称
+   * @return 响应头
+   */
+  String[] getReponseHeader(String name);
 
 }

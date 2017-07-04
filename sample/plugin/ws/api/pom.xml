@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.github.hualuomoli</groupId>
 		<artifactId>hualuomoli-sample-plugin-ws</artifactId>
-		<version>1.0.5.3</version>
+		<version>1.0.6</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

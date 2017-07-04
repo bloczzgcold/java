@@ -1,6 +1,8 @@
 package com.github.hualuomoli.gateway.client;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -13,9 +15,9 @@ import com.github.hualuomoli.gateway.api.enums.SignatureEnum;
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
-import com.github.hualuomoli.gateway.client.dealer.EncryptionDealer;
-import com.github.hualuomoli.gateway.client.dealer.SignatureDealer;
 import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
+import com.github.hualuomoli.gateway.client.interceptor.encrypt.EncryptionInterceptor;
+import com.github.hualuomoli.gateway.client.interceptor.sign.SignatureInterceptor;
 import com.github.hualuomoli.gateway.client.invoker.ClientInvoker;
 import com.github.hualuomoli.gateway.client.lang.ClientException;
 
@@ -23,47 +25,50 @@ public class GatewayClient {
 
   private String version;
   private String partnerId;
+
+  protected JSONParser jsonParser;
+  private ClientInvoker invoker;
+
   private SignatureEnum signature;
   private EncryptionEnum encryption;
+  private List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
-  private List<Interceptor> interceptors;
-  private ClientInvoker invoker;
-  protected JSONParser jsonParser;
-
-  public void setVersion(String version) {
+  public GatewayClient(String version, String partnerId) {
     this.version = version;
-  }
-
-  public void setPartnerId(String partnerId) {
     this.partnerId = partnerId;
-  }
-
-  public void setSignature(SignatureEnum signature) {
-    this.signature = signature;
-  }
-
-  public void setEncryption(EncryptionEnum encryption) {
-    this.encryption = encryption;
-  }
-
-  public void setInterceptors(List<Interceptor> interceptors) {
-    this.interceptors = interceptors;
-  }
-
-  public void setInvoker(ClientInvoker invoker) {
-    this.invoker = invoker;
   }
 
   public void setJsonParser(JSONParser jsonParser) {
     this.jsonParser = jsonParser;
   }
 
-  public void setEncryptionDealers(List<EncryptionDealer> encryptionDealers) {
-    DealerUtils.setEncryptionDealers(encryptionDealers);
+  public void setInvoker(ClientInvoker invoker) {
+    this.invoker = invoker;
   }
 
-  public void setSignatureDealers(List<SignatureDealer> signatureDealers) {
-    DealerUtils.setSignatureDealers(signatureDealers);
+  public GatewayClient addSignature(SignatureEnum signature) {
+    this.signature = signature;
+    return this;
+  }
+
+  public GatewayClient addEncryption(EncryptionEnum encryption) {
+    this.encryption = encryption;
+    return this;
+  }
+
+  public GatewayClient addSignatureInterceptor(SignatureInterceptor signatureInterceptor) {
+    interceptors.add(signatureInterceptor);
+    return this;
+  }
+
+  public GatewayClient addEncryptionInterceptor(EncryptionInterceptor encryptionInterceptor) {
+    interceptors.add(encryptionInterceptor);
+    return this;
+  }
+
+  public GatewayClient addInterceptor(Interceptor interceptor) {
+    interceptors.add(interceptor);
+    return this;
   }
 
   /**
@@ -77,7 +82,7 @@ public class GatewayClient {
     request.setTimestamp(new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()));
     request.setNonceStr(UUID.randomUUID().toString().substring(0, 12));
     request.setBizContent(bizContent);
-    request.setSignType(signature.name());
+    request.setSignType(signature == null ? null : signature.name());
     request.setEncryptType(encryption == null ? null : encryption.name());
 
     try {
@@ -88,8 +93,8 @@ public class GatewayClient {
       }
 
       // 执行业务处理
-      String result = invoker.call(request);
-      Response response = jsonParser.parseObject(result, Response.class);
+      invoker.call(request);
+      Response response = jsonParser.parseObject(invoker.getResult(), Response.class);
 
       // 网关处理错误
       if (response.getCode() != CodeEnum.SUCCESS) {
@@ -102,14 +107,10 @@ public class GatewayClient {
       }
 
       return response.getResult();
-    } catch (ClientException e) {
-      throw e;
-    } catch (BusinessException e) {
-      throw e;
+    } catch (IOException e) {
+      throw new ClientException(CodeEnum.NETWORK, e);
     } catch (InvalidDataException e) {
       throw new ClientException(CodeEnum.INVALID_DATA, e);
-    } catch (Exception e) {
-      throw new ClientException(CodeEnum.ERROR, e);
     }
     // end
   }

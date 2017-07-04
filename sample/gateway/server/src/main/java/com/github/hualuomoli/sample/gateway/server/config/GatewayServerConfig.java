@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.github.hualuomoli.sample.gateway.server.biz.gateway.service.BusinessHandlerService;
-import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
 import com.github.hualuomoli.gateway.api.enums.EncryptionEnum;
@@ -32,7 +30,9 @@ import com.github.hualuomoli.gateway.server.dealer.EncryptionDealer;
 import com.github.hualuomoli.gateway.server.dealer.SignatureDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 import com.github.hualuomoli.gateway.server.interceptor.encrypt.EncryptionInterceptor;
-import com.github.hualuomoli.gateway.server.interceptor.encrypt.SignatureInterceptor;
+import com.github.hualuomoli.gateway.server.interceptor.sign.SignatureInterceptor;
+import com.github.hualuomoli.sample.gateway.server.biz.gateway.service.BusinessHandlerService;
+import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.google.common.collect.Lists;
 
 @Configuration
@@ -48,9 +48,7 @@ public class GatewayServerConfig {
     server.setBusinessHandler(businessHandler);
     server.setAuthorityInterceptor(this.authorityInterceptor());
     server.setInterceptors(this.interceptors());
-    server.setBusinessInterceptors(Lists.newArrayList(this.logInterceptor()));
-    server.setEncryptionDealers(Lists.newArrayList(this.encryptionDealer()));
-    server.setSignatureDealers(Lists.newArrayList(this.signatureDealer()));
+    server.setBusinessInterceptors(Lists.newArrayList(this.businessInterceptor()));
 
     return server;
   }
@@ -60,8 +58,8 @@ public class GatewayServerConfig {
 
     // pre = 解密 - 验签 - 其他
     // post = 其他 - 签名 + 加密
-    interceptors.add(new EncryptionInterceptor());
-    interceptors.add(new SignatureInterceptor());
+    interceptors.add(new EncryptionInterceptor(Lists.newArrayList(this.encryptionDealer())));
+    interceptors.add(new SignatureInterceptor(Lists.newArrayList(this.signatureDealer())));
 
     interceptors.add(new Interceptor() {
 
@@ -131,7 +129,7 @@ public class GatewayServerConfig {
     };
   }
 
-  private BusinessInterceptor logInterceptor() {
+  private BusinessInterceptor businessInterceptor() {
     final Logger logger = LoggerFactory.getLogger(BusinessInterceptor.class);
 
     return new BusinessInterceptor() {

@@ -1,4 +1,4 @@
-package com.github.hualuomoli.gateway.client.interceptor.encrypt;
+package com.github.hualuomoli.gateway.client.interceptor.sign;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
 import com.github.hualuomoli.gateway.api.enums.SignatureEnum;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.client.DealerUtils;
 import com.github.hualuomoli.gateway.client.dealer.SignatureDealer;
 import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
 
@@ -24,13 +23,24 @@ public class SignatureInterceptor implements Interceptor {
 
   private static final Logger logger = LoggerFactory.getLogger(SignatureInterceptor.class);
 
+  private List<SignatureDealer> dealers = new ArrayList<SignatureDealer>();
+
+  public SignatureInterceptor() {
+  }
+
+  public SignatureInterceptor(List<SignatureDealer> dealers) {
+    this.dealers = dealers;
+  }
+
+  public void setDealers(List<SignatureDealer> dealers) {
+    this.dealers = dealers;
+  }
+
   @Override
   public void preHandle(Request request) {
 
-    // 获取类型
-    SignatureEnum signature = this.getType(request);
     // 获取处理类
-    SignatureDealer dealer = DealerUtils.getSignatureDealer(signature);
+    SignatureDealer dealer = this.getDealer(request);
 
     // 获取签名原文
     StringBuilder buffer = new StringBuilder();
@@ -49,10 +59,8 @@ public class SignatureInterceptor implements Interceptor {
 
   @Override
   public void postHandle(Request request, Response response) throws InvalidDataException {
-    // 获取类型
-    SignatureEnum signature = this.getType(request);
     // 获取处理类
-    SignatureDealer dealer = DealerUtils.getSignatureDealer(signature);
+    SignatureDealer dealer = this.getDealer(request);
 
     // 验证请求的字符串与返回的字符串是否一致
     if (!request.getNonceStr().equals(response.getNonceStr())) {
@@ -92,6 +100,10 @@ public class SignatureInterceptor implements Interceptor {
         if (value == null) {
           continue;
         }
+        String val = String.valueOf(value);
+        if (val.trim().length() == 0) {
+          continue;
+        }
         datas.add(new Data(name, value.toString()));
       } catch (Exception e) {
         logger.debug(e.getMessage(), e);
@@ -113,7 +125,7 @@ public class SignatureInterceptor implements Interceptor {
     String name;
     String value;
 
-    public Data(String name, String value) {
+    Data(String name, String value) {
       super();
       this.name = name;
       this.value = value;
@@ -121,16 +133,25 @@ public class SignatureInterceptor implements Interceptor {
   }
 
   /**
-   * 获取类型
-   * @param request 网关请求
-   * @return 类型
+   * 获取签名/验签处理类,如果未设置签名类型或签名类型处理器未配置,抛出异常
+   * @param request 请求信息
+   * @return 处理类
    */
-  private SignatureEnum getType(Request request) {
+  private SignatureDealer getDealer(Request request) {
+    // get sign type
     String type = request.getSignType();
     if (type == null || type.trim().length() == 0) {
-      return null;
+      throw new InvalidDataException("please configure sign type.");
     }
-    return Enum.valueOf(SignatureEnum.class, type);
+
+    // get dealer
+    SignatureEnum signature = Enum.valueOf(SignatureEnum.class, type);
+    for (SignatureDealer dealer : dealers) {
+      if (dealer.support(signature)) {
+        return dealer;
+      }
+    }
+    throw new InvalidDataException("there is no dealer support " + signature);
   }
 
 }

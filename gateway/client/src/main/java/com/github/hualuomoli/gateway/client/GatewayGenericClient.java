@@ -12,6 +12,10 @@ public class GatewayGenericClient extends GatewayClient {
 
   private Parser parser;
 
+  public GatewayGenericClient(String version, String partnerId) {
+    super(version, partnerId);
+  }
+
   public void setParser(Parser parser) {
     this.parser = parser;
   }

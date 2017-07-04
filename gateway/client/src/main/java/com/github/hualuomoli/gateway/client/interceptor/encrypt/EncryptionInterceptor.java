@@ -1,5 +1,8 @@
 package com.github.hualuomoli.gateway.client.interceptor.encrypt;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,7 +10,6 @@ import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
 import com.github.hualuomoli.gateway.api.enums.EncryptionEnum;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.client.DealerUtils;
 import com.github.hualuomoli.gateway.client.dealer.EncryptionDealer;
 import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
 
@@ -18,17 +20,24 @@ public class EncryptionInterceptor implements Interceptor {
 
   private static final Logger logger = LoggerFactory.getLogger(EncryptionInterceptor.class);
 
+  private List<EncryptionDealer> dealers = new ArrayList<EncryptionDealer>();
+
+  public EncryptionInterceptor() {
+  }
+
+  public EncryptionInterceptor(List<EncryptionDealer> dealers) {
+    this.dealers = dealers;
+  }
+
+  public void setDealers(List<EncryptionDealer> dealers) {
+    this.dealers = dealers;
+  }
+
   @Override
   public void preHandle(Request request) {
 
-    // 获取类型
-    EncryptionEnum encryption = this.getType(request);
-    if (encryption == null) {
-      return;
-    }
-
     // 获取处理类
-    EncryptionDealer dealer = DealerUtils.getEncryptionDealer(encryption);
+    EncryptionDealer dealer = this.getEncryptionDealer(request);
     if (dealer == null) {
       return;
     }
@@ -49,13 +58,8 @@ public class EncryptionInterceptor implements Interceptor {
   @Override
   public void postHandle(Request request, Response response) throws InvalidDataException {
 
-    // 获取类型
-    EncryptionEnum encryption = this.getType(request);
-    if (encryption == null) {
-      return;
-    }
     // 获取处理类
-    EncryptionDealer dealer = DealerUtils.getEncryptionDealer(encryption);
+    EncryptionDealer dealer = this.getEncryptionDealer(request);
     if (dealer == null) {
       return;
     }
@@ -74,16 +78,24 @@ public class EncryptionInterceptor implements Interceptor {
   }
 
   /**
-   * 获取类型
-   * @param request 网关请求
-   * @return 类型
+   * 获取加密/解密处理类
+   * @param request 请求信息
+   * @return 处理类
    */
-  private EncryptionEnum getType(Request request) {
+  private EncryptionDealer getEncryptionDealer(Request request) {
     String type = request.getEncryptType();
     if (type == null || type.trim().length() == 0) {
       return null;
     }
-    return Enum.valueOf(EncryptionEnum.class, type);
+
+    EncryptionEnum encryption = Enum.valueOf(EncryptionEnum.class, type);
+
+    for (EncryptionDealer dealer : dealers) {
+      if (dealer.support(encryption)) {
+        return dealer;
+      }
+    }
+    throw new InvalidDataException("there is no dealer support " + encryption);
   }
 
 }

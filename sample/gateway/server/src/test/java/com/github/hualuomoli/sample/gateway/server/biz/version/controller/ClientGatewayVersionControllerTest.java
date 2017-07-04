@@ -5,9 +5,9 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.github.hualuomoli.sample.gateway.server.controller.ClientControllerTest;
 import com.github.hualuomoli.gateway.api.enums.CodeEnum;
 import com.github.hualuomoli.gateway.client.lang.ClientException;
+import com.github.hualuomoli.sample.gateway.server.controller.ClientControllerTest;
 
 /**
  * 同一URL不同的版本
@@ -83,7 +83,7 @@ public class ClientGatewayVersionControllerTest extends ClientControllerTest {
 
   // 执行
   private String execute(String apiVersion) {
-    httpClient.addHeader("api-version", apiVersion);
+    invoker.addRequestHeader("api-version", apiVersion);
     return client.call("version.find", "");
   }
 
