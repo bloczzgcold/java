@@ -1,0 +1,6 @@
+/target
+/.project
+/.classpath
+/.settings
+/pom.xml.versionsBackup
+/src/main/resources/configs/test

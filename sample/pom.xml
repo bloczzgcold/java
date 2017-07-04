@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.github.hualuomoli</groupId>
+	<artifactId>hualuomoli-sample</artifactId>
+	<version>1.0.5.3</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>./framework</module>
+		<module>./gateway</module>
+		<module>./plugin</module>
+	</modules>
+
+	<properties>
+
+		<!-- 编译环境 -->
+		<jdk.version>1.7</jdk.version>
+		<project.encoding>UTF-8</project.encoding>
+
+		<slf4j.version>1.7.7</slf4j.version>
+		<spring.version>4.0.8.RELEASE</spring.version>
+
+	</properties>
+
+	<dependencies>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- 编译 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>utf8</encoding>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+			<!-- 源码 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!-- 文档 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!-- 单元测试 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<!-- 资源库 -->
+	<repositories>
+
+		<repository>
+			<id>nexus</id>
+			<name>Repository for nexus</name>
+			<url>http://192.168.1.60:8081/nexus/content/groups/public/</url>
+		</repository>
+
+	</repositories>
+
+	<!-- 设定插件仓库 -->
+	<pluginRepositories>
+
+		<pluginRepository>
+			<id>nexus</id>
+			<name>Repository for nexus</name>
+			<url>http://192.168.1.60:8081/nexus/content/groups/public/</url>
+		</pluginRepository>
+
+	</pluginRepositories>
+
+</project>
