@@ -1,6 +1,7 @@
 package com.github.hualuomoli.sample.framework.biz.user.entity;
 
-import java.util.Date;
+import com.github.hualuomoli.sample.framework.biz.enums.StateEnum;
+import com.github.hualuomoli.sample.framework.biz.enums.StatusEnum;
 
 /**
  * 用户
@@ -17,16 +18,10 @@ public class User {
   private Integer age;
   /** 性别 */
   private String sex;
-  /** 创建人 */
-  private String createBy;
-  /** 创建时间 */
-  private Date createDate;
-  /** 修改人 */
-  private String updateBy;
-  /** 修改时间 */
-  private Date updateDate;
   /** 数据状态 */
-  private String status;
+  private StateEnum state;
+  /** 数据状态 */
+  private StatusEnum status;
   /** 描述信息 */
   private String remark;
 
@@ -70,43 +65,19 @@ public class User {
     this.sex = sex;
   }
 
-  public String getCreateBy() {
-    return createBy;
+  public StateEnum getState() {
+    return state;
   }
 
-  public void setCreateBy(String createBy) {
-    this.createBy = createBy;
+  public void setState(StateEnum state) {
+    this.state = state;
   }
 
-  public Date getCreateDate() {
-    return createDate;
-  }
-
-  public void setCreateDate(Date createDate) {
-    this.createDate = createDate;
-  }
-
-  public String getUpdateBy() {
-    return updateBy;
-  }
-
-  public void setUpdateBy(String updateBy) {
-    this.updateBy = updateBy;
-  }
-
-  public Date getUpdateDate() {
-    return updateDate;
-  }
-
-  public void setUpdateDate(Date updateDate) {
-    this.updateDate = updateDate;
-  }
-
-  public String getStatus() {
+  public StatusEnum getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
@@ -120,8 +91,8 @@ public class User {
 
   @Override
   public String toString() {
-    return "User [id=" + id + ", username=" + username + ", nickname=" + nickname + ", age=" + age + ", sex=" + sex + ", createBy=" + createBy + ", createDate="
-        + createDate + ", updateBy=" + updateBy + ", updateDate=" + updateDate + ", status=" + status + ", remark=" + remark + "]";
+    return "User [id=" + id + ", username=" + username + ", nickname=" + nickname + ", age=" + age + ", sex=" + sex + ", state=" + state + ", status=" + status
+        + ", remark=" + remark + "]";
   }
 
 }

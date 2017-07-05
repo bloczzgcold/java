@@ -1,6 +1,5 @@
 package com.github.hualuomoli.sample.framework.biz.user.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.hualuomoli.sample.framework.biz.CurrentThread;
-import com.github.hualuomoli.sample.framework.biz.enums.Status;
-import com.github.hualuomoli.sample.framework.biz.user.entity.User;
-import com.github.hualuomoli.sample.framework.biz.user.mapper.UserMapper;
 import com.github.hualuomoli.framework.base.entity.Page;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
+import com.github.hualuomoli.sample.framework.biz.enums.StateEnum;
+import com.github.hualuomoli.sample.framework.biz.enums.StatusEnum;
+import com.github.hualuomoli.sample.framework.biz.user.entity.User;
+import com.github.hualuomoli.sample.framework.biz.user.mapper.UserMapper;
 
 @Service(value = "com.github.hualuomoli.sample.framework.biz.user.service.UserService")
 @Transactional(readOnly = true)
@@ -31,11 +30,8 @@ public class UserService {
     if (user.getId() == null) {
       user.setId(UUID.randomUUID().toString().replaceAll("[-]", ""));
     }
-    user.setCreateBy(CurrentThread.getOperator());
-    user.setCreateDate(CurrentThread.getDate());
-    user.setUpdateBy(CurrentThread.getOperator());
-    user.setUpdateDate(CurrentThread.getDate());
-    user.setStatus(Status.NOMAL.name());
+    user.setStatus(StatusEnum.NOMAL);
+    user.setState(StateEnum.NOMAL);
 
     return userMapper.insert(user);
   }
@@ -47,18 +43,13 @@ public class UserService {
       return 0;
     }
 
-    String username = CurrentThread.getOperator();
-    Date date = CurrentThread.getDate();
-
     for (User user : userList) {
       if (user.getId() == null) {
         user.setId(UUID.randomUUID().toString().replaceAll("[-]", ""));
       }
-      user.setCreateBy(username);
-      user.setCreateDate(date);
-      user.setUpdateBy(username);
-      user.setUpdateDate(date);
-      user.setStatus(Status.NOMAL.name());
+
+      user.setStatus(StatusEnum.NOMAL);
+      user.setState(StateEnum.NOMAL);
     }
 
     return userMapper.batchInsert(userList);
@@ -71,18 +62,13 @@ public class UserService {
       return 0;
     }
 
-    String username = CurrentThread.getOperator();
-    Date date = CurrentThread.getDate();
-
     for (User user : users) {
       if (user.getId() == null) {
         user.setId(UUID.randomUUID().toString().replaceAll("[-]", ""));
       }
-      user.setCreateBy(username);
-      user.setCreateDate(date);
-      user.setUpdateBy(username);
-      user.setUpdateDate(date);
-      user.setStatus(Status.NOMAL.name());
+
+      user.setStatus(StatusEnum.NOMAL);
+      user.setState(StateEnum.NOMAL);
     }
 
     return userMapper.batchInsert(users);
@@ -95,11 +81,6 @@ public class UserService {
       return 0;
     }
 
-    user.setCreateBy(null);
-    user.setCreateDate(null);
-    user.setUpdateBy(CurrentThread.getOperator());
-    user.setUpdateDate(CurrentThread.getDate());
-
     return userMapper.update(user);
   }
 
@@ -107,7 +88,8 @@ public class UserService {
   public int logicDelete(String id) {
     User user = new User();
     user.setId(id);
-    user.setStatus(Status.DELETED.name());
+    user.setStatus(StatusEnum.DELETED);
+    user.setState(StateEnum.DELETED);
 
     return this.update(user);
   }

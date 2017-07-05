@@ -8,11 +8,8 @@
     `nickname`		as "nickname",
     `age`			as "age",
     `sex`			as "sex",
-    `create_by`		as "createBy",
-    `create_date`	as "createDate",
-    `update_by`		as "updateBy",
-    `update_date`	as "updateDate",
-    `status`	as "status",
+    `state`  as "state",
+    `status`  as "status",
     `remark`		as "remark"
   </sql>
   
@@ -32,18 +29,9 @@
     <if test="sex != null"> 
       and `sex` = #{sex}
     </if>
-    <if test="createBy != null and createBy != ''"> 
-      and `create_by` = #{createBy}
-    </if>
-    <if test="createDate != null"> 
-      and `create_date` = #{createDate}
-    </if>
-    <if test="updateBy != null and updateBy != ''"> 
-      and `update_by` = #{updateBy}
-    </if>
-    <if test="updateDate != null"> 
-      and `update_date` = #{updateDate}
-    </if>
+    <if test="state != null"> 
+      and `state` = #{state}
+    </if> 
     <if test="status != null"> 
       and `status` = #{status}
     </if>
@@ -66,11 +54,8 @@
 		`nickname`		,
 		`age`			,
 		`sex`			,
-		`create_by`		,
-		`create_date`	,
-		`update_by`		,
-		`update_date`	,
-		`status`	,
+    `state`  ,
+    `status`  ,
 		`remark`		
     ) values (
 		#{id},
@@ -78,11 +63,8 @@
 		#{nickname},
 		#{age},
 		#{sex},
-		#{createBy},
-		#{createDate},
-		#{updateBy},
-		#{updateDate},
-		#{status},
+    #{state},
+    #{status},
 		#{remark}
     )
   </insert>
@@ -94,11 +76,8 @@
 		`nickname`		,
 		`age`			,
 		`sex`			,
-		`create_by`		,
-		`create_date`	,
-		`update_by`		,
-		`update_date`	,
-		`status`	,
+    `state`  ,
+    `status`  ,
 		`remark`		
     ) 
 	<foreach collection="list" item="obj" separator="union all">
@@ -108,11 +87,8 @@
 		#{obj.nickname},
 		#{obj.age},
 		#{obj.sex},
-		#{obj.createBy},
-		#{obj.createDate},
-		#{obj.updateBy},
-		#{obj.updateDate},
-		#{obj.status},
+    #{obj.state},
+    #{obj.status},
 		#{obj.remark}
 	</foreach>
   </insert>
@@ -132,21 +108,12 @@
 	    <if test="sex != null"> 
 	      `sex` = #{sex},
 	    </if>
-	    <if test="createBy != null and createBy != ''"> 
-	      `create_by` = #{createBy},
-	    </if>
-	    <if test="createDate != null"> 
-	      `create_date` = #{createDate},
-	    </if>
-	    <if test="updateBy != null and updateBy != ''"> 
-	      `update_by` = #{updateBy},
-	    </if>
-	    <if test="updateDate != null"> 
-	      `update_date` = #{updateDate},
-	    </if>
-	    <if test="status != null"> 
-	      `status` = #{status},
-	    </if>
+	    <if test="state != null"> 
+        `state` = #{state},
+      </if>
+      <if test="status != null"> 
+        `status` = #{status},
+      </if>
 	    <if test="remark != null and remark != ''"> 
 	      `remark` = #{remark},
 	    </if>

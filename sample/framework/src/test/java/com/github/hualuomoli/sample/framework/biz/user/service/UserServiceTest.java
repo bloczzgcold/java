@@ -1,9 +1,17 @@
 package com.github.hualuomoli.sample.framework.biz.user.service;
 
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -11,12 +19,14 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.hualuomoli.framework.base.entity.Page;
 import com.github.hualuomoli.sample.framework.biz.CurrentThread;
 import com.github.hualuomoli.sample.framework.biz.ProjectConfig;
-import com.github.hualuomoli.sample.framework.biz.enums.Status;
+import com.github.hualuomoli.sample.framework.biz.enums.StateEnum;
+import com.github.hualuomoli.sample.framework.biz.enums.StatusEnum;
 import com.github.hualuomoli.sample.framework.biz.user.entity.User;
+import com.github.hualuomoli.sample.framework.config.base.MybatisConfig;
 import com.github.hualuomoli.sample.framework.service.ServiceTest;
-import com.github.hualuomoli.framework.base.entity.Page;
 import com.github.hualuomoli.tool.util.EnvUtils;
 import com.google.common.collect.Lists;
 
@@ -35,6 +45,49 @@ public class UserServiceTest extends ServiceTest {
     System.setProperty("environment", EnvUtils.Env.TEST.name());
     EnvUtils.init("environment");
     ProjectConfig.init("configs/jdbc.properties", "configs/config.properties");
+
+    MybatisConfig.addTypeHandler(new StateTypeHandler());
+
+  }
+
+  // 自定义枚举转换器
+  @MappedJdbcTypes(includeNullJdbcType = true, value = {})
+  @MappedTypes(value = { StateEnum.class })
+  private static class StateTypeHandler extends BaseTypeHandler<StateEnum> {
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, StateEnum parameter, JdbcType jdbcType) throws SQLException {
+      ps.setInt(i, parameter.value());
+    }
+
+    @Override
+    public StateEnum getNullableResult(ResultSet rs, String columnName) throws SQLException {
+      int value = rs.getInt(columnName);
+      return this.get(value);
+    }
+
+    @Override
+    public StateEnum getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+      int value = rs.getInt(columnIndex);
+      return this.get(value);
+    }
+
+    @Override
+    public StateEnum getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+      int value = cs.getInt(columnIndex);
+      return this.get(value);
+    }
+
+    private StateEnum get(int value) {
+      StateEnum[] values = StateEnum.values();
+      for (StateEnum state : values) {
+        if (state.value() == value) {
+          return state;
+        }
+      }
+      return null;
+    }
+
   }
 
   @Test
@@ -90,7 +143,8 @@ public class UserServiceTest extends ServiceTest {
     // get
     User user = userService.get(id);
     Assert.assertNotNull(user);
-    Assert.assertEquals(Status.DELETED.name(), user.getStatus());
+    Assert.assertEquals(StatusEnum.DELETED, user.getStatus());
+    Assert.assertEquals(StateEnum.DELETED, user.getState());
   }
 
   @Test
