@@ -28,12 +28,6 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-logger</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
     <!-- commons-lang3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -164,6 +158,18 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>${mysql.driver.version}</version>
       <scope>runtime</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <!-- junit -->

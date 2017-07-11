@@ -13,7 +13,6 @@
   <artifactId>hualuomoli-plugin-mq</artifactId>
   <packaging>jar</packaging>
 
-
   <properties>
 
     <!-- ActiveMQ -->

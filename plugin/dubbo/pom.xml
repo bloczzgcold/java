@@ -11,8 +11,7 @@
   </parent>
 
   <artifactId>hualuomoli-plugin-dubbo</artifactId>
-  <packaging>jar</packaging>
-
+  <packaging>pom</packaging>
 
   <properties>
 
