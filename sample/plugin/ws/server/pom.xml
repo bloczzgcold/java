@@ -1,70 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.github.hualuomoli</groupId>
-		<artifactId>hualuomoli-sample-plugin-ws</artifactId>
-		<version>1.0.6.2</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+  <parent>
+    <groupId>com.github.hualuomoli</groupId>
+    <artifactId>hualuomoli-sample-plugin-ws</artifactId>
+    <version>1.0.6.2</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-	<artifactId>hualuomoli-sample-plugin-ws-server</artifactId>
-	<packaging>war</packaging>
+  <artifactId>hualuomoli-sample-plugin-ws-server</artifactId>
+  <packaging>war</packaging>
 
-	<dependencies>
+  <dependencies>
 
-		<!-- hualuomoli -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-logger</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-framework</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-plugin-ws</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+    <!-- hualuomoli -->
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-logger</artifactId>
+      <version>${project.parent.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-framework</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-plugin-ws</artifactId>
+      <version>${project.parent.version}</version>
+      <type>pom</type>
+    </dependency>
 
-		<!-- api -->
-		<dependency>
-			<groupId>com.github.hualuomoli</groupId>
-			<artifactId>hualuomoli-sample-plugin-ws-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+    <!-- api -->
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-sample-plugin-ws-api</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
 
 
-		<!-- servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>
+    <!-- servlet -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 
-	<build>
-		<plugins>
+  <build>
+    <plugins>
 
-			<!-- 打包 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<!-- 没有web.xml不报错 -->
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
+      <!-- 打包 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <!-- 没有web.xml不报错 -->
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
 
-		</plugins>
-	</build>
+    </plugins>
+  </build>
 
 </project>
