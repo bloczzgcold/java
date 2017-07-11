@@ -12,19 +12,28 @@ import com.github.hualuomoli.tool.util.ClassUtils;
 
 public class DefaultParser implements Parser {
 
-  private static final Formater formater = new DefaultFormater();
+  private static final Formater DEFAULT_FORMATER = new DefaultFormater();
+
+  @Override
+  public List<Param> parse(Object object) {
+    return this.parse(object, DEFAULT_FORMATER);
+  }
 
   @Override
   public List<Param> parse(Object object, Formater formater) {
     if (object == null) {
       return new ArrayList<Param>();
     }
-    return this.parse(null, object);
+    return this.parse(null, object, formater);
   }
 
   @SuppressWarnings("unchecked")
-  private List<Param> parse(String prefix, Object object) {
+  private List<Param> parse(String prefix, Object object, Formater formater) {
     List<Param> params = new ArrayList<Param>();
+
+    if (object == null) {
+      return params;
+    }
 
     Class<?> clazz = object.getClass();
 
@@ -68,7 +77,7 @@ public class DefaultParser implements Parser {
     if (Map.class.isAssignableFrom(clazz)) {
       Map<String, Object> map = (Map<String, Object>) object;
       for (String key : map.keySet()) {
-        params.addAll(this.parse(this.getPrefix(prefix, key), map.get(key)));
+        params.addAll(this.parse(this.getPrefix(prefix, key), map.get(key), formater));
       }
       return params;
     }
@@ -80,7 +89,7 @@ public class DefaultParser implements Parser {
       if (value == null) {
         continue;
       }
-      params.addAll(this.parse(this.getPrefix(prefix, field.getName()), value));
+      params.addAll(this.parse(this.getPrefix(prefix, field.getName()), value, formater));
     }
 
     return params;

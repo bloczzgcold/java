@@ -11,6 +11,13 @@ public interface Parser {
   /**
    * 解析参数为表单提交参数
    * @param object
+   * @return 参数集合
+   */
+  List<Param> parse(Object object);
+
+  /**
+   * 解析参数为表单提交参数
+   * @param object
    * @param formater 格式化
    * @return 参数集合
    */
