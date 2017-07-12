@@ -73,6 +73,12 @@ public class DefaultParser implements Parser {
       return params;
     }
 
+    // Enum
+    if (Enum.class.isAssignableFrom(clazz)) {
+      params.add(new Param(prefix, ((Enum<?>) object).name()));
+      return params;
+    }
+
     // Map
     if (Map.class.isAssignableFrom(clazz)) {
       Map<String, Object> map = (Map<String, Object>) object;

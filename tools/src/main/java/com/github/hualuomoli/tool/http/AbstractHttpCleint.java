@@ -5,10 +5,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 客户端
  */
 public abstract class AbstractHttpCleint implements HttpClient {
+
+  protected static final Logger logger = LoggerFactory.getLogger(AbstractHttpCleint.class);
 
   @Override
   public String get(List<Param> params) throws IOException {
@@ -44,7 +49,11 @@ public abstract class AbstractHttpCleint implements HttpClient {
     for (Param param : params) {
       buffer.append("&").append(param.name).append("=").append(this.encoded(param.value));
     }
-    return buffer.toString().substring(1);
+    String data = buffer.toString().substring(1);
+
+    logger.info("data={}", data);
+
+    return data;
   }
 
   /**
