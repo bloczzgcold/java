@@ -96,6 +96,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
 
       // set request header
       this.writeHttpRequestHeader(conn, requestHeaders);
+      this.writeHttpRequestContentType(conn, "application/x-www-form-urlencoded");
 
       // flush data
       if (params != null && params.size() > 0) {
@@ -131,6 +132,7 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
 
       // set request header
       this.writeHttpRequestHeader(conn, requestHeaders);
+      this.writeHttpRequestContentType(conn, "application/json");
 
       // flush data
       if (content != null && content.length() > 0) {
@@ -164,6 +166,18 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       for (String value : values) {
         conn.addRequestProperty(header.name, value);
       }
+    }
+  }
+
+  /**
+   * 写入请求Content-Type
+   * @param conn 连接
+   * @param name 请求header名
+   * @param value 请求header值
+   */
+  private void writeHttpRequestContentType(HttpURLConnection conn, String... values) {
+    for (String value : values) {
+      conn.addRequestProperty("Content-Type", value);
     }
   }
 
