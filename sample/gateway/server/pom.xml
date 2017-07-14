@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli-sample-gateway</artifactId>
-    <version>1.0.6.3</version>
+    <version>1.0.6.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -33,7 +33,6 @@
       <artifactId>hualuomoli-tools</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.github.hualuomoli</groupId>
       <artifactId>hualuomoli-framework</artifactId>
@@ -85,40 +84,6 @@
       <version>${jackson.version}</version>
     </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <!-- common-logging 实际调用slf4j -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <!-- java.util.logging 实际调用slf4j -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jul-to-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <!-- log4j -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-    </dependency>
 
     <!-- junit-test -->
     <dependency>

@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli</artifactId>
-    <version>1.0.6.3</version>
+    <version>1.0.6.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

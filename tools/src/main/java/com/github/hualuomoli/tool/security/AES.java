@@ -16,7 +16,7 @@ public class AES {
   private static final String DEFAULT_CHARSET = "UTF-8";
 
   /**
-   * 加密 {@value #DEFAULT_CHARSET}
+   * 加密 {@linkplain #DEFAULT_CHARSET}
    * @param key Key
    * @param content 明文
    * @return 密文
@@ -41,7 +41,7 @@ public class AES {
   }
 
   /**
-   * 解密 {@value #DEFAULT_CHARSET}
+   * 解密 {@linkplain #DEFAULT_CHARSET}
    * @param key Key
    * @param cipherContent 密文
    * @return 明文

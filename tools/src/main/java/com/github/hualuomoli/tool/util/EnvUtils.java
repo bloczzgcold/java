@@ -67,7 +67,6 @@ public class EnvUtils {
    * logs/test/log4j.properties           当前文件目录下的test目录下的配置文件
    * @param resource 资源文件
    * @return 包含运行环境的资源文件 
-   * @return
    */
   private static final List<String> parse2List(String resource) {
     List<String> resources = new ArrayList<String>();

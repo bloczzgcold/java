@@ -18,11 +18,16 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 默认客户端
  */
 public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient {
+
+  private static final Logger logger = LoggerFactory.getLogger(HttpDefaultClient.class);
 
   // 链接时长
   private Integer connectTimeout = 1000 * 2;
@@ -44,22 +49,26 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  public String get(List<Param> params, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+  public String get(String content, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
 
     HttpURLConnection conn = null;
 
     try {
       // 获取URL地址
       String url = this.url;
-      if (params != null && params.size() > 0) {
+      if (StringUtils.isNotBlank(content)) {
         if (url.lastIndexOf("?") > 0) {
-          url = url + "&" + this.getEncoded(params);
+          url = url + "&" + content;
         } else {
-          url = url + "?" + this.getEncoded(params);
+          url = url + "?" + content;
         }
       }
 
+      logger.debug("[get] url={}", url);
+      logger.debug("[get] requestHeaders={}", requestHeaders);
+
       conn = this.getConnection(url);
+      conn.setRequestMethod("GET");
       conn.setConnectTimeout(connectTimeout); // 连接超时时间
       conn.setReadTimeout(readTimeout); // 从主机读取数据超时时间
       conn.setDoInput(true); // 设置是否读入
@@ -81,13 +90,16 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
   }
 
   @Override
-  public String urlencoded(List<Param> params, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+  public String urlencoded(String content, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+    logger.debug("[urlencoded] url={},content={}", url, content);
+    logger.debug("[urlencoded] requestHeaders={}", requestHeaders);
 
     HttpURLConnection conn = null;
     OutputStream os = null;
 
     try {
       conn = this.getConnection(url);
+      conn.setRequestMethod("POST");
       conn.setConnectTimeout(connectTimeout); // 连接超时时间
       conn.setReadTimeout(readTimeout); // 从主机读取数据超时时间
       conn.setDoInput(true); // 设置是否读入
@@ -99,9 +111,9 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
       this.writeHttpRequestContentType(conn, "application/x-www-form-urlencoded");
 
       // flush data
-      if (params != null && params.size() > 0) {
+      if (StringUtils.isNotBlank(content)) {
         os = conn.getOutputStream();
-        os.write(this.getEncoded(params).getBytes());
+        os.write(content.getBytes());
       }
 
       // get response header
@@ -118,12 +130,15 @@ public class HttpDefaultClient extends AbstractHttpCleint implements HttpClient 
 
   @Override
   public String json(String content, List<Header> requestHeaders, List<Header> responseHeaders) throws IOException {
+    logger.debug("[json] url={},content={}", url, content);
+    logger.debug("[json] requestHeaders={}", requestHeaders);
 
     HttpURLConnection conn = null;
     OutputStream os = null;
 
     try {
       conn = this.getConnection(url);
+      conn.setRequestMethod("POST");
       conn.setConnectTimeout(connectTimeout); // 连接超时时间
       conn.setReadTimeout(readTimeout); // 从主机读取数据超时时间
       conn.setDoInput(true); // 设置是否读入

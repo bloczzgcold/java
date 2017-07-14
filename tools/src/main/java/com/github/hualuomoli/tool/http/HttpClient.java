@@ -46,7 +46,7 @@ public interface HttpClient {
 
   /**
    * application/json
-   * @param object 请求信息
+   * @param content 请求内容
    * @return 响应结果
    * @throws IOException 调用过程中异常
    */
@@ -54,7 +54,7 @@ public interface HttpClient {
 
   /**
    * application/json
-   * @param object 请求信息
+   * @param content 请求信息
    * @param requestHeaders 请求的header
    * @param responseHeaders 响应的header
    * @return 响应结果

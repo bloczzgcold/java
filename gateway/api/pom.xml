@@ -6,21 +6,11 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli-gateway</artifactId>
-    <version>1.0.6.3</version>
+    <version>1.0.6.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>hualuomoli-gateway-api</artifactId>
   <packaging>jar</packaging>
-
-  <dependencies>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-
-  </dependencies>
 
 </project>

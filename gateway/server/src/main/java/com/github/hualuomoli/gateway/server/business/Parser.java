@@ -15,7 +15,7 @@ public interface Parser {
 
   /**
    * 获取处理类
-   * @return
+   * @return 处理类的类型
    */
   List<Class<?>> dealers();
 

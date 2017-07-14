@@ -54,7 +54,7 @@ public class ClassUtils {
   /**
    * 获取属性值
    * @param name 属性名
-   * @param obj 数据
+   * @param object 数据
    * @return 值
    */
   public static Object getFieldValue(String name, Object object) {
@@ -70,7 +70,7 @@ public class ClassUtils {
   /**
    * 获取属性值
    * @param field 属性
-   * @param obj 数据
+   * @param object 数据
    * @return 值
    */
   public static Object getFieldValue(Field field, Object object) {
@@ -163,9 +163,9 @@ public class ClassUtils {
 
   /**
    * 获取属性
-   * @param name
-   * @param clazz
-   * @return
+   * @param name 属性名称
+   * @param clazz 类
+   * @return 属性
    */
   public static Field getField(String name, Class<?> clazz) {
     if (clazz == null) {

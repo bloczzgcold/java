@@ -72,7 +72,7 @@ public class GatewayClient {
   }
 
   /**
-   * {@linkplain ClientInvoker#call(String, String)}
+   * {@linkplain ClientInvoker#call(Request)}
    */
   public String call(String method, String bizContent) throws BusinessException, ClientException {
     Request request = new Request();

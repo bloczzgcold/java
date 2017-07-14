@@ -5,7 +5,7 @@
 
   <groupId>com.github.hualuomoli</groupId>
   <artifactId>hualuomoli</artifactId>
-  <version>1.0.6.3</version>
+  <version>1.0.6.4</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -107,7 +107,7 @@
     <repository>
       <id>nexus</id>
       <name>Repository for nexus</name>
-      <url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+      <url>http://nexus.hualuomoli.cn/content/groups/public/</url>
     </repository>
 
   </repositories>
@@ -117,8 +117,8 @@
 
     <pluginRepository>
       <id>nexus</id>
-      <name>Repository for nexus</name>
-      <url>http://nexus.hualuomoli.cn/nexus/content/groups/public/</url>
+      <name>Repository plugin for nexus</name>
+      <url>http://nexus.hualuomoli.cn/content/groups/public/</url>
     </pluginRepository>
 
   </pluginRepositories>
@@ -127,13 +127,14 @@
   <distributionManagement>
     <repository>
       <id>releases</id>
-      <name>Repository for nexus release</name>
-      <url>http://nexus.hualuomoli.cn/nexus/content/repositories/releases/</url>
+      <name>Repository for release repository</name>
+      <url>http://nexus.hualuomoli.cn/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>snapshots</id>
-      <name>Snapshot for nexus snapshot</name>
-      <url>http://nexus.hualuomoli.cn/nexus/content/repositories/snapshots/</url>
+      <name>Snapshot for snapshot repository</name>
+      <url>http://nexus.hualuomoli.cn/content/repositories/snapshots/</url>
+      <!-- 是否为Snapshot版本分配一个包含时间戳的构建号 -->
       <uniqueVersion>true</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>

@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli</artifactId>
-    <version>1.0.6.3</version>
+    <version>1.0.6.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -30,11 +30,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
     <!-- common-logging 实际调用slf4j -->

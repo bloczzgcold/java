@@ -18,7 +18,7 @@ public interface Interceptor {
    * @param req HTTP请求
    * @param res HTTP响应
    * @param request 网关请求
-   * @param NoPartnerException 合作伙伴未注册
+   * @throws NoPartnerException 合作伙伴未注册
    * @throws InvalidDataException 不合法的数据
    */
   void preHandle(HttpServletRequest req, HttpServletResponse res, Request request) throws NoPartnerException, InvalidDataException;
@@ -29,7 +29,6 @@ public interface Interceptor {
    * @param res HTTP响应
    * @param request 网关请求
    * @param response 网关响应
-   * @throws InvalidDataException 不合法的数据
    */
   void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response);
 

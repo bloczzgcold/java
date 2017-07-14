@@ -19,7 +19,7 @@ public class RSA {
   private static final String DEFAULT_CHARSET = "UTF-8";
 
   /**
-   * 签名 {@value #DEFAULT_CHARSET}
+   * 签名 {@linkplain #DEFAULT_CHARSET}
    * @param privateKey 私钥
    * @param origin 签名原文
    * @return 签名
@@ -44,7 +44,7 @@ public class RSA {
   }
 
   /**
-   * 验证签名 {@value #DEFAULT_CHARSET}
+   * 验证签名 {@linkplain #DEFAULT_CHARSET}
    * @param publicKey 公钥
    * @param origin 签名原文
    * @param sign 签名

@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli-sample</artifactId>
-    <version>1.0.6.3</version>
+    <version>1.0.6.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -24,11 +24,6 @@
 
     <dependency>
       <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-framework</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.hualuomoli</groupId>
       <artifactId>hualuomoli-logger</artifactId>
       <version>${project.parent.version}</version>
       <type>pom</type>
@@ -36,6 +31,11 @@
     <dependency>
       <groupId>com.github.hualuomoli</groupId>
       <artifactId>hualuomoli-tools</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.hualuomoli</groupId>
+      <artifactId>hualuomoli-framework</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -68,7 +68,22 @@
       <version>${jackson.version}</version>
     </dependency>
 
-    <!-- junit-test -->
+    <!-- ==================== provided ==================== -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>javax.el-api</artifactId>
+      <version>2.2.4</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- ==================== test ==================== -->
+    <!-- junit -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -80,20 +95,9 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <version>${spring.version}</version>
-    </dependency>
-    <!-- servlet -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.el</groupId>
-      <artifactId>javax.el-api</artifactId>
-      <version>2.2.4</version>
       <scope>test</scope>
     </dependency>
+
 
   </dependencies>
 
