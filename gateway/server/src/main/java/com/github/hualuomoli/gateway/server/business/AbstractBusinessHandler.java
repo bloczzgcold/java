@@ -16,6 +16,7 @@ import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
+import com.github.hualuomoli.gateway.api.lang.RequestVersionNotSupportException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
@@ -43,7 +44,7 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
   @Override
   public String execute(HttpServletRequest req, HttpServletResponse res//
       , String partnerId, String method, String bizContent //
-      , AuthorityInterceptor authorityInterceptor, List<BusinessInterceptor> interceptors) throws NoAuthorityException, NoRouterException, BusinessException {
+      , AuthorityInterceptor authorityInterceptor, List<BusinessInterceptor> interceptors) throws NoAuthorityException, NoRouterException, RequestVersionNotSupportException, BusinessException {
 
     this.init();
 
@@ -55,10 +56,6 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
     String version = this.parser().requestVersion(req);
 
     Function function = tool.getFunction(method, version);
-    // 没有路由
-    if (function == null) {
-      throw new NoRouterException(method, version);
-    }
 
     // 权限认证
     if (authorityInterceptor != null) {

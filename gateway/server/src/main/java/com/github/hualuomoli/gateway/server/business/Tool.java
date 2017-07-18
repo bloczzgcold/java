@@ -11,6 +11,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.hualuomoli.gateway.api.lang.NoRouterException;
+import com.github.hualuomoli.gateway.api.lang.RequestVersionNotSupportException;
+
 final class Tool {
 
   private static final Logger logger = LoggerFactory.getLogger(Tool.class);
@@ -56,10 +59,10 @@ final class Tool {
    * @param version 请求版本
    * @return 功能
    */
-  Function getFunction(String method, String version) {
+  Function getFunction(String method, String version) throws NoRouterException, RequestVersionNotSupportException {
     List<Function> functions = functionMap.get(method);
     if (functions == null || functions.size() == 0) {
-      return null;
+      throw new NoRouterException(method);
     }
 
     if (functions.size() == 1) {
@@ -77,8 +80,9 @@ final class Tool {
       }
     }
 
+    // 没有一个支持的版本
     if (list == null || list.size() == 0) {
-      return null;
+      throw new RequestVersionNotSupportException(method, version);
     }
 
     // 倒序

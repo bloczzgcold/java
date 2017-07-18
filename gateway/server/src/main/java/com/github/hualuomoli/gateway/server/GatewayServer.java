@@ -14,6 +14,7 @@ import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
+import com.github.hualuomoli.gateway.api.lang.RequestVersionNotSupportException;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
@@ -77,6 +78,9 @@ public class GatewayServer {
       response.setMessage(e.getMessage());
     } catch (NoRouterException e) {
       response.setCode(CodeEnum.NO_ROUTER);
+      response.setMessage(e.getMessage());
+    } catch (RequestVersionNotSupportException e) {
+      response.setCode(CodeEnum.REQUEST_VERSION_NOT_SUPPORT);
       response.setMessage(e.getMessage());
     } catch (BusinessException e) {
       response.setCode(CodeEnum.BUSINESS);
