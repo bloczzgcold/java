@@ -52,4 +52,9 @@ public class BusinessException extends RuntimeException {
     return subDescription;
   }
 
+  @Override
+  public String toString() {
+    return "BusinessException [subCode=" + subCode + ", subMessage=" + subMessage + ", subDescription=" + subDescription + "]";
+  }
+
 }
