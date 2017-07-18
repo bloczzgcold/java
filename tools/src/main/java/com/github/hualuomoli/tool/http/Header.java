@@ -9,9 +9,14 @@ public class Header {
   /** 值 */
   String[] value;
 
-  public Header(String name, String[] value) {
+  public Header(String name, String value) {
     this.name = name;
-    this.value = value;
+    this.value = new String[] { value };
+  }
+
+  public Header(String name, String... values) {
+    this.name = name;
+    this.value = values;
   }
 
   public String getName() {

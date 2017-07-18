@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,12 +15,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.github.hualuomoli.config.BaseComponentConfig;
+import com.github.hualuomoli.config.ConnectionConfig;
+import com.github.hualuomoli.config.JmsTemplateConfig;
 import com.github.hualuomoli.plugin.mq.MessageSender.Type;
 import com.github.hualuomoli.plugin.mq.jms.JmsMessageSender;
-import com.github.hualuomoli.sample.plugin.mq.sender.config.BaseConfig;
+import com.github.hualuomoli.util.ProjectConfig;
 
 @WebAppConfiguration
-@ContextConfiguration(classes = { BaseConfig.class })
+@ContextConfiguration(classes = { BaseComponentConfig.class, ConnectionConfig.class, JmsTemplateConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SenderTest {
 
@@ -27,6 +31,11 @@ public class SenderTest {
 
   @Resource(name = "jmsTemplate")
   private JmsTemplate jmsTemplate;
+
+  @BeforeClass
+  public static void beforeClass() {
+    ProjectConfig.init("classpath*:configs/activemq.properties");
+  }
 
   @Test
   public void testSendQueue() {
@@ -41,7 +50,7 @@ public class SenderTest {
     logger.info("count={}", count);
 
     for (int i = 1; i <= count; i++) {
-      sender.send("core_queue", i + " " + timestamp + " 单点message");
+      sender.send("sample_queue", i + " " + timestamp + " 单点message");
     }
 
   }
@@ -58,7 +67,7 @@ public class SenderTest {
     logger.info("count={}", count);
 
     for (int i = 1; i <= count; i++) {
-      sender.send("core_topic", i + " " + timestamp + " 广播message", Type.TOPIC);
+      sender.send("sample_topic", i + " " + timestamp + " 广播message", Type.TOPIC);
     }
 
   }

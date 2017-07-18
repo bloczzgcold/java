@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * API版本号
+ * 请求方法
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

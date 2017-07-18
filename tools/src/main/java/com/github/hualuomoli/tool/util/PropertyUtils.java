@@ -33,7 +33,29 @@ public final class PropertyUtils {
       return null;
     }
 
-    for (String filename : filenames) {
+    for (int i = 0, len = filenames.length; i < len; i++) {
+      String filename = filenames[i];
+      Properties prop = load(filename);
+      if (prop != null) {
+        return prop;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 反转加载第一个可加载的配置文件
+   * {@linkplain #load(String) }
+   * @param filenames 资源文件
+   * @return 配置信息
+   */
+  public static Properties loadFirstReverse(String... filenames) {
+    if (filenames == null || filenames.length == 0) {
+      return null;
+    }
+
+    for (int i = filenames.length - 1; i >= 0; i--) {
+      String filename = filenames[i];
       Properties prop = load(filename);
       if (prop != null) {
         return prop;

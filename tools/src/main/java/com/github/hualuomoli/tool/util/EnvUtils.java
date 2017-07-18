@@ -5,15 +5,10 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * 服务器运行环境
  */
 public class EnvUtils {
-
-  private static final Logger logger = LoggerFactory.getLogger(EnvUtils.class);
 
   private static final Lock LOCK = new ReentrantLock();
   private static String[] keys = new String[] { "server-startup-environment" };
@@ -119,7 +114,7 @@ public class EnvUtils {
       }
 
       String runtime = getRuntime(keys);
-      logger.info("user configure server environment {}", runtime);
+      System.out.println("user configure server environment " + runtime);
 
       if (runtime != null && runtime.length() > 0) {
         env = Env.valueOf(Env.class, runtime.toUpperCase());
@@ -127,7 +122,7 @@ public class EnvUtils {
         env = Env.PRODUCT;
       }
     } finally {
-      logger.info("server environment {}", env.name().toLowerCase());
+      System.out.println("server environment " + env.name().toLowerCase());
       // unlock
       LOCK.unlock();
     }

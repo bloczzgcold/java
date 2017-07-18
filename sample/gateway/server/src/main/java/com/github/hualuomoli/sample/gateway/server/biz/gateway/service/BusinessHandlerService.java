@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hualuomoli.framework.mvc.annotation.ApiVersion;
+import com.github.hualuomoli.framework.mvc.version.annotation.ApiVersion;
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.business.AbstractBusinessHandler;

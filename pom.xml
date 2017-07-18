@@ -12,9 +12,19 @@
     <module>./logger</module>
     <module>./tools</module>
     <module>./validator</module>
-    <module>./framework</module>
-    <module>./gateway</module>
-    <module>./plugin</module>
+    <module>./framework/core</module>
+    <module>./framework/mvc</module>
+    <module>./framework/mvc-version</module>
+    <module>./gateway/api</module>
+    <module>./gateway/server</module>
+    <module>./gateway/client</module>
+    <module>./plugin/dubbo/consumer</module>
+    <module>./plugin/dubbo/provider</module>
+    <module>./plugin/mq/sender</module>
+    <module>./plugin/mq/receiver</module>
+    <module>./plugin/ws/consumer</module>
+    <module>./plugin/ws/provider</module>
+    <module>./creator</module>
   </modules>
 
   <properties>
@@ -24,7 +34,10 @@
     <project.encoding>UTF-8</project.encoding>
 
     <slf4j.version>1.7.7</slf4j.version>
-    <spring.version>4.0.8.RELEASE</spring.version>
+    <spring.version>4.3.9.RELEASE</spring.version>
+    <jackson.version>2.7.4</jackson.version>
+    <junit.version>4.12</junit.version>
+    <servlet.version>3.0.1</servlet.version>
 
   </properties>
 

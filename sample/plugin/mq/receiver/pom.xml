@@ -5,12 +5,12 @@
 
   <parent>
     <groupId>com.github.hualuomoli</groupId>
-    <artifactId>hualuomoli-sample-plugin-mq</artifactId>
+    <artifactId>hualuomoli-sample</artifactId>
     <version>1.0.6.4</version>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>hualuomoli-sample-plugin-mq-receiver</artifactId>
+  <artifactId>hualuomoli-sample-mq-receiver</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -38,12 +38,20 @@
     </dependency>
 
 
+    <!-- ==================== provided ==================== -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
 
-    <!-- junit-test -->
+    <!-- ==================== test ==================== -->
+    <!-- junit -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- spring -->
@@ -58,13 +66,6 @@
       <artifactId>spring-test</artifactId>
       <version>${spring.version}</version>
       <scope>test</scope>
-    </dependency>
-    <!-- servlet -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
-      <scope>provided</scope>
     </dependency>
 
   </dependencies>

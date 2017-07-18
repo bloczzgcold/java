@@ -10,8 +10,14 @@
 
   <modules>
     <module>./framework</module>
-    <module>./gateway</module>
-    <module>./plugin</module>
+    <module>./gateway/server</module>
+    <module>./plugin/dubbo/api</module>
+    <module>./plugin/dubbo/consumer</module>
+    <module>./plugin/dubbo/provider</module>
+    <module>./plugin/mq/sender</module>
+    <module>./plugin/mq/receiver</module>
+    <module>./plugin/ws/consumer</module>
+    <module>./plugin/ws/provider</module>
   </modules>
 
   <properties>
@@ -21,7 +27,9 @@
     <project.encoding>UTF-8</project.encoding>
 
     <slf4j.version>1.7.7</slf4j.version>
-    <spring.version>4.0.8.RELEASE</spring.version>
+    <spring.version>4.3.9.RELEASE</spring.version>
+    <jackson.version>2.7.4</jackson.version>
+    <junit.version>4.12</junit.version>
 
   </properties>
 
@@ -53,8 +61,25 @@
         <configuration>
           <!-- 跳过测试 -->
           <skip>true</skip>
+          <!-- 测试失败忽略 -->
+          <testFailureIgnore>true</testFailureIgnore>
         </configuration>
       </plugin>
+
+      <build>
+        <plugins>
+          <!-- 打包 -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+              <!-- 没有web.xml不报错 -->
+              <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
 
     </plugins>
   </build>

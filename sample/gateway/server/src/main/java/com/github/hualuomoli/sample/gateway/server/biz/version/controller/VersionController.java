@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.hualuomoli.framework.mvc.annotation.ApiVersion;
+import com.github.hualuomoli.framework.mvc.version.annotation.ApiVersion;
 
 @Controller(value = "com.github.hualuomoli.sample.gateway.server.biz.version.controller.VersionController")
 @RequestMapping(value = "/version")

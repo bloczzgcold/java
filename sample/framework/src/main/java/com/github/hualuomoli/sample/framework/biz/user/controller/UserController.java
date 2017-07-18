@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hualuomoli.sample.framework.biz.user.entity.User;
-import com.github.hualuomoli.sample.framework.biz.user.service.UserService;
+import com.github.hualuomoli.sample.framework.base.entity.User;
+import com.github.hualuomoli.sample.framework.base.service.UserBaseService;
 
 /**
  * 用户,测试spring mvc的基础使用
  */
-@Controller(value = "com.github.hualuomoli.sample.framework.biz.user.controller.UserController")
 @RequestMapping(value = "/user")
+@Controller(value = "com.github.hualuomoli.sample.framework.biz.user.controller.UserController")
 public class UserController {
 
   @Autowired
-  private UserService userService;
+  private UserBaseService userBaseService;
 
   // http://localhost/user/json?username=hualuomoil&nickname=花落寞离
   @RequestMapping(value = "/json")
@@ -42,7 +42,7 @@ public class UserController {
   public String find(User user, HttpServletRequest req) {
     User u = new User();
     u.setUsername(user.getUsername());
-    List<User> list = userService.findList(u);
+    List<User> list = userBaseService.findList(u);
 
     if (list != null && list.size() > 0) {
       u = list.get(0);
