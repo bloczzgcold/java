@@ -28,7 +28,7 @@ public class SoapUtils {
    * 获取服务
    * @param address wsdl地址
    * @param clazz 服务类型
-   * @param interceptors 拦截器
+   * @param interceptor 拦截器
    * @return 服务
    * @throws SoapException 获取服务错误
    */

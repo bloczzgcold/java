@@ -6,11 +6,11 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli</artifactId>
-    <version>1.0.6.5</version>
+    <version>1.0.6.4</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>hualuomoli-mq-receiver</artifactId>
+  <artifactId>hualuomoli-mq-sender</artifactId>
   <packaging>jar</packaging>
 
   <properties>

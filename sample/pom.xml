@@ -5,7 +5,7 @@
 
   <groupId>com.github.hualuomoli</groupId>
   <artifactId>hualuomoli-sample</artifactId>
-  <version>1.0.6.4</version>
+  <version>1.0.6.5</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -27,7 +27,7 @@
     <project.encoding>UTF-8</project.encoding>
 
     <slf4j.version>1.7.7</slf4j.version>
-    <spring.version>4.3.9.RELEASE</spring.version>
+    <spring.version>4.2.0.RELEASE</spring.version>
     <jackson.version>2.7.4</jackson.version>
     <junit.version>4.12</junit.version>
 
@@ -52,7 +52,6 @@
           <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
-
       <!-- 单元测试 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -65,21 +64,16 @@
           <testFailureIgnore>true</testFailureIgnore>
         </configuration>
       </plugin>
-
-      <build>
-        <plugins>
-          <!-- 打包 -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.6</version>
-            <configuration>
-              <!-- 没有web.xml不报错 -->
-              <failOnMissingWebXml>false</failOnMissingWebXml>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <!-- 打包 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <!-- 没有web.xml不报错 -->
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
 
     </plugins>
   </build>

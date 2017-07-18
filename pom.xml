@@ -5,7 +5,7 @@
 
   <groupId>com.github.hualuomoli</groupId>
   <artifactId>hualuomoli</artifactId>
-  <version>1.0.6.4</version>
+  <version>1.0.6.5</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -34,7 +34,7 @@
     <project.encoding>UTF-8</project.encoding>
 
     <slf4j.version>1.7.7</slf4j.version>
-    <spring.version>4.3.9.RELEASE</spring.version>
+    <spring.version>4.2.0.RELEASE</spring.version>
     <jackson.version>2.7.4</jackson.version>
     <junit.version>4.12</junit.version>
     <servlet.version>3.0.1</servlet.version>
