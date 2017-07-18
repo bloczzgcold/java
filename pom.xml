@@ -14,7 +14,6 @@
     <module>./validator</module>
     <module>./framework/core</module>
     <module>./framework/mvc</module>
-    <module>./framework/mvc-version</module>
     <module>./gateway/api</module>
     <module>./gateway/server</module>
     <module>./gateway/client</module>
