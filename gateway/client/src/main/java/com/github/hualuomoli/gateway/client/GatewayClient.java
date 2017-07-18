@@ -98,7 +98,7 @@ public class GatewayClient {
 
       // 网关处理错误
       if (response.getCode() != CodeEnum.SUCCESS) {
-        throw new ClientException(response.getCode(), response.getMessage());
+        throw new BusinessException(response.getSubCode(), response.getSubMessage());
       }
 
       // 后置拦截
