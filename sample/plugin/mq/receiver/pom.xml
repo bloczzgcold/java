@@ -33,7 +33,7 @@
     </dependency>
     <dependency>
       <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-plugin-mq</artifactId>
+      <artifactId>hualuomoli-mq-receiver</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.github.hualuomoli.plugin.mq.listener.DefaultMessageListener;
+import com.github.hualuomoli.mq.receiver.listener.DefaultMessageListener;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer1;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer2;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer3;

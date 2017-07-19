@@ -18,8 +18,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.github.hualuomoli.config.BaseComponentConfig;
 import com.github.hualuomoli.config.ConnectionConfig;
 import com.github.hualuomoli.config.JmsTemplateConfig;
-import com.github.hualuomoli.plugin.mq.MessageSender.Type;
-import com.github.hualuomoli.plugin.mq.jms.JmsMessageSender;
+import com.github.hualuomoli.mq.sender.MessageSender.Type;
+import com.github.hualuomoli.mq.sender.jms.JmsMessageSender;
 import com.github.hualuomoli.util.ProjectConfig;
 
 @WebAppConfiguration
