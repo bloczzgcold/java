@@ -21,9 +21,9 @@ import com.github.hualuomoli.sample.plugin.ws.consumer.service.ServerService;
 @WebAppConfiguration
 @ContextConfiguration(classes = { BaseComponentConfig.class, WsClientConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ServerServiceTest {
+public class ConsumerTest {
 
-  private static final Logger logger = LoggerFactory.getLogger(ServerService.class);
+  private static final Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
 
   @Autowired
   private ServerService serverService;
