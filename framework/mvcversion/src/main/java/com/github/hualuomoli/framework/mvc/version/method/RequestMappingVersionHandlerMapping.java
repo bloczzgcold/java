@@ -51,6 +51,14 @@ public class RequestMappingVersionHandlerMapping extends RequestMappingHandlerMa
     }
 
     @Override
+    public boolean support(String version, String requestVersion) {
+      if (requestVersion == null || requestVersion.trim().length() == 0) {
+        return true;
+      }
+      return this.compare(version, requestVersion) <= 0;
+    }
+
+    @Override
     public int compare(String v1, String v2) {
 
       if (v1 == null && v2 == null) {

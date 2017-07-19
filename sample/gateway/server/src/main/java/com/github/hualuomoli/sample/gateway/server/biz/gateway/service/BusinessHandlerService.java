@@ -111,6 +111,9 @@ public class BusinessHandlerService extends AbstractBusinessHandler implements A
 
       @Override
       public boolean support(String functionVersion, String requestVersion) {
+        if (StringUtils.isBlank(requestVersion)) {
+          return true;
+        }
         return this.compare(functionVersion, requestVersion) <= 0;
       }
 

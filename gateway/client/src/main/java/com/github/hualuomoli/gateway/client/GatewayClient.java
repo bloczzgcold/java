@@ -96,9 +96,14 @@ public class GatewayClient {
       invoker.call(request);
       Response response = jsonParser.parseObject(invoker.getResult(), Response.class);
 
-      // 网关处理错误
-      if (response.getCode() != CodeEnum.SUCCESS) {
+      // 业务处理错误
+      if (response.getCode() == CodeEnum.BUSINESS) {
         throw new BusinessException(response.getSubCode(), response.getSubMessage());
+      }
+
+      // 其他错误
+      if (response.getCode() != CodeEnum.SUCCESS) {
+        throw new ClientException(response.getCode(), response.getMessage());
       }
 
       // 后置拦截

@@ -33,7 +33,7 @@ public class VersionRequestCondition implements RequestCondition<VersionRequestC
     // 请求版本号
     String version = parser.getVersion(request);
 
-    return parser.compare(this.version, version) <= 0 ? this : null;
+    return parser.support(this.version, version) ? this : null;
   }
 
   // 版本号排序,版本号越大越靠前

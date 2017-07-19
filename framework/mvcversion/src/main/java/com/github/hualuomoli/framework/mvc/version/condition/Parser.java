@@ -17,6 +17,14 @@ public interface Parser {
   String getVersion(HttpServletRequest req);
 
   /**
+   * 是否支持
+   * @param version 业务功能版本号
+   * @param requestVersion 请求版本号
+   * @return 是否支持
+   */
+  boolean support(String version, String requestVersion);
+
+  /**
    * 版本比较
    * @param v1 版本1
    * @param v2 版本2
