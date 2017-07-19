@@ -2,7 +2,6 @@ package com.github.hualuomoli.framework.mvc.version.condition;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 
 /**
@@ -10,18 +9,12 @@ import org.springframework.web.servlet.mvc.condition.RequestCondition;
  */
 public class VersionRequestCondition implements RequestCondition<VersionRequestCondition> {
 
-  private Parser parser = new DefaultParser();
-
   private String version;
+  private Parser parser;
 
-  public VersionRequestCondition() {
-  }
-
-  public VersionRequestCondition(String version) {
+  public VersionRequestCondition(String version, Parser parser) {
+    super();
     this.version = version;
-  }
-
-  public void setParser(Parser parser) {
     this.parser = parser;
   }
 
@@ -31,7 +24,7 @@ public class VersionRequestCondition implements RequestCondition<VersionRequestC
    */
   @Override
   public VersionRequestCondition combine(VersionRequestCondition other) {
-    return new VersionRequestCondition(other.version);
+    return new VersionRequestCondition(other.version, parser);
   }
 
   // 获取符合的条件
@@ -39,10 +32,6 @@ public class VersionRequestCondition implements RequestCondition<VersionRequestC
   public VersionRequestCondition getMatchingCondition(HttpServletRequest request) {
     // 请求版本号
     String version = parser.getVersion(request);
-
-    if (StringUtils.isBlank(version)) {
-      return this;
-    }
 
     return parser.compare(this.version, version) <= 0 ? this : null;
   }

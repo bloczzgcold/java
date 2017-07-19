@@ -65,17 +65,10 @@ final class Tool {
       throw new NoRouterException(method);
     }
 
-    if (functions.size() == 1) {
-      return functions.get(0);
-    }
-
-    boolean empty = version == null || version.trim().length() == 0;
-
-    // check version
-    // 1、support functions
+    // check version support
     List<Function> list = new ArrayList<Function>();
     for (Function function : functions) {
-      if (empty || parser.support(function.version, version)) {
+      if (parser.support(function.version, version)) {
         list.add(function);
       }
     }
@@ -83,6 +76,11 @@ final class Tool {
     // 没有一个支持的版本
     if (list == null || list.size() == 0) {
       throw new RequestVersionNotSupportException(method, version);
+    }
+
+    // 只有一个
+    if (functions.size() == 1) {
+      return functions.get(0);
     }
 
     // 倒序

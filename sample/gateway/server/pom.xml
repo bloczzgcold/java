@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-framework-mvc</artifactId>
+      <artifactId>hualuomoli-framework-mvcversion</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
