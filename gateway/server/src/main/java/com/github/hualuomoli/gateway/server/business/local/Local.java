@@ -1,5 +1,8 @@
 package com.github.hualuomoli.gateway.server.business.local;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 当前线程数据
  */
@@ -8,6 +11,7 @@ public class Local {
   private static final ThreadLocal<String> LOCAL_PARTNER_ID = new ThreadLocal<>(); // 合作伙伴ID
   private static final ThreadLocal<String> LOCAL_METHOD = new ThreadLocal<>(); // 请求方法
   private static final ThreadLocal<String> LOCAL_BIZ_CONTENT = new ThreadLocal<String>(); // 请求的业务内容
+  private static final ThreadLocal<Map<String, String>> LOCAL_HEADER = new ThreadLocal<Map<String, String>>(); // header
 
   public static String getPartnerId() {
     return LOCAL_PARTNER_ID.get();
@@ -31,6 +35,23 @@ public class Local {
 
   public static void setBizContent(String bizContent) {
     LOCAL_BIZ_CONTENT.set(bizContent);
+  }
+
+  public static String getHeader(String headerName) {
+    Map<String, String> map = LOCAL_HEADER.get();
+    if (map == null) {
+      return null;
+    }
+    return map.get(headerName);
+  }
+
+  public static void addHeader(String headerName, String headerValue) {
+    Map<String, String> map = LOCAL_HEADER.get();
+    if (map == null) {
+      map = new HashMap<String, String>();
+      LOCAL_HEADER.set(map);
+    }
+    map.put(headerName, headerValue);
   }
 
 }
