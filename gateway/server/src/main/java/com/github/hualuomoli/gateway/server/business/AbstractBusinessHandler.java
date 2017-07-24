@@ -9,61 +9,80 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
-import com.github.hualuomoli.gateway.api.lang.RequestVersionNotSupportException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
+import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
+import com.github.hualuomoli.gateway.server.business.entity.Function;
 import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.business.local.Local;
+import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 
 /**
  * 业务处理者
  */
-public abstract class AbstractBusinessHandler implements BusinessHandler {
+public class AbstractBusinessHandler implements BusinessHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractBusinessHandler.class);
+  //权限拦截器
+  private AuthorityInterceptor authorityInterceptor;
+  // 业务拦截器
+  private List<BusinessInterceptor> interceptors = new ArrayList<BusinessInterceptor>();
+  // Function处理类
+  private FunctionDealer functionDealer;
+  // 业务错误解析器
+  private BusinessErrorParser businessErrorParser;
+  // JSON转换器
+  private JSONParser jsonParser;
+  // 实体类包路径
+  private String[] packageNames;
 
-  private Tool tool;
-  private static boolean init = false;
+  public void setAuthorityInterceptor(AuthorityInterceptor authorityInterceptor) {
+    this.authorityInterceptor = authorityInterceptor;
+  }
 
-  public void init() {
-    if (init) {
-      return;
-    }
-    tool = new Tool(this.parser());
-    init = true;
-    logger.info("init tool.");
+  public void setInterceptors(List<BusinessInterceptor> interceptors) {
+    this.interceptors = interceptors;
+  }
+
+  public void setFunctionDealer(FunctionDealer functionDealer) {
+    this.functionDealer = functionDealer;
+  }
+
+  public void setBusinessErrorParser(BusinessErrorParser businessErrorParser) {
+    this.businessErrorParser = businessErrorParser;
+  }
+
+  public void setJsonParser(JSONParser jsonParser) {
+    this.jsonParser = jsonParser;
+  }
+
+  public void setPackageNames(String[] packageNames) {
+    this.packageNames = packageNames;
   }
 
   @Override
-  public String execute(HttpServletRequest req, HttpServletResponse res//
-      , String partnerId, String method, String bizContent //
-      , AuthorityInterceptor authorityInterceptor, List<BusinessInterceptor> interceptors) throws NoAuthorityException, NoRouterException, RequestVersionNotSupportException, BusinessException {
-
-    this.init();
+  public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoAuthorityException, NoRouterException, BusinessException {
 
     // 设置信息到本地线程
     Local.setPartnerId(partnerId);
     Local.setMethod(method);
     Local.setBizContent(bizContent);
 
-    String version = this.parser().requestVersion(req);
-
-    Function function = tool.getFunction(method, version);
+    Function function = functionDealer.getFunction(method, req);
+    // 处理类
+    Object handler = functionDealer.getDealer(function);
 
     // 权限认证
     if (authorityInterceptor != null) {
-      authorityInterceptor.handle(req, res);
+      authorityInterceptor.handle(partnerId, method, req, res);
     }
 
     List<Object> paramList = new ArrayList<Object>();
-    Class<?>[] parameterTypes = function.method.getParameterTypes();
+    Method m = function.getMethod();
+    Class<?>[] parameterTypes = m.getParameterTypes();
     c: for (Class<?> parameterType : parameterTypes) {
 
       // HTTP request
@@ -80,39 +99,35 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
 
       // List
       if (List.class.isAssignableFrom(parameterType)) {
-        ParameterizedType genericParameterTypes = (ParameterizedType) function.method.getGenericParameterTypes()[0];
+        ParameterizedType genericParameterTypes = (ParameterizedType) m.getGenericParameterTypes()[0];
         Class<?> clazz = (Class<?>) genericParameterTypes.getActualTypeArguments()[0];
-        paramList.add(this.jsonParser().parseArray(bizContent, clazz));
+        paramList.add(jsonParser.parseArray(bizContent, clazz));
         continue;
       }
 
       // packageName
-      String[] packageNames = this.packageNames();
       String name = parameterType.getName();
       for (String packageName : packageNames) {
         if (name.startsWith(packageName)) {
-          paramList.add(this.jsonParser().parseObject(bizContent, parameterType));
+          paramList.add(jsonParser.parseObject(bizContent, parameterType));
           continue c;
         }
       }
 
       // end
       throw new InvalidDataException("there is not support type " + name);
-
     }
 
     // 请求参数
     Object[] params = paramList.toArray(new Object[] {});
-    // 处理类
-    Object handler = tool.getDealer(function);
 
     // 执行业务
     try {
-      return this.deal(function.method, handler, params, interceptors, req, res);
+      return this.deal(m, handler, params, req, res);
     } catch (BusinessException be) {
       throw be;
     } catch (Throwable t) {
-      throw this.parser().parse(t);
+      throw businessErrorParser.parse(t);
     }
 
   }
@@ -122,12 +137,11 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
    * @param method 执行方法
    * @param handler 执行器
    * @param params 执行参数 
-   * @param interceptors 拦截器
    * @param req HTTP请求
    * @param res HTTP响应
    * @return 业务处理结果
    */
-  private String deal(Method method, Object handler, Object[] params, List<BusinessInterceptor> interceptors, HttpServletRequest req, HttpServletResponse res) {
+  private String deal(Method method, Object handler, Object[] params, HttpServletRequest req, HttpServletResponse res) {
 
     // 前置拦截
     for (BusinessInterceptor interceptor : interceptors) {
@@ -140,14 +154,14 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
     try {
       Object object = method.invoke(handler, params);
       if (object != null) {
-        result = this.jsonParser().toJsonString(object);
+        result = jsonParser.toJsonString(object);
       }
     } catch (IllegalAccessException e) {
-      be = this.parser().parse(e);
+      be = businessErrorParser.parse(e);
     } catch (IllegalArgumentException e) {
-      be = this.parser().parse(e);
+      be = businessErrorParser.parse(e);
     } catch (InvocationTargetException e) {
-      be = this.parser().parse(e.getTargetException());
+      be = businessErrorParser.parse(e.getTargetException());
     }
 
     if (be == null) {
@@ -165,11 +179,5 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
 
     return result;
   }
-
-  protected abstract Parser parser();
-
-  protected abstract JSONParser jsonParser();
-
-  protected abstract String[] packageNames();
 
 }

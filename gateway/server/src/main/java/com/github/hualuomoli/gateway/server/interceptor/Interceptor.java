@@ -9,7 +9,7 @@ import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
 
 /**
- * 拦截器
+ * 拦截器,用于权限验证/数据加解密
  */
 public interface Interceptor {
 

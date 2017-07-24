@@ -13,8 +13,6 @@ public enum CodeEnum {
   NO_PARTNER,
   /** 没有路由 */
   NO_ROUTER,
-  /** 请求版本不支持 */
-  REQUEST_VERSION_NOT_SUPPORT,
   /** 没有权限 */
   NO_AUTHORITY,
   /** 业务处理错误 */

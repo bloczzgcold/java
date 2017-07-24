@@ -14,10 +14,7 @@ import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
 import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
-import com.github.hualuomoli.gateway.api.lang.RequestVersionNotSupportException;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
-import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
-import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 
 /**
@@ -26,24 +23,14 @@ import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 public class GatewayServer {
 
   private BusinessHandler businessHandler;
-  private AuthorityInterceptor authorityInterceptor;
   private List<Interceptor> interceptors = new ArrayList<Interceptor>();
-  private List<BusinessInterceptor> businessInterceptors = new ArrayList<BusinessInterceptor>();
 
   public void setBusinessHandler(BusinessHandler businessHandler) {
     this.businessHandler = businessHandler;
   }
 
-  public void setAuthorityInterceptor(AuthorityInterceptor authorityInterceptor) {
-    this.authorityInterceptor = authorityInterceptor;
-  }
-
   public void setInterceptors(List<Interceptor> interceptors) {
     this.interceptors = interceptors;
-  }
-
-  public void setBusinessInterceptors(List<BusinessInterceptor> businessInterceptors) {
-    this.businessInterceptors = businessInterceptors;
   }
 
   public Response execute(HttpServletRequest req, HttpServletResponse res) {
@@ -58,9 +45,7 @@ public class GatewayServer {
       }
 
       // 执行业务 
-      String result = businessHandler.execute(req, res//
-          , request.getPartnerId(), request.getMethod(), request.getBizContent()//
-          , authorityInterceptor, businessInterceptors);
+      String result = businessHandler.execute(req, res, request.getPartnerId(), request.getMethod(), request.getBizContent());
 
       // 设置返回信息
       response.setCode(CodeEnum.SUCCESS);
@@ -79,14 +64,12 @@ public class GatewayServer {
     } catch (NoRouterException e) {
       response.setCode(CodeEnum.NO_ROUTER);
       response.setMessage(e.getMessage());
-    } catch (RequestVersionNotSupportException e) {
-      response.setCode(CodeEnum.REQUEST_VERSION_NOT_SUPPORT);
-      response.setMessage(e.getMessage());
     } catch (BusinessException e) {
       response.setCode(CodeEnum.BUSINESS);
       response.setMessage("业务处理错误");
       response.setSubCode(e.getSubCode());
       response.setSubMessage(e.getSubMessage());
+      response.setSubDescription(e.getSubDescription());
     } catch (Exception e) {
       response.setCode(CodeEnum.ERROR);
       response.setMessage(e.getMessage());

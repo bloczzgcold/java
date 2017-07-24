@@ -21,7 +21,7 @@ public class ApiVersionGatewayTest extends ClientControllerTest {
     try {
       this.execute("0.0.0.1");
     } catch (ClientException e) {
-      Assert.assertTrue(e.getCode() == CodeEnum.REQUEST_VERSION_NOT_SUPPORT);
+      Assert.assertTrue(e.getCode() == CodeEnum.NO_ROUTER);
     }
   }
 

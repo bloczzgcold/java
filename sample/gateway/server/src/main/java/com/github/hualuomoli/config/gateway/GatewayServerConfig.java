@@ -1,6 +1,5 @@
-package com.github.hualuomoli.config;
+package com.github.hualuomoli.config.gateway;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,44 +10,39 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import com.github.hualuomoli.gateway.api.entity.Request;
 import com.github.hualuomoli.gateway.api.entity.Response;
 import com.github.hualuomoli.gateway.api.enums.EncryptionEnum;
 import com.github.hualuomoli.gateway.api.enums.SignatureEnum;
-import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
 import com.github.hualuomoli.gateway.api.support.security.AES;
 import com.github.hualuomoli.gateway.api.support.security.RSA;
 import com.github.hualuomoli.gateway.server.GatewayServer;
-import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
-import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.business.local.Local;
+import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.dealer.EncryptionDealer;
 import com.github.hualuomoli.gateway.server.dealer.SignatureDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
 import com.github.hualuomoli.gateway.server.interceptor.encrypt.EncryptionInterceptor;
 import com.github.hualuomoli.gateway.server.interceptor.sign.SignatureInterceptor;
-import com.github.hualuomoli.sample.gateway.server.biz.gateway.service.BusinessHandlerService;
 import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.google.common.collect.Lists;
 
-@Configuration(value = "com.github.hualuomoli.config.GatewayServerConfig")
+@Configuration(value = "com.github.hualuomoli.config.gateway.GatewayServerConfig")
+@Import(value = { GatewayBusinessHandlerConfig.class })
 public class GatewayServerConfig {
 
   @Autowired
-  private BusinessHandlerService businessHandler;
+  private BusinessHandler businessHandler;
 
   @Bean
   public GatewayServer initGateway() {
 
     GatewayServer server = new GatewayServer();
     server.setBusinessHandler(businessHandler);
-    server.setAuthorityInterceptor(this.authorityInterceptor());
     server.setInterceptors(this.interceptors());
-    server.setBusinessInterceptors(Lists.newArrayList(this.businessInterceptor()));
 
     return server;
   }
@@ -77,15 +71,6 @@ public class GatewayServerConfig {
     });
 
     return interceptors;
-  }
-
-  private AuthorityInterceptor authorityInterceptor() {
-    return new AuthorityInterceptor() {
-
-      @Override
-      public void handle(HttpServletRequest req, HttpServletResponse res) throws NoAuthorityException {
-      }
-    };
   }
 
   private EncryptionDealer encryptionDealer() {
@@ -129,25 +114,4 @@ public class GatewayServerConfig {
     };
   }
 
-  private BusinessInterceptor businessInterceptor() {
-    final Logger logger = LoggerFactory.getLogger(BusinessInterceptor.class);
-
-    return new BusinessInterceptor() {
-
-      @Override
-      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
-        logger.debug("业务处理前日志输出 partnerId={},method={},bizContent={}", Local.getPartnerId(), Local.getMethod(), Local.getBizContent());
-      }
-
-      @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Object result) {
-        logger.debug("业务处理后日志输出 partnerId={},method={},result={}", Local.getPartnerId(), Local.getMethod(), result);
-      }
-
-      @Override
-      public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
-        logger.debug("业务处理出现异常 partnerId={},method={},e={}", Local.getPartnerId(), Local.getMethod(), be.getMessage(), be);
-      }
-    };
-  }
 }
