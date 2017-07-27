@@ -25,6 +25,7 @@
     <module>./plugin/ws/consumer</module>
     <module>./plugin/ws/provider</module>
     <module>./creator</module>
+    <module>./apidoc</module>
   </modules>
 
   <properties>
