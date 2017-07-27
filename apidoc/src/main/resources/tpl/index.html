@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>API</title>
-    <link href="https://cdn.bootcss.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="css/index.css" />
 </head>
 
 <body>
@@ -293,12 +293,10 @@
                         <td>本次交易支付所使用的单品券优惠的商品优惠信息</td>
                         <td>[{"goods_id":"STANDARD1026181538","goods_name":"雪碧","discount_amount":"100.00","voucher_id":"2015102600073002039000002D5O"}]</td>
                     </tr>
-                    <tr class="trigger">
+                    <tr class="level-control" data-open="#voucher_detail_list">
                         <td>
-                            <span>
-                                <i class="fa fa-plus-square-o"></i>
-                                <i class="fa fa-minus-square-o hide"></i>
-                            </span>
+                            <i class="fa fa-plus-square-o"></i>
+                            <i class="fa fa-minus-square-o hide"></i>
                             voucher_detail_list
                         </td>
                         <td>Array</td>
@@ -307,63 +305,88 @@
                         <td>本交易支付时使用的所有优惠券信息</td>
                         <td></td>
                     </tr>
-                    <tr class="trigger-data hide">
+                    <tr class="level-data hide" id="voucher_detail_list">
                         <td colspan="6">
-                            <ul>
-                                <li><span>id</span></li>
-                                <li><span>String</span></li>
-                                <li><span>是</span></li>
-                                <li><span>32</span></li>
-                                <li><span>券id</span></li>
-                                <li><span>2015102600073002039000002D5O</span></li>
+                            <ul class="level-1">
+                                <li>id</li>
+                                <li>String</li>
+                                <li>是</li>
+                                <li>32</li>
+                                <li>券id</li>
+                                <li>2015102600073002039000002D5O</li>
                             </ul>
-                            <ul>
-                                <li><span>name</span></li>
-                                <li><span>String</span></li>
-                                <li><span>是</span></li>
-                                <li><span>64</span></li>
-                                <li><span>券名称</span></li>
-                                <li><span>XX超市5折优惠</span></li>
+                            <ul class="level-1">
+                                <li>name</li>
+                                <li>String</li>
+                                <li>是</li>
+                                <li>64</li>
+                                <li>券名称</li>
+                                <li>XX超市5折优惠</li>
                             </ul>
-                            <ul>
-                                <li><span>type</span></li>
-                                <li><span>String</span></li>
-                                <li><span>是</span></li>
-                                <li><span>32</span></li>
-                                <li><span>当前有三种类型：ALIPAY_FIX_VOUCHER - 全场代金券 ALIPAY_DISCOUNT_VOUCHER - 折扣券 ALIPAY_ITEM_VOUCHER - 单品优惠 注：不排除将来新增其他类型的可能，商家接入时注意兼容性避免硬编码</span></li>
-                                <li><span></span></li>
+                            <ul class="level-1">
+                                <li>type</li>
+                                <li>String</li>
+                                <li>是</li>
+                                <li>32</li>
+                                <li>当前有三种类型：ALIPAY_FIX_VOUCHER - 全场代金券 ALIPAY_DISCOUNT_VOUCHER - 折扣券 ALIPAY_ITEM_VOUCHER - 单品优惠 注：不排除将来新增其他类型的可能，商家接入时注意兼容性避免硬编码</li>
+                                <li></li>
                             </ul>
-                            <ul>
-                                <li><span>amount</span></li>
-                                <li><span>Price</span></li>
-                                <li><span>是</span></li>
-                                <li><span>8</span></li>
-                                <li><span>优惠券面额，它应该会等于商家出资加上其他出资方出资</span></li>
-                                <li><span>10.00</span></li>
+                            <ul class="level-1">
+                                <li>amount</li>
+                                <li>Price</li>
+                                <li>是</li>
+                                <li>8</li>
+                                <li>优惠券面额，它应该会等于商家出资加上其他出资方出资</li>
+                                <li>10.00</li>
                             </ul>
-                            <ul>
-                                <li><span>merchant_contribute</span></li>
-                                <li><span>Price</span></li>
-                                <li><span>否</span></li>
-                                <li><span>8</span></li>
-                                <li><span>商家出资（特指发起交易的商家出资金额）</span></li>
-                                <li><span>9.00</span></li>
+                            <ul class="level-1 level-control" data-open="#voucher">
+                                <li>
+                                    <i class="fa fa-plus-square-o"></i>
+                                    <i class="fa fa-minus-square-o hide"></i>
+                                    merchant_contribute
+                                </li>
+                                <li>Price</li>
+                                <li>否</li>
+                                <li>8</li>
+                                <li>商家出资（特指发起交易的商家出资金额）</li>
+                                <li>9.00</li>
                             </ul>
-                            <ul>
-                                <li><span>other_contribute</span></li>
-                                <li><span>Price</span></li>
-                                <li><span>否</span></li>
-                                <li><span>8</span></li>
-                                <li><span>其他出资方出资金额，可能是支付宝，可能是品牌商，或者其他方，也可能是他们的一起出资</span></li>
-                                <li><span>1.00</span></li>
+                            
+                            <div class="level-data hide" id="voucher">
+                                <ul class="level-2">
+                                    <li>id</li>
+                                    <li>String</li>
+                                    <li>是</li>
+                                    <li>32</li>
+                                    <li>券id</li>
+                                    <li>2015102600073002039000002D5O</li>
+                                </ul>
+                                <ul class="level-2">
+                                    <li>name</li>
+                                    <li>String</li>
+                                    <li>是</li>
+                                    <li>64</li>
+                                    <li>券名称</li>
+                                    <li>XX超市5折优惠</li>
+                                </ul>
+                            </div>
+                            
+
+                            <ul class="level-1">
+                                <li>other_contribute</li>
+                                <li>Price</li>
+                                <li>否</li>
+                                <li>8</li>
+                                <li>其他出资方出资金额，可能是支付宝，可能是品牌商，或者其他方，也可能是他们的一起出资</li>
+                                <li>1.00</li>
                             </ul>
-                            <ul>
-                                <li><span>memo</span></li>
-                                <li><span>String</span></li>
-                                <li><span>否</span></li>
-                                <li><span>256</span></li>
-                                <li><span>优惠券备注信息</span></li>
-                                <li><span>学生专用优惠</span></li>
+                            <ul class="level-1">
+                                <li>memo</li>
+                                <li>String</li>
+                                <li>否</li>
+                                <li>256</li>
+                                <li>优惠券备注信息</li>
+                                <li>学生专用优惠</li>
                             </ul>
                         </td>
                     </tr>
@@ -403,8 +426,8 @@
         </div>
         <!-- content -->
     </div>
-    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-    <script src="js/index.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/index.js"></script>
 </body>
 
 </html>

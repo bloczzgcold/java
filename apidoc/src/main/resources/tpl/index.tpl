@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>${title}</title>
-    <link href="https://cdn.bootcss.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="css/index.css" />
 </head>
 
 <body>
@@ -25,10 +25,12 @@
                         <th width="35%">环境</th>
                         <th width="65%">HTTPS请求地址</th>
                     </tr>
+                    <#list servers as server>
                     <tr>
-                        <td>正式环境</td>
-                        <td>${serverUrl}</td>
+                        <td>${server.name}</td>
+                        <td>${server.url}</td>
                     </tr>
+                    </#list>
                 </table>
             </div>
             <!-- ./url -->
@@ -135,12 +137,11 @@
                     </tr>
                     <#list requestParameters as requestParameter>
                     <#if requestParameter.type == 'Array' || requestParameter.type == 'Object'>
-                    <tr class="trigger">
+                    <#-- 显示的数据 -->
+                    <tr class="level-control" data-open="#request-${requestParameter.name}-${requestParameter.level}">
                         <td>
-                            <span>
-                                <i class="fa fa-plus-square-o"></i>
-                                <i class="fa fa-minus-square-o hide"></i>
-                            </span>
+                            <i class="fa fa-plus-square-o"></i>
+                            <i class="fa fa-minus-square-o hide"></i>
                             ${requestParameter.name}
                         </td>
                         <td>${requestParameter.type!''}</td>
@@ -149,22 +150,53 @@
                         <td>${requestParameter.description}</td>
                         <td>${requestParameter.sample!''}</td>
                     </tr>
-                    <tr class="trigger-data hide">
+                    <#-- 子集数据 -->
+                    <tr class="level-data hide" id="request-${requestParameter.name}-${requestParameter.level}">
                         <td colspan="6">
                             <#list requestParameter.parameters as parameter>
-                            <ul>
-                                <li><span>${parameter.name}</span></li>
-                                <li><span>${parameter.type}</span></li>
-                                <li><span>${parameter.required?string('是','否')}</span></li>
-                                <li><span>${parameter.maxLength!'-'}</span></li>
-                                <li><span>${parameter.description}</span></li>
-                                <li><span>${parameter.sample!''}</span></li>
+                            <#if parameter.type == 'Array' || parameter.type == 'Object'>
+                            <#-- 显示的数据 -->
+                            <ul class="level-${parameter.level} level-control" data-open="#request-${parameter.name}-${parameter.level}">
+                                <li>
+                                    <i class="fa fa-plus-square-o"></i>
+                                    <i class="fa fa-minus-square-o hide"></i>
+                                    ${parameter.name}
+                                </li>
+                                <li>${parameter.type}</li>
+                                <li>${parameter.required?string('是','否')}</li>
+                                <li>${parameter.maxLength!'-'}</li>
+                                <li>${parameter.description}</li>
+                                <li>${parameter.sample!''}</li>
                             </ul>
+                            <#-- 子集数据 -->
+                            <div class="level-data hide" id="request-${parameter.name}-${parameter.level}">
+                                <#list parameter.parameters as subParameter>
+                                <ul class="level-2">
+                                    <li>${subParameter.name}</li>
+                                    <li>${subParameter.type}</li>
+                                    <li>${subParameter.required?string('是','否')}</li>
+                                    <li>${subParameter.maxLength!'-'}</li>
+                                    <li>${subParameter.description}</li>
+                                    <li>${subParameter.sample!''}</li>
+                                </ul>
+                                </#list>
+                            </div>
+                            <#else>
+                            <#-- 普通数据 -->
+                            <ul class="level-${parameter.level}">
+                                <li>${parameter.name}</li>
+                                <li>${parameter.type}</li>
+                                <li>${parameter.required?string('是','否')}</li>
+                                <li>${parameter.maxLength!'-'}</li>
+                                <li>${parameter.description}</li>
+                                <li>${parameter.sample!''}</li>
+                            </ul>
+                            </#if>
                             </#list>
                         </td>
                     </tr>
-
                     <#else>
+                    <#-- 普通数据 -->
                     <tr>
                         <td>${requestParameter.name}</td>
                         <td>${requestParameter.type!''}</td>
@@ -273,12 +305,11 @@
                     </tr>
                     <#list responseParameters as responseParameter>
                     <#if responseParameter.type == 'Array' || responseParameter.type == 'Object'>
-                    <tr class="trigger">
+                    <#-- 显示的数据 -->
+                    <tr class="level-control" data-open="#response-${responseParameter.name}-${responseParameter.level}">
                         <td>
-                            <span>
-                                <i class="fa fa-plus-square-o"></i>
-                                <i class="fa fa-minus-square-o hide"></i>
-                            </span>
+                            <i class="fa fa-plus-square-o"></i>
+                            <i class="fa fa-minus-square-o hide"></i>
                             ${responseParameter.name}
                         </td>
                         <td>${responseParameter.type!''}</td>
@@ -287,22 +318,53 @@
                         <td>${responseParameter.description}</td>
                         <td>${responseParameter.sample!''}</td>
                     </tr>
-                    <tr class="trigger-data hide">
+                    <#-- 子集数据 -->
+                    <tr class="level-data hide" id="response-${responseParameter.name}-${responseParameter.level}">
                         <td colspan="6">
                             <#list responseParameter.parameters as parameter>
-                            <ul>
-                                <li><span>${parameter.name}</span></li>
-                                <li><span>${parameter.type}</span></li>
-                                <li><span>${parameter.required?string('是','否')}</span></li>
-                                <li><span>${parameter.maxLength!'-'}</span></li>
-                                <li><span>${parameter.description}</span></li>
-                                <li><span>${parameter.sample!''}</span></li>
+                            <#if parameter.type == 'Array' || parameter.type == 'Object'>
+                            <#-- 显示的数据 -->
+                            <ul class="level-${parameter.level} level-control" data-open="#response-${parameter.name}-${parameter.level}">
+                                <li>
+                                    <i class="fa fa-plus-square-o"></i>
+                                    <i class="fa fa-minus-square-o hide"></i>
+                                    ${parameter.name}
+                                </li>
+                                <li>${parameter.type}</li>
+                                <li>${parameter.required?string('是','否')}</li>
+                                <li>${parameter.maxLength!'-'}</li>
+                                <li>${parameter.description}</li>
+                                <li>${parameter.sample!''}</li>
                             </ul>
+                            <#-- 子集数据 -->
+                            <div class="level-data hide" id="response-${parameter.name}-${parameter.level}">
+                                <#list parameter.parameters as subParameter>
+                                <ul class="level-2">
+                                    <li>${subParameter.name}</li>
+                                    <li>${subParameter.type}</li>
+                                    <li>${subParameter.required?string('是','否')}</li>
+                                    <li>${subParameter.maxLength!'-'}</li>
+                                    <li>${subParameter.description}</li>
+                                    <li>${subParameter.sample!''}</li>
+                                </ul>
+                                </#list>
+                            </div>
+                            <#else>
+                            <#-- 普通数据 -->
+                            <ul class="level-${parameter.level}">
+                                <li>${parameter.name}</li>
+                                <li>${parameter.type}</li>
+                                <li>${parameter.required?string('是','否')}</li>
+                                <li>${parameter.maxLength!'-'}</li>
+                                <li>${parameter.description}</li>
+                                <li>${parameter.sample!''}</li>
+                            </ul>
+                            </#if>
                             </#list>
                         </td>
                     </tr>
-
                     <#else>
+                    <#-- 普通数据 -->
                     <tr>
                         <td>${responseParameter.name}</td>
                         <td>${responseParameter.type!''}</td>
@@ -348,8 +410,8 @@
         </div>
         <!-- content -->
     </div>
-    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-    <script src="js/index.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/index.js"></script>
 </body>
 
 </html>

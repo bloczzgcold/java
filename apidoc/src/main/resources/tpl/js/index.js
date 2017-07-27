@@ -4,10 +4,12 @@
 		$(this).next('table').toggleClass('fade');
 	});
 
-	$('tr.trigger').on('click', function(){
+	$('.level-control').on('click', function(){
 		$(this).toggleClass('open');
-		$(this).find('td:nth-child(1) i').toggleClass('hide');
-		$(this).next('tr.trigger-data').toggleClass('hide');
+		$(this).find('td:nth-child(1) i, li:nth-child(1) i').toggleClass('hide');
+		var needdOpen = $(this).attr('data-open');
+		console.log(needdOpen);
+		$(needdOpen).toggleClass('hide');
 	});
 
 })(jQuery);

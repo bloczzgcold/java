@@ -2,6 +2,7 @@ package com.github.hualuomoli.apidoc.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.apidoc.entity.ApiDoc;
+import com.github.hualuomoli.apidoc.entity.Server;
 import com.github.hualuomoli.apidoc.filter.Filter;
 
 public class ApiDocUtilsTest {
@@ -38,7 +40,10 @@ public class ApiDocUtilsTest {
     });
     logger.info("docs={}", JSON.toJSONString(docs));
 
-    ApiDocUtils.flush(docs, "E:/apidoc", "http://www.baidu.com");
+    List<Server> servers = new ArrayList<Server>();
+    servers.add(new Server("正式环境", "http://www.baidu.com"));
+
+    ApiDocUtils.flush(docs, "E:/apidoc", servers);
 
   }
 

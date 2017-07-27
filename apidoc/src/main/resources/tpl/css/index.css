@@ -54,6 +54,9 @@ h5, h6 {
 .data {
     margin: 10px auto;
 }
+.hide {
+    display: none;
+}
 
 h5 {
     background-color: #fff;
@@ -94,27 +97,15 @@ th {
     background-color: #666;
 }
 td {
-}
-
-/** 有子元素 */
-tr.trigger {
-
-}
-tr.trigger i.hide {
-    display: none;
+    padding: 6px;
 }
 
 /** 子元素 */
-tr.trigger-data {
-}
-tr.trigger-data.hide {
-    display: none;
-}
-tr.trigger-data td {
+.level-data td {
     padding: 0;
     border: 0;
 }
-tr.trigger-data ul {
+.level-data ul {
     list-style: none;
     position: relative;
     width: 786px;
@@ -122,18 +113,22 @@ tr.trigger-data ul {
     padding: 7px 0;
     background-color: #fff;
 }
-tr.trigger-data li {
+.level-data li {
     width: 120px;
     padding-left: 6px;
     display: inline-block;
     vertical-align: center;
     line-height: 100%;
 }
-tr.trigger-data li:nth-child(1) {
-    width: 100px;
-    padding-left: 26px;
+.level-data .level-1 li:nth-child(1) {
+    width: 108px;
+    padding-left: 18px;
+}
+.level-data .level-2 li:nth-child(1) {
+    width: 90px;
+    padding-left: 36px;
 }
 
-tr.trigger-data ul:nth-child(odd) {
+.level-data ul:nth-child(odd) {
     background-color: #f5f5f5;
 }

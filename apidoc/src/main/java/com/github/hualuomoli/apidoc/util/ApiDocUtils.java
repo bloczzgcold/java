@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.hualuomoli.apidoc.entity.ApiDoc;
 import com.github.hualuomoli.apidoc.entity.Parameter;
+import com.github.hualuomoli.apidoc.entity.Server;
 import com.github.hualuomoli.apidoc.enums.ParameterTypeEnum;
 import com.github.hualuomoli.apidoc.filter.Filter;
 import com.github.hualuomoli.tool.util.TemplateUtils;
@@ -23,31 +24,90 @@ import com.github.hualuomoli.tool.util.TemplateUtils;
 public class ApiDocUtils {
 
   private static final Logger logger = LoggerFactory.getLogger(ApiDocUtils.class);
+  private static final ClassLoader LOADER = ApiDocUtils.class.getClassLoader();;
 
   private static String apiPath = null;
   private static String encoding = null;
   private static Filter filter = null;
 
   private static String flushPath = null;
+  private static List<Server> servers = null;
 
-  public static void flush(List<ApiDoc> docs, String flushPath, String serverUrl) {
+  /**
+   * 输出API文档
+   * @param docs API文档
+   * @param flushPath 输出地址
+   * @param serverUrl 服务器地址
+   */
+  public static void flush(List<ApiDoc> docs, String flushPath, List<Server> servers) {
     ApiDocUtils.flushPath = flushPath;
+    ApiDocUtils.servers = servers;
 
     // copy
-    TemplateUtils.processByResource("tpl/css", "index.css", null, new File(flushPath, "/css/index.css"));
-    TemplateUtils.processByResource("tpl/css", "sign.css", null, new File(flushPath, "/css/sign.css"));
-    TemplateUtils.processByResource("tpl/js", "index.js", null, new File(flushPath, "/js/index.js"));
-    TemplateUtils.processByResource("tpl", "sign.html", null, new File(flushPath, "sign.html"));
+    copy();
 
+    // flush
     for (ApiDoc doc : docs) {
-      flush(doc, serverUrl);
+      flush(doc);
     }
 
   }
 
-  public static void flush(ApiDoc doc, String serverUrl) {
+  /**
+   * 复制公共信息
+   */
+  private static void copy() {
+    // fonts
+    copy("fonts", "FontAwesome.otf");
+    copy("fonts", "fontawesome-webfont.eot");
+    copy("fonts", "fontawesome-webfont.svg");
+    copy("fonts", "fontawesome-webfont.ttf");
+    copy("fonts", "fontawesome-webfont.woff");
+    copy("fonts", "fontawesome-webfont.woff2");
+
+    // css
+    copy("css", "font-awesome.css");
+    copy("css", "index.css");
+    copy("css", "sign.css");
+
+    // js
+    copy("js", "jquery.js");
+    copy("js", "index.js");
+
+    // html
+    copy(null, "index.html");
+    copy(null, "sign.html");
+  }
+
+  private static void copy(String folder, String filename) {
+    try {
+      String resource = null;
+      String outputFilename = null;
+      if (folder == null) {
+        resource = "tpl/" + filename;
+        outputFilename = filename;
+      } else {
+        resource = "tpl/" + folder + "/" + filename;
+        outputFilename = folder + "/" + filename;
+      }
+      logger.info("copy resource {}", resource);
+      logger.info("output filename {}", outputFilename);
+      FileUtils.copyInputStreamToFile(LOADER.getResourceAsStream(resource), new File(flushPath, outputFilename));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * 输出APi
+   * @param doc API文档
+   * @param serverUrl 服务器地址
+   */
+  public static void flush(ApiDoc doc) {
+    logger.info("create apidoc {}", doc.getTitle());
+    logger.debug("apidoc data={}", doc);
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("serverUrl", serverUrl);
+    map.put("servers", servers);
     map.put("title", doc.getTitle());
     map.put("method", doc.getMethod());
     map.put("description", doc.getDescription());
@@ -135,7 +195,27 @@ public class ApiDocUtils {
     doc.setRequests(getParameter(requestLines));
     doc.setResponses(getParameter(responseLines));
 
+    // configure level
+    Integer level = 0;
+    configureLevel(doc.getRequests(), level);
+    configureLevel(doc.getResponses(), level);
+
     return doc;
+  }
+
+  /**
+   * 配置级别
+   * @param parameters 参数
+   * @param level 级别
+   */
+  private static void configureLevel(List<Parameter> parameters, Integer level) {
+    if (parameters == null || parameters.size() == 0) {
+      return;
+    }
+    for (Parameter parameter : parameters) {
+      parameter.setLevel(level);
+      configureLevel(parameter.getParameters(), level + 1);
+    }
   }
 
   /**
@@ -223,30 +303,30 @@ public class ApiDocUtils {
         // 属性名
         parameter.setName(name);
 
-        if (type.equals("Date") || type.equals("String")// 
-            || type.equals("Integer") || type.equals("Double") || type.equals("Long")) {
+        if (isBasicType(type)) {
           parameter.setParameterType(ParameterTypeEnum.SIMPLE);
           parameter.setType(type);
           // simple
         } else if (type.startsWith("Set<")) {
-          type = type.substring(4, type.length() - 1);
           // set
+          type = type.substring(4, type.length() - 1);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
           parameter.setType("Array");
           configureSubParameter(parameter, lines, type);
         } else if (type.startsWith("List")) {
-          type = type.substring(5, type.length() - 1);
           // list
+          type = type.substring(5, type.length() - 1);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
           parameter.setType("Array");
           configureSubParameter(parameter, lines, type);
         } else if (type.endsWith("[]")) {
-          type = type.substring(0, type.length() - 2);
           // array
+          type = type.substring(0, type.length() - 2);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
           parameter.setType("Array");
           configureSubParameter(parameter, lines, type);
         } else {
+          // object
           parameter.setParameterType(ParameterTypeEnum.OBJECT);
           parameter.setType("Object");
           configureSubParameter(parameter, lines, type);
@@ -276,6 +356,12 @@ public class ApiDocUtils {
    * @throws IOException 文件未找到
    */
   private static void configureSubParameter(Parameter parameter, List<String> lines, String className) throws IOException {
+
+    if (isBasicType(className)) {
+      parameter.setParameterType(ParameterTypeEnum.SIMPLE);
+      parameter.setType(className + "[]");
+      return;
+    }
 
     // 判断是否为外部引用类
     String subClassFullName = getSubClassFullName(lines, className);
@@ -603,24 +689,31 @@ public class ApiDocUtils {
         String name = array[1];
         parameter.setName(name);
 
-        if (type.equals("Date") || type.equals("String")// 
-            || type.equals("Integer") || type.equals("Double") || type.equals("Long")) {
+        if (isBasicType(type)) {
           parameter.setParameterType(ParameterTypeEnum.SIMPLE);
           parameter.setType(type);
         } else if (type.startsWith("Set<")) {
-          // array
+          // set
+          type = type.substring(4, type.length() - 1);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
-          configureSubParameter(parameter, lines, type.substring(4, type.length() - 1));
+          parameter.setType("Array");
+          configureSubParameter(parameter, lines, type);
         } else if (type.startsWith("List")) {
-          // array
+          // list
+          type = type.substring(5, type.length() - 1);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
-          configureSubParameter(parameter, lines, type.substring(5, type.length() - 1));
+          parameter.setType("Array");
+          configureSubParameter(parameter, lines, type);
         } else if (type.endsWith("[]")) {
           // array
+          type = type.substring(0, type.length() - 2);
           parameter.setParameterType(ParameterTypeEnum.ARRAY);
-          configureSubParameter(parameter, lines, type.substring(0, type.length() - 2));
+          parameter.setType("Array");
+          configureSubParameter(parameter, lines, type);
         } else {
+          // object
           parameter.setParameterType(ParameterTypeEnum.OBJECT);
+          parameter.setType("Object");
           configureSubParameter(parameter, lines, type);
         }
 
@@ -689,5 +782,15 @@ public class ApiDocUtils {
 
     } // end for
   } // end configure
+
+  /**
+   * 是否是基本数据类型
+   * @param className 类名
+   * @return 是否是基本数据类型
+   */
+  private static boolean isBasicType(String className) {
+    return (className.equals("Date") || className.equals("String")// 
+        || className.equals("Integer") || className.equals("Double") || className.equals("Long"));
+  }
 
 }

@@ -24,6 +24,8 @@ public class Parameter {
   private String description;
   /** 示例 */
   private String sample;
+  /** 数据级别 */
+  private Integer level;
 
   // 子参数
   private List<Parameter> parameters;
@@ -92,10 +94,18 @@ public class Parameter {
     this.parameters = parameters;
   }
 
+  public Integer getLevel() {
+    return level;
+  }
+
+  public void setLevel(Integer level) {
+    this.level = level;
+  }
+
   @Override
   public String toString() {
     return "Parameter [parameterType=" + parameterType + ", name=" + name + ", type=" + type + ", required=" + required + ", maxLength=" + maxLength + ", description=" + description + ", sample="
-        + sample + ", parameters=" + parameters + "]";
+        + sample + ", level=" + level + ", parameters=" + parameters + "]";
   }
 
 }
