@@ -12,6 +12,7 @@ class Name {
   static final String API_MODULES;
   static final String API_METHOD;
   static final String API_TITLE;
+  static final String API_ERROR;
 
   static final String PARAMETER_REQUIRED;
   static final String PARAMETER_MAXLENGTH;
@@ -22,6 +23,7 @@ class Name {
     API_MODULES = prop.getProperty("api.modules");
     API_METHOD = prop.getProperty("api.method");
     API_TITLE = prop.getProperty("api.title");
+    API_ERROR = prop.getProperty("api.error");
 
     PARAMETER_REQUIRED = prop.getProperty("parameter.required");
     PARAMETER_MAXLENGTH = prop.getProperty("parameter.maxLength");

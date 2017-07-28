@@ -108,9 +108,10 @@ public class ApiDocUtils {
     logger.debug("apidoc data={}", doc);
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("servers", servers);
-    map.put("title", doc.getTitle());
     map.put("method", doc.getMethod());
+    map.put("title", doc.getTitle());
     map.put("description", doc.getDescription());
+    map.put("errors", doc.getErrors());
     map.put("requestParameters", doc.getRequests());
     map.put("responseParameters", doc.getResponses());
     TemplateUtils.processByResource("tpl", "index.tpl", map, new File(flushPath, doc.getTitle() + ".html"));
@@ -739,6 +740,8 @@ public class ApiDocUtils {
    */
   private static void configureApi(ApiDoc doc, List<String> lines) {
     doc.setDescription("");
+    List<com.github.hualuomoli.apidoc.entity.Error> errors = new ArrayList<com.github.hualuomoli.apidoc.entity.Error>();
+    doc.setErrors(errors);
 
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i).trim();
@@ -771,6 +774,20 @@ public class ApiDocUtils {
           if (line.startsWith(Name.API_TITLE)) {
             doc.setTitle(line.substring(Name.API_TITLE.length()));
             continue;
+          }
+          // error
+          if (line.startsWith(Name.API_ERROR)) {
+            line = line.substring(Name.API_ERROR.length()).trim();
+            String[] array = line.split("[|]");
+            com.github.hualuomoli.apidoc.entity.Error error = new com.github.hualuomoli.apidoc.entity.Error();
+            error.setCode(array[0].trim());
+            error.setMessage(array[1].trim());
+            if (array.length == 2) {
+              error.setDeal("");
+            } else {
+              error.setDeal(array[2].trim());
+            }
+            errors.add(error);
           }
         }
       }

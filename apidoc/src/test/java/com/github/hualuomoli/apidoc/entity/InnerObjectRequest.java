@@ -8,6 +8,9 @@ import java.util.List;
  * @modules sample
  * @title 包含层级API
  * @method api.innerObject
+ * @error NO_USER|用户不存在|确定用户信息后重试
+ * @error NO_MORE_MONEY|余额不足|
+ * @error INVALID_PASSWORD|密码错误|重试
  */
 public class InnerObjectRequest {
 

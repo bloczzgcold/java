@@ -16,6 +16,8 @@ public class ApiDoc {
   private String title;
   /** 功能详细描述 */
   private String description;
+  /** 功能错误 */
+  private List<Error> errors;
 
   /** 请求参数 */
   private List<Parameter> requests;
@@ -54,6 +56,14 @@ public class ApiDoc {
     this.description = description;
   }
 
+  public List<Error> getErrors() {
+    return errors;
+  }
+
+  public void setErrors(List<Error> errors) {
+    this.errors = errors;
+  }
+
   public List<Parameter> getRequests() {
     return requests;
   }
@@ -72,7 +82,8 @@ public class ApiDoc {
 
   @Override
   public String toString() {
-    return "ApiDoc [modules=" + Arrays.toString(modules) + ", method=" + method + ", title=" + title + ", description=" + description + ", requests=" + requests + ", responses=" + responses + "]";
+    return "ApiDoc [modules=" + Arrays.toString(modules) + ", method=" + method + ", title=" + title + ", description=" + description + ", errors=" + errors + ", requests=" + requests + ", responses="
+        + responses + "]";
   }
 
 }

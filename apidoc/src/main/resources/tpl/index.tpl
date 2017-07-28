@@ -244,7 +244,7 @@
                         <td>String</td>
                         <td>否</td>
                         <td>-</td>
-                        <td>业务返回码,详见文档</td>
+                        <td>业务处理编码,详见文档</td>
                         <td>ACQ.TRADE_HAS_SUCCESS</td>
                     </tr>
                     <tr>
@@ -252,16 +252,16 @@
                         <td>String</td>
                         <td>否</td>
                         <td>-</td>
-                        <td>业务返回码描述,详见文档</td>
+                        <td>业务处理信息,详见文档</td>
                         <td>交易已被支付</td>
                     </tr>
                     <tr>
-                        <td>subDescription</td>
+                        <td>subErrorCode</td>
                         <td>String</td>
                         <td>否</td>
                         <td>-</td>
-                        <td>业务返回码详细描述,详见文档</td>
-                        <td>交易已被支付</td>
+                        <td>业务处理错误编码,详见文档</td>
+                        <td>96523689</td>
                     </tr>
                     <tr>
                         <td>nonceStr</td>
@@ -388,21 +388,13 @@
                         <th>错误描述</th>
                         <th>解决方案</th>
                     </tr>
+                    <#list errors as error>
                     <tr>
-                        <td>ACQ.SYSTEM_ERROR</td>
-                        <td>系统错误</td>
-                        <td>重新发起请求</td>
+                        <td>${error.code}</td>
+                        <td>${error.message}</td>
+                        <td>${error.deal}</td>
                     </tr>
-                    <tr>
-                        <td>ACQ.INVALID_PARAMETER</td>
-                        <td>参数无效</td>
-                        <td>检查请求参数，修改后重新发起请求</td>
-                    </tr>
-                    <tr>
-                        <td>ACQ.TRADE_NOT_EXIST</td>
-                        <td>查询的交易不存在</td>
-                        <td>检查传入的交易号是否正确，修改后重新发起请求</td>
-                    </tr>
+                    </#list>
                 </table>
             </div>
             <!-- ./业务错误码 -->
