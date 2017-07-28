@@ -98,7 +98,7 @@ public class GatewayClient {
 
       // 业务处理错误
       if (response.getCode() == CodeEnum.BUSINESS) {
-        throw new BusinessException(response.getSubCode(), response.getSubMessage());
+        throw new BusinessException(response.getSubCode(), response.getSubMessage(), response.getSubErrorCode());
       }
 
       // 其他错误

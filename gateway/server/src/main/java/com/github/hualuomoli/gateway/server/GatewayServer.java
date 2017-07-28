@@ -11,7 +11,6 @@ import com.github.hualuomoli.gateway.api.entity.Response;
 import com.github.hualuomoli.gateway.api.enums.CodeEnum;
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
@@ -58,9 +57,6 @@ public class GatewayServer {
     } catch (NoPartnerException e) {
       response.setCode(CodeEnum.NO_PARTNER);
       response.setMessage(e.getMessage());
-    } catch (NoAuthorityException e) {
-      response.setCode(CodeEnum.NO_AUTHORITY);
-      response.setMessage(e.getMessage());
     } catch (NoRouterException e) {
       response.setCode(CodeEnum.NO_ROUTER);
       response.setMessage(e.getMessage());
@@ -69,7 +65,7 @@ public class GatewayServer {
       response.setMessage("业务处理错误");
       response.setSubCode(e.getSubCode());
       response.setSubMessage(e.getSubMessage());
-      response.setSubDescription(e.getSubDescription());
+      response.setSubErrorCode(e.getSubErrorCode());
     } catch (Exception e) {
       response.setCode(CodeEnum.ERROR);
       response.setMessage(e.getMessage());

@@ -7,37 +7,33 @@ public class BusinessException extends RuntimeException {
 
   private static final long serialVersionUID = 1762069845484506953L;
 
-  /** 异常编码 */
+  /** 业务处理编码 */
   private String subCode;
-  /** 异常信息 */
+  /** 业务处理信息 */
   private String subMessage;
-  /** 异常描述 */
-  private String subDescription;
+  /** 业务处理错误编码 */
+  private String subErrorCode;
 
-  public BusinessException(String subCode, String subMessage) {
-    super();
+  public BusinessException(String subCode, String subMessage, String subErrorCode) {
+    super(subMessage);
     this.subCode = subCode;
     this.subMessage = subMessage;
+    this.subErrorCode = subErrorCode;
   }
 
-  public BusinessException(String subCode, String subMessage, Throwable t) {
-    super(t);
+  public BusinessException(String subCode, String subMessage, String subErrorCode, Throwable t) {
+    super(subMessage, t);
     this.subCode = subCode;
     this.subMessage = subMessage;
+    this.subErrorCode = subErrorCode;
   }
 
-  public BusinessException(String subCode, String subMessage, String subDescription) {
-    super();
-    this.subCode = subCode;
-    this.subMessage = subMessage;
-    this.subDescription = subDescription;
+  public BusinessException(Enum<?> subCode, String subMessage, String subErrorCode) {
+    this(subCode.name(), subMessage, subErrorCode);
   }
 
-  public BusinessException(String subCode, String subMessage, String subDescription, Throwable t) {
-    super(t);
-    this.subCode = subCode;
-    this.subMessage = subMessage;
-    this.subDescription = subDescription;
+  public BusinessException(Enum<?> subCode, String subMessage, String subErrorCode, Throwable t) {
+    this(subCode.name(), subMessage, subErrorCode, t);
   }
 
   public String getSubCode() {
@@ -48,13 +44,13 @@ public class BusinessException extends RuntimeException {
     return subMessage;
   }
 
-  public String getSubDescription() {
-    return subDescription;
+  public String getSubErrorCode() {
+    return subErrorCode;
   }
 
   @Override
   public String toString() {
-    return "BusinessException [subCode=" + subCode + ", subMessage=" + subMessage + ", subDescription=" + subDescription + "]";
+    return "BusinessException [subCode=" + subCode + ", subMessage=" + subMessage + ", subErrorCode=" + subErrorCode + "]";
   }
 
 }

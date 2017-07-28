@@ -1,6 +1,7 @@
 package com.github.hualuomoli.config.gateway;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +18,17 @@ import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.hualuomoli.enums.GatewaySubErrorEnum;
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
-import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.business.AbstractBusinessHandler;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
-import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
+import com.github.hualuomoli.validator.Validate;
+import com.github.hualuomoli.validator.lang.InvalidParameterException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -40,7 +43,6 @@ public class GatewayBusinessHandlerConfig {
   @Bean
   public BusinessHandler businessHandler() {
     AbstractBusinessHandler handler = new AbstractBusinessHandler();
-    handler.setAuthorityInterceptor(this.authorityInterceptor());
     handler.setInterceptors(this.interceptors());
     handler.setFunctionDealer(functionDealer);
     handler.setBusinessErrorParser(this.businessErrorParser());
@@ -50,20 +52,81 @@ public class GatewayBusinessHandlerConfig {
     return handler;
   }
 
-  // 业务权限认证
-  private AuthorityInterceptor authorityInterceptor() {
-    return new AuthorityInterceptor() {
-
-      @Override
-      public void handle(String partnerId, String method, HttpServletRequest req, HttpServletResponse res) throws NoAuthorityException {
-        logger.debug("业务权限认证{}是否有{}的访问权限", partnerId, method);
-      }
-    };
-  }
-
   // 业务拦截器
   private List<BusinessInterceptor> interceptors() {
     List<BusinessInterceptor> interceptors = Lists.newArrayList();
+
+    interceptors.add(new BusinessInterceptor() {
+
+      @Override
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
+        String partnerId = Local.getPartnerId();
+        String m = Local.getMethod();
+        // 权限认证
+        logger.debug("业务权限认证{}是否有{}的访问权限", partnerId, m);
+        if (StringUtils.equals("error.noAuth", m)) {
+          GatewaySubErrorEnum e = GatewaySubErrorEnum.INVALID_AUTHORITY;
+          throw new BusinessException(e, e.getMessage(), e.getErrorCode());
+        }
+      }
+
+      @Override
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, Object result) {
+      }
+
+      @Override
+      public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
+      }
+    });
+
+    // 验证参数
+    interceptors.add(new BusinessInterceptor() {
+
+      private void valid(Object object) {
+        try {
+          Validate.valid(object);
+        } catch (InvalidParameterException ipe) {
+          GatewaySubErrorEnum e = GatewaySubErrorEnum.INVALID_PARAMETER;
+          throw new BusinessException(e, ipe.getMessage(), e.getErrorCode());
+        }
+      }
+
+      @Override
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
+        if (params == null || params.length == 0) {
+          return;
+        }
+        for (Object param : params) {
+          if (param == null) {
+            continue;
+          }
+          if (HttpServletRequest.class.isAssignableFrom(param.getClass())) {
+            continue;
+          }
+          if (HttpServletResponse.class.isAssignableFrom(param.getClass())) {
+            continue;
+          }
+          // 集合
+          if (Collection.class.isAssignableFrom(param.getClass())) {
+            Collection<?> c = (Collection<?>) param;
+            for (Object p : c) {
+              this.valid(p);
+            }
+            continue;
+          }
+          // 基本参数
+          this.valid(param);
+        }
+      }
+
+      @Override
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, Object result) {
+      }
+
+      @Override
+      public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
+      }
+    });
 
     // 日志
     interceptors.add(new BusinessInterceptor() {
@@ -80,7 +143,7 @@ public class GatewayBusinessHandlerConfig {
 
       @Override
       public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
-        logger.debug("业务处理出现异常 partnerId={},method={},e={}", Local.getPartnerId(), Local.getMethod(), be.getMessage(), be);
+        logger.debug("业务处理出现异常 partnerId={},method={},errorMessage={}", Local.getPartnerId(), Local.getMethod(), be.getMessage());
       }
     });
 
@@ -92,19 +155,33 @@ public class GatewayBusinessHandlerConfig {
     return new BusinessErrorParser() {
       @Override
       public BusinessException parse(IllegalAccessException e) {
-        return new BusinessException("0001", "没有访问权限");
+        return this.parse(GatewaySubErrorEnum.INVALID_AUTHORITY);
       }
 
       @Override
       public BusinessException parse(IllegalArgumentException e) {
-        return new BusinessException("0002", "请求参数不合法");
+        return this.parse(GatewaySubErrorEnum.INVALID_PARAMETER);
       }
 
       @Override
       public BusinessException parse(Throwable t) {
-        return new BusinessException("9999", t.getMessage());
+        logger.debug("转换错误信息,输出当前错误日志", t);
+        return this.parse(GatewaySubErrorEnum.SYSTEM, t.getMessage());
       }
+
+      private BusinessException parse(GatewaySubErrorEnum e) {
+        return new BusinessException(e, e.getMessage(), e.getErrorCode());
+      }
+
+      private BusinessException parse(GatewaySubErrorEnum e, String message) {
+        if (message == null || message.trim().length() == 0) {
+          message = e.getMessage();
+        }
+        return new BusinessException(e, message, e.getErrorCode());
+      }
+
     };
+
   }
 
   // JSON转换器

@@ -8,12 +8,12 @@ public class Response {
   private CodeEnum code;
   /** 网关处理信息 */
   private String message;
-  /** 业务处理错误编码 */
+  /** 业务处理编码 */
   private String subCode;
-  /** 业务处理错误信息 */
+  /** 业务处理信息 */
   private String subMessage;
-  /** 业务处理错误描述 */
-  private String subDescription;
+  /** 业务处理错误编码 */
+  private String subErrorCode;
   /** 随机字符串 */
   private String nonceStr;
   /** 响应结果 */
@@ -53,12 +53,12 @@ public class Response {
     this.subMessage = subMessage;
   }
 
-  public String getSubDescription() {
-    return subDescription;
+  public String getSubErrorCode() {
+    return subErrorCode;
   }
 
-  public void setSubDescription(String subDescription) {
-    this.subDescription = subDescription;
+  public void setSubErrorCode(String subErrorCode) {
+    this.subErrorCode = subErrorCode;
   }
 
   public String getNonceStr() {
@@ -87,7 +87,7 @@ public class Response {
 
   @Override
   public String toString() {
-    return "Response [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", subDescription=" + subDescription + ", nonceStr=" + nonceStr + ", result="
+    return "Response [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", subErrorCode=" + subErrorCode + ", nonceStr=" + nonceStr + ", result="
         + result + ", sign=" + sign + "]";
   }
 

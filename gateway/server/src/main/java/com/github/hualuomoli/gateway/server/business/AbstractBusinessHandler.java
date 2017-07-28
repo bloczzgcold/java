@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,12 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.github.hualuomoli.gateway.api.lang.BusinessException;
 import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.lang.NoAuthorityException;
 import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.api.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.entity.Function;
-import com.github.hualuomoli.gateway.server.business.interceptor.AuthorityInterceptor;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
@@ -26,8 +25,6 @@ import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
  */
 public class AbstractBusinessHandler implements BusinessHandler {
 
-  //权限拦截器
-  private AuthorityInterceptor authorityInterceptor;
   // 业务拦截器
   private List<BusinessInterceptor> interceptors = new ArrayList<BusinessInterceptor>();
   // Function处理类
@@ -38,10 +35,6 @@ public class AbstractBusinessHandler implements BusinessHandler {
   private JSONParser jsonParser;
   // 实体类包路径
   private String[] packageNames;
-
-  public void setAuthorityInterceptor(AuthorityInterceptor authorityInterceptor) {
-    this.authorityInterceptor = authorityInterceptor;
-  }
 
   public void setInterceptors(List<BusinessInterceptor> interceptors) {
     this.interceptors = interceptors;
@@ -64,7 +57,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
   }
 
   @Override
-  public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoAuthorityException, NoRouterException, BusinessException {
+  public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {
 
     // 设置信息到本地线程
     Local.setPartnerId(partnerId);
@@ -74,11 +67,6 @@ public class AbstractBusinessHandler implements BusinessHandler {
     Function function = functionDealer.getFunction(method, req);
     // 处理类
     Object handler = functionDealer.getDealer(function);
-
-    // 权限认证
-    if (authorityInterceptor != null) {
-      authorityInterceptor.handle(partnerId, method, req, res);
-    }
 
     List<Object> paramList = new ArrayList<Object>();
     Method m = function.getMethod();
@@ -98,7 +86,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
       }
 
       // List
-      if (List.class.isAssignableFrom(parameterType)) {
+      if (Collection.class.isAssignableFrom(parameterType)) {
         ParameterizedType genericParameterTypes = (ParameterizedType) m.getGenericParameterTypes()[0];
         Class<?> clazz = (Class<?>) genericParameterTypes.getActualTypeArguments()[0];
         paramList.add(jsonParser.parseArray(bizContent, clazz));

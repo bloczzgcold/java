@@ -13,13 +13,11 @@ public enum CodeEnum {
   NO_PARTNER,
   /** 没有路由 */
   NO_ROUTER,
-  /** 没有权限 */
-  NO_AUTHORITY,
   /** 业务处理错误 */
   BUSINESS,
   /** 网络异常 */
   NETWORK,
-  /** 错误 */
+  /** 其他错误 */
   ERROR;
 
 }
