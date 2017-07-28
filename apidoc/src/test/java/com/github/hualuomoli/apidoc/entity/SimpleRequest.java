@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * 这是一个简单的请求信息,所有的参数都是简单的数据类型
- * @modules sample
+ * @module sample.simple
  * @title 简单实用API
  * @method api.simple
  */

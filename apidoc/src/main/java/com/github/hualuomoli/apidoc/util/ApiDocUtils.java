@@ -37,7 +37,7 @@ public class ApiDocUtils {
    * 输出API文档
    * @param docs API文档
    * @param flushPath 输出地址
-   * @param serverUrl 服务器地址
+   * @param servers 服务器
    */
   public static void flush(List<ApiDoc> docs, String flushPath, List<Server> servers) {
     ApiDocUtils.flushPath = flushPath;
@@ -51,6 +51,10 @@ public class ApiDocUtils {
       flush(doc);
     }
 
+    // 输出index
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("docs", docs);
+    TemplateUtils.processByResource("tpl", "index.tpl", map, new File(flushPath, "index.html"));
   }
 
   /**
@@ -67,15 +71,16 @@ public class ApiDocUtils {
 
     // css
     copy("css", "font-awesome.css");
+    copy("css", "api.css");
     copy("css", "index.css");
     copy("css", "sign.css");
 
     // js
     copy("js", "jquery.js");
-    copy("js", "index.js");
+    copy("js", "api.js");
 
     // html
-    copy(null, "index.html");
+    // copy(null, "api.html");
     copy(null, "sign.html");
   }
 
@@ -101,11 +106,11 @@ public class ApiDocUtils {
   /**
    * 输出APi
    * @param doc API文档
-   * @param serverUrl 服务器地址
    */
   public static void flush(ApiDoc doc) {
     logger.info("create apidoc {}", doc.getTitle());
     logger.debug("apidoc data={}", doc);
+
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("servers", servers);
     map.put("method", doc.getMethod());
@@ -114,7 +119,8 @@ public class ApiDocUtils {
     map.put("errors", doc.getErrors());
     map.put("requestParameters", doc.getRequests());
     map.put("responseParameters", doc.getResponses());
-    TemplateUtils.processByResource("tpl", "index.tpl", map, new File(flushPath, doc.getTitle() + ".html"));
+
+    TemplateUtils.processByResource("tpl", "api.tpl", map, new File(new File(flushPath, doc.getRelativePath()), doc.getMethod() + ".html"));
   }
 
   /**
@@ -761,18 +767,18 @@ public class ApiDocUtils {
         } else {
           // 其他注释
           // modules
-          if (line.startsWith(Name.API_MODULES)) {
-            doc.setModules(line.substring(Name.API_MODULES.length()).split("[.]"));
+          if (line.startsWith(Name.API_MODULE)) {
+            doc.setModule(line.substring(Name.API_MODULE.length()).trim());
             continue;
           }
           // method
           if (line.startsWith(Name.API_METHOD)) {
-            doc.setMethod(line.substring(Name.API_METHOD.length()));
+            doc.setMethod(line.substring(Name.API_METHOD.length()).trim());
             continue;
           }
           // title
           if (line.startsWith(Name.API_TITLE)) {
-            doc.setTitle(line.substring(Name.API_TITLE.length()));
+            doc.setTitle(line.substring(Name.API_TITLE.length()).trim());
             continue;
           }
           // error
@@ -798,6 +804,12 @@ public class ApiDocUtils {
       }
 
     } // end for
+
+    // 如果没设置模块,使用方法
+    if (doc.getModule() == null) {
+      doc.setModule(doc.getMethod());
+    }
+
   } // end configure
 
   /**

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 这是一个包含层级的请求信息
- * @modules sample
+ * @module sample.inner
  * @title 包含层级API
  * @method api.innerObject
  * @error NO_USER|用户不存在|确定用户信息后重试

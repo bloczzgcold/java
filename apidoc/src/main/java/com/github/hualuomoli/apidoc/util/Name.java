@@ -9,7 +9,7 @@ class Name {
 
   private static final Properties prop;
 
-  static final String API_MODULES;
+  static final String API_MODULE;
   static final String API_METHOD;
   static final String API_TITLE;
   static final String API_ERROR;
@@ -20,7 +20,7 @@ class Name {
 
   static {
     prop = init();
-    API_MODULES = prop.getProperty("api.modules");
+    API_MODULE = prop.getProperty("api.module");
     API_METHOD = prop.getProperty("api.method");
     API_TITLE = prop.getProperty("api.title");
     API_ERROR = prop.getProperty("api.error");

@@ -10,7 +10,7 @@ import com.github.hualuomoli.apidoc.entity.inner.UserTypeEnum;
 
 /**
  * 这是一个包含外部属性层级的请求信息
- * @modules sample
+ * @module sample.outer
  * @title 包含外部属性API
  * @method api.outerObject
  */

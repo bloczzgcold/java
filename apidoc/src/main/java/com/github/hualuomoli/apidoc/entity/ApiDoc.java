@@ -1,6 +1,5 @@
 package com.github.hualuomoli.apidoc.entity;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,7 +8,7 @@ import java.util.List;
 public class ApiDoc {
 
   /** 模块 */
-  private String[] modules;
+  private String module;
   /** 方法名 */
   private String method;
   /** 功能描述 */
@@ -24,12 +23,12 @@ public class ApiDoc {
   /** 响应参数 */
   private List<Parameter> responses;
 
-  public String[] getModules() {
-    return modules;
+  public String getModule() {
+    return module;
   }
 
-  public void setModules(String[] modules) {
-    this.modules = modules;
+  public void setModule(String module) {
+    this.module = module;
   }
 
   public String getMethod() {
@@ -80,10 +79,13 @@ public class ApiDoc {
     this.responses = responses;
   }
 
+  public String getRelativePath() {
+    return method.replaceAll("[.]", "/");
+  }
+
   @Override
   public String toString() {
-    return "ApiDoc [modules=" + Arrays.toString(modules) + ", method=" + method + ", title=" + title + ", description=" + description + ", errors=" + errors + ", requests=" + requests + ", responses="
-        + responses + "]";
+    return "ApiDoc [module=" + module + ", method=" + method + ", title=" + title + ", description=" + description + ", errors=" + errors + ", requests=" + requests + ", responses=" + responses + "]";
   }
 
 }
