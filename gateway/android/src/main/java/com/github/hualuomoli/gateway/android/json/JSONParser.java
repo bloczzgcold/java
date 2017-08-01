@@ -1,14 +1,12 @@
 package com.github.hualuomoli.gateway.android.json;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
 /**
  * JSON转换器
  */
 public interface JSONParser {
 
-  <T> T parseObject(String json, Class<T> clazz);
-
-  <T> List<T> parseArray(String json, Class<T> clazz);
+  <T> T parseObject(String json, Type type);
 
 }

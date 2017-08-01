@@ -2,6 +2,7 @@ package com.github.hualuomoli.gateway.android;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,9 +16,6 @@ import java.util.UUID;
 
 import com.github.hualuomoli.gateway.android.base64.Base64;
 import com.github.hualuomoli.gateway.android.callback.Callback;
-import com.github.hualuomoli.gateway.android.callback.CallbackArray;
-import com.github.hualuomoli.gateway.android.callback.CallbackObject;
-import com.github.hualuomoli.gateway.android.callback.CallbackString;
 import com.github.hualuomoli.gateway.android.entity.Request;
 import com.github.hualuomoli.gateway.android.entity.Response;
 import com.github.hualuomoli.gateway.android.enums.ErrorTypeEnum;
@@ -86,7 +84,7 @@ public class GatewayClient {
     return this;
   }
 
-  public void execute(String method, String bizContent, Callback callback) {
+  public <T> void execute(String method, String bizContent, Callback<T> callback) {
     // 没有定义回调
     if (callback == null) {
       Log.w(TAG, "请设置回调函数");
@@ -132,9 +130,10 @@ public class GatewayClient {
         this.success(res.getResult(), callback);
       } else if ("BUSINESS".equalsIgnoreCase(res.getCode())) {
         callback.onBusinessError(res.getSubCode(), res.getSubMessage(), res.getSubErrorCode());
+      } else {
+        // 其他不可知错误
+        throw new Exception(res.getMessage() + "[" + res.getCode() + "]");
       }
-      // 其他不可知错误
-      throw new Exception(res.getMessage() + "[" + res.getCode() + "]");
     } catch (GatewayException e) {
       // 网关处理事变
       callback.onError(e.getErrorType(), e.getMessage());
@@ -153,61 +152,16 @@ public class GatewayClient {
    * @param callback 回调
    * @throws GatewayException 网关错误{@link ErrorTypeEnum#INVALID_SERVER_JSON}
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  private void success(String result, Callback callback) throws GatewayException {
-
-    // 获取泛型
-    Class<?> clazz = this.getCallbackGeneric(callback);
-
-    // String
-    if (callback instanceof CallbackString) {
-      ((CallbackString) callback).onSuccess(result);
-      return;
-    }
-
-    // object
-    if (callback instanceof CallbackObject) {
-      Object object = null;
-      // 获取JSON
-      try {
-        object = this.jsonParser.parseObject(result, clazz);
-      } catch (Exception e) {
-        throw new GatewayException(ErrorTypeEnum.INVALID_SERVER_JSON, e.getMessage());
-      }
-
-      ((CallbackObject) callback).onSuccess(object);
-      return;
-    }
-
-    // array
-    if (callback instanceof CallbackArray) {
-      List<?> list = null;
-      try {
-        list = this.jsonParser.parseArray(result, clazz);
-      } catch (Exception e) {
-        throw new GatewayException(ErrorTypeEnum.INVALID_SERVER_JSON, e.getMessage());
-      }
-
-      ((CallbackArray) callback).onSuccess(list);
-      return;
-    }
-
-    throw new GatewayException(ErrorTypeEnum.UNKNOWN, "未知回调类型" + callback.getClass());
-  }
-
-  /**
-   * 获取callback的泛型
-   * @param callback callback
-   * @return 泛型类型
-   */
-  private Class<?> getCallbackGeneric(Callback callback) {
+  private <T> void success(String result, Callback<T> callback) throws GatewayException {
     try {
-      ParameterizedType parameterizedType = (ParameterizedType) callback.getClass().getGenericSuperclass();
-      return (Class<?>) (parameterizedType.getActualTypeArguments()[0]);
+      ParameterizedType parameterized = (ParameterizedType) callback.getClass().getGenericSuperclass();
+      Type type = parameterized.getActualTypeArguments()[0];
+      T object = this.jsonParser.parseObject(result, type);
+      callback.onSuccess(object);
     } catch (Exception e) {
-      Log.d(TAG, e.getMessage());
+      Log.w(TAG, e.getMessage());
     }
-    return null;
+    // end
   }
 
   /**

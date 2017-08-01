@@ -83,4 +83,10 @@ public class Response {
     this.sign = sign;
   }
 
+  @Override
+  public String toString() {
+    return "Response [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", subErrorCode=" + subErrorCode + ", nonceStr=" + nonceStr + ", result="
+        + result + ", sign=" + sign + "]";
+  }
+
 }

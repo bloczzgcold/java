@@ -1,6 +1,7 @@
 package com.github.hualuomoli.sample.gateway.server.biz.type.controller;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -11,8 +12,7 @@ import org.junit.runners.MethodSorters;
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.gateway.android.GatewayClient;
 import com.github.hualuomoli.gateway.android.base64.Base64;
-import com.github.hualuomoli.gateway.android.callback.CallbackArray;
-import com.github.hualuomoli.gateway.android.callback.CallbackObject;
+import com.github.hualuomoli.gateway.android.callback.Callback;
 import com.github.hualuomoli.gateway.android.entity.Request;
 import com.github.hualuomoli.gateway.android.entity.Response;
 import com.github.hualuomoli.gateway.android.enums.ErrorTypeEnum;
@@ -27,11 +27,14 @@ import com.github.hualuomoli.sample.gateway.server.biz.type.entity.InArrayRespon
 import com.github.hualuomoli.sample.gateway.server.biz.type.entity.InObjectRequest;
 import com.github.hualuomoli.sample.gateway.server.biz.type.entity.InObjectResponse;
 import com.github.hualuomoli.sample.gateway.server.biz.type.entity.OutArrayRequest;
+import com.github.hualuomoli.sample.gateway.server.biz.type.entity.OutArrayResponse;
 import com.github.hualuomoli.sample.gateway.server.biz.type.entity.OutObjectRequest;
+import com.github.hualuomoli.sample.gateway.server.biz.type.entity.OutObjectResponse;
 import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.github.hualuomoli.tool.http.HttpDefaultClient;
 import com.github.hualuomoli.tool.http.parser.DefaultParser;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 
 import android.util.Log;
 
@@ -63,7 +66,12 @@ public class TypeControllerObjectClientForAndroidTest {
         .setSecurity(SECURITY)//
         .setHttpInvoker(new MyHttpInvoker())
 
-        .execute("type.inObject", JSON.toJSONString(req), new MyCallbackObject<InObjectResponse>() {
+        .execute("type.inObject", JSON.toJSONString(req), new MyCallback<InObjectResponse>() {
+
+          @Override
+          public void onSuccess(InObjectResponse result) {
+            Log.i(TAG, result.toString());
+          }
         });
 
   }
@@ -94,7 +102,12 @@ public class TypeControllerObjectClientForAndroidTest {
         .setSecurity(SECURITY)//
         .setHttpInvoker(new MyHttpInvoker())
 
-        .execute("type.inArray", JSON.toJSONString(list), new MyCallbackObject<InArrayResponse>() {
+        .execute("type.inArray", JSON.toJSONString(list), new MyCallback<InArrayResponse>() {
+
+          @Override
+          public void onSuccess(InArrayResponse result) {
+            Log.i(TAG, result.toString());
+          }
         });
 
   }
@@ -112,7 +125,12 @@ public class TypeControllerObjectClientForAndroidTest {
         .setSecurity(SECURITY)//
         .setHttpInvoker(new MyHttpInvoker())
 
-        .execute("type.outObject", JSON.toJSONString(req), new MyCallbackObject<InObjectResponse>() {
+        .execute("type.outObject", JSON.toJSONString(req), new MyCallback<OutObjectResponse>() {
+
+          @Override
+          public void onSuccess(OutObjectResponse result) {
+            Log.i(TAG, result.toString());
+          }
         });
   }
 
@@ -128,7 +146,12 @@ public class TypeControllerObjectClientForAndroidTest {
         .setSecurity(SECURITY)//
         .setHttpInvoker(new MyHttpInvoker())
 
-        .execute("type.outArray", JSON.toJSONString(req), new MyCallbackArray<InObjectResponse>() {
+        .execute("type.outArray", JSON.toJSONString(req), new MyCallback<List<OutArrayResponse>>() {
+
+          @Override
+          public void onSuccess(List<OutArrayResponse> result) {
+            Log.i(TAG, result.toString());
+          }
         });
 
   }
@@ -176,13 +199,10 @@ public class TypeControllerObjectClientForAndroidTest {
   private static class MyJSONParser implements JSONParser {
 
     @Override
-    public <T> T parseObject(String json, Class<T> clazz) {
-      return JSON.parseObject(json, clazz);
-    }
-
-    @Override
-    public <T> List<T> parseArray(String json, Class<T> clazz) {
-      return JSON.parseArray(json, clazz);
+    public <T> T parseObject(String json, Type clazz) {
+      //      clazz = Types.canonicalize(clazz);
+      //      clazz = $Gson$Types.canonicalize(clazz);
+      return new Gson().fromJson(json, clazz);
     }
 
   }
@@ -238,7 +258,9 @@ public class TypeControllerObjectClientForAndroidTest {
 
   }
 
-  private static class MyCallbackObject<T> implements CallbackObject<T> {
+  public abstract class MyCallback<T> implements Callback<T> {
+
+    private static final String TAG = "TypeControllerObjectClientForAndroidTest";
 
     @Override
     public void onError(ErrorTypeEnum errorType, String message) {
@@ -248,30 +270,6 @@ public class TypeControllerObjectClientForAndroidTest {
     @Override
     public void onBusinessError(String subCode, String subMessage, String subErrorCode) {
       Log.e(TAG, "" + subMessage + "[" + subErrorCode + "]" + "(" + subCode + ")");
-    }
-
-    @Override
-    public void onSuccess(T result) {
-      Log.i(TAG, result.toString());
-    }
-
-  }
-
-  private static class MyCallbackArray<T> implements CallbackArray<T> {
-
-    @Override
-    public void onError(ErrorTypeEnum errorType, String message) {
-      Log.e(TAG, "" + message + "[" + errorType.name() + "]");
-    }
-
-    @Override
-    public void onBusinessError(String subCode, String subMessage, String subErrorCode) {
-      Log.e(TAG, "" + subMessage + "[" + subErrorCode + "]" + "(" + subCode + ")");
-    }
-
-    @Override
-    public void onSuccess(List<T> results) {
-      Log.i(TAG, results.toString());
     }
 
   }

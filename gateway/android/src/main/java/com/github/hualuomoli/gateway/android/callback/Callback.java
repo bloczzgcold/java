@@ -5,7 +5,13 @@ import com.github.hualuomoli.gateway.android.enums.ErrorTypeEnum;
 /**
  * 回调
  */
-public interface Callback {
+public interface Callback<T> {
+
+  /**
+   * 业务处理成功
+   * @param result 响应业务数据
+   */
+  void onSuccess(T result);
 
   /**
    * 调用失败,该方法正常情况仅出现在调试阶段

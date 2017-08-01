@@ -91,4 +91,10 @@ public class Request {
   public void setEncryptType(String encryptType) {
     this.encryptType = encryptType;
   }
+
+  @Override
+  public String toString() {
+    return "Request [version=" + version + ", partnerId=" + partnerId + ", method=" + method + ", timestamp=" + timestamp + ", nonceStr=" + nonceStr + ", bizContent=" + bizContent + ", signType="
+        + signType + ", sign=" + sign + ", encryptType=" + encryptType + "]";
+  }
 }
