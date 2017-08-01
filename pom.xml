@@ -18,6 +18,7 @@
     <module>./gateway/api</module>
     <module>./gateway/server</module>
     <module>./gateway/client</module>
+    <module>./gateway/android</module>
     <module>./plugin/dubbo/consumer</module>
     <module>./plugin/dubbo/provider</module>
     <module>./plugin/mq/sender</module>
