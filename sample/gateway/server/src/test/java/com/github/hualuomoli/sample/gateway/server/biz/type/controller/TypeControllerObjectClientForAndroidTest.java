@@ -199,10 +199,9 @@ public class TypeControllerObjectClientForAndroidTest {
   private static class MyJSONParser implements JSONParser {
 
     @Override
-    public <T> T parseObject(String json, Type clazz) {
-      //      clazz = Types.canonicalize(clazz);
-      //      clazz = $Gson$Types.canonicalize(clazz);
-      return new Gson().fromJson(json, clazz);
+    public <T> T parseObject(String json, Type type) {
+      //      return JSON.parseObject(json, type);
+      return new Gson().fromJson(json, type);
     }
 
   }
