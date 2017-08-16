@@ -1,5 +1,6 @@
 package com.github.hualuomoli.sample.framework.creator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,10 @@ public class EntityCratorTest extends ServiceTest {
 
   @Before
   public void before() {
-    outputPath = ServiceTest.class.getResource("/").getPath();
-    outputPath = outputPath.substring(0, outputPath.lastIndexOf("/target/"));
+    if (StringUtils.isBlank(outputPath)) {
+      outputPath = ServiceTest.class.getResource("/").getPath();
+      outputPath = outputPath.substring(0, outputPath.lastIndexOf("/target/"));
+    }
     logger.info("outputPath={}", outputPath);
   }
 
