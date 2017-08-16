@@ -19,6 +19,7 @@
     <module>./gateway/server</module>
     <module>./gateway/client</module>
     <module>./gateway/android</module>
+    <module>./plugin/atomikos</module>
     <module>./plugin/dubbo/consumer</module>
     <module>./plugin/dubbo/provider</module>
     <module>./plugin/mq/sender</module>
@@ -90,6 +91,7 @@
           <charset>UTF-8</charset>
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
+          <failOnError>true</failOnError>
         </configuration>
         <executions>
           <execution>

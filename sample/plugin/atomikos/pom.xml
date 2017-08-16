@@ -7,26 +7,14 @@
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli-sample</artifactId>
     <version>1.0.8</version>
-    <relativePath>../../../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>hualuomoli-sample-mq-sender</artifactId>
+  <artifactId>hualuomoli-sample-atomikos</artifactId>
   <packaging>jar</packaging>
-
-  <properties>
-
-    <atomikos.version>3.9.1</atomikos.version>
-
-  </properties>
 
   <dependencies>
 
-    <!-- atomikos-jms -->
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jms</artifactId>
-      <version>${atomikos.version}</version>
-    </dependency>
 
     <!-- hualuomoli -->
     <dependency>
@@ -50,11 +38,6 @@
       <artifactId>hualuomoli-atomikos</artifactId>
       <version>${project.parent.version}</version>
       <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-mq-sender</artifactId>
-      <version>${project.parent.version}</version>
     </dependency>
 
     <!-- ==================== provided ==================== -->
