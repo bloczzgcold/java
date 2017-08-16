@@ -14,6 +14,7 @@
     <module>./plugin/dubbo/api</module>
     <module>./plugin/dubbo/consumer</module>
     <module>./plugin/dubbo/provider</module>
+    <module>./plugin/atomikos</module>
     <module>./plugin/mq/sender</module>
     <module>./plugin/mq/receiver</module>
     <module>./plugin/ws/consumer</module>
