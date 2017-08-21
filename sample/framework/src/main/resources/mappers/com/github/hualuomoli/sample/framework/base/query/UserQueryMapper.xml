@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.hualuomoli.sample.atomikos.ds1.query.mapper.UserQueryMapper">
+<mapper namespace="com.github.hualuomoli.sample.framework.base.query.mapper.UserQueryMapper">
 
   <!-- 返回的列 -->
   <sql id="columns">
@@ -16,15 +16,6 @@
   
   <!-- 查询的列 -->
   <sql id="querys">
-    <if test="usernameLeftLike != null and usernameLeftLike != ''"> 
-      and `username` like CONCAT(#{usernameLeftLike}, '%')
-    </if>
-    <if test="usernameRightLike != null and usernameRightLike != ''"> 
-      and `username` like CONCAT('%', #{usernameRightLike})
-    </if>
-    <if test="usernameLike != null and usernameLike != ''"> 
-      and `username` like CONCAT('%', #{usernameLike}, '%')
-    </if>
     <if test="nicknameLeftLike != null and nicknameLeftLike != ''"> 
       and `nickname` like CONCAT(#{nicknameLeftLike}, '%')
     </if>
@@ -55,26 +46,25 @@
     <if test="sexLike != null and sexLike != ''"> 
       and `sex` like CONCAT('%', #{sexLike}, '%')
     </if>
-    <if test="stateGreaterThan != null"> 
-      and `state` <![CDATA[ > ]]> #{stateGreaterThan}
+    <if test="stateIns != null">
+      <foreach collection="stateIns" item="obj" open="and (" close=")" separator="or">
+        `state` = #{obj}
+      </foreach>
     </if>
-    <if test="stateGreaterEqual != null"> 
-      and `state` <![CDATA[ >= ]]> #{stateGreaterEqual}
+    <if test="stateNotIns != null">
+      <foreach collection="stateNotIns" item="obj" open="and (" close=")" separator="and">
+        `state` <![CDATA[ <> ]]> #{obj}
+      </foreach>
     </if>
-    <if test="stateLessThan != null"> 
-      and `state` <![CDATA[ < ]]> #{stateLessThan}
+    <if test="statusIns != null">
+      <foreach collection="statusIns" item="obj" open="and (" close=")" separator="or">
+        `status` = #{obj}
+      </foreach>
     </if>
-    <if test="stateLessEqual != null"> 
-      and `state` <![CDATA[ <= ]]> #{stateLessEqual}
-    </if>
-    <if test="statusLeftLike != null and statusLeftLike != ''"> 
-      and `status` like CONCAT(#{statusLeftLike}, '%')
-    </if>
-    <if test="statusRightLike != null and statusRightLike != ''"> 
-      and `status` like CONCAT('%', #{statusRightLike})
-    </if>
-    <if test="statusLike != null and statusLike != ''"> 
-      and `status` like CONCAT('%', #{statusLike}, '%')
+    <if test="statusNotIns != null">
+      <foreach collection="statusNotIns" item="obj" open="and (" close=")" separator="and">
+        `status` <![CDATA[ <> ]]> #{obj}
+      </foreach>
     </if>
     <if test="remarkLeftLike != null and remarkLeftLike != ''"> 
       and `remark` like CONCAT(#{remarkLeftLike}, '%')
@@ -88,7 +78,7 @@
   </sql>
   
   <!-- 查询列表 -->
-  <select id="findList" resultType="com.github.hualuomoli.sample.atomikos.ds1.entity.User">
+  <select id="findList" resultType="com.github.hualuomoli.sample.framework.base.entity.User">
     select
       <include refid="columns" />
     from `t_user`

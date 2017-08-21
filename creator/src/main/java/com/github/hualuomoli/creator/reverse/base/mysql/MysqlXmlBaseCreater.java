@@ -25,7 +25,7 @@ public class MysqlXmlBaseCreater implements XmlBaseCreater {
     data.put("columns", javaColumns);
     data.put("tableName", tableName);
 
-    TemplateUtils.processByResource("tpl/base/mysql", "xml.tpl", data, new File(outputPath + "/base", entityName + "BaseMapper.xml"));
+    TemplateUtils.processByResource("tpl/base/mysql", "xml.tpl", data, new File(outputPath, entityName + "BaseMapper.xml"));
   }
 
 }

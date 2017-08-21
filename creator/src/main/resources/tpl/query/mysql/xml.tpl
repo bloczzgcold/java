@@ -100,7 +100,7 @@
   </sql>
   
   <!-- 查询列表 -->
-  <select id="findList" resultType="${packageName}.base.entity.${javaName}">
+  <select id="findList" resultType="${packageName}.entity.${javaName}">
     select
       <include refid="columns" />
     from `${tableName}`

@@ -62,7 +62,7 @@
   </sql>
   
   <!-- 查询列表 -->
-  <select id="findList" resultType="com.github.hualuomoli.sample.atomikos.ds2.base.entity.Address">
+  <select id="findList" resultType="com.github.hualuomoli.sample.atomikos.ds2.entity.Address">
     select
       <include refid="columns" />
     from `t_address`

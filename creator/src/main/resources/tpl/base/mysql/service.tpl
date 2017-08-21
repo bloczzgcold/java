@@ -1,4 +1,4 @@
-package ${packageName}.base.service;
+package ${packageName}.service;
 
 import java.util.List;
 
@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hualuomoli.framework.entity.Page;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
-import ${packageName}.base.entity.${javaName};
-import ${packageName}.base.mapper.${javaName}BaseMapper;
+import ${packageName}.entity.${javaName};
+import ${packageName}.mapper.${javaName}BaseMapper;
 
 // ${comment!''}
-@Service(value = "${packageName}.base.service.${javaName}BaseService")
+@Service(value = "${packageName}.service.${javaName}BaseService")
 @Transactional(readOnly = true)
 public class ${javaName}BaseService {
 

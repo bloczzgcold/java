@@ -25,7 +25,7 @@ public class MysqlMapperBaseCreater implements MapperBaseCreater {
     data.put("javaName", entityName);
     data.put("columns", javaColumns);
 
-    TemplateUtils.processByResource("tpl/base/mysql", "mapper.tpl", data, new File(outputPath + "/base/mapper", entityName + "BaseMapper.java"));
+    TemplateUtils.processByResource("tpl/base/mysql", "mapper.tpl", data, new File(outputPath + "/mapper", entityName + "BaseMapper.java"));
   }
 
 }

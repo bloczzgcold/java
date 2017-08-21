@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.hualuomoli.sample.atomikos.ds1.base.entity.User;
-import com.github.hualuomoli.sample.atomikos.ds1.base.mapper.UserBaseMapper;
-import com.github.hualuomoli.sample.atomikos.ds1.base.service.UserBaseService;
-import com.github.hualuomoli.sample.atomikos.ds2.base.entity.Address;
-import com.github.hualuomoli.sample.atomikos.ds2.base.mapper.AddressBaseMapper;
-import com.github.hualuomoli.sample.atomikos.ds2.base.service.AddressBaseService;
+import com.github.hualuomoli.sample.atomikos.ds1.entity.User;
+import com.github.hualuomoli.sample.atomikos.ds1.mapper.UserBaseMapper;
+import com.github.hualuomoli.sample.atomikos.ds1.service.UserBaseService;
+import com.github.hualuomoli.sample.atomikos.ds2.entity.Address;
+import com.github.hualuomoli.sample.atomikos.ds2.mapper.AddressBaseMapper;
+import com.github.hualuomoli.sample.atomikos.ds2.service.AddressBaseService;
 
 @Service(value = "com.github.hualuomoli.sample.atomikos.biz.service.JtaService")
 @Transactional(readOnly = true)

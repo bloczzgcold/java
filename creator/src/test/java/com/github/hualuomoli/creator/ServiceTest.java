@@ -27,7 +27,7 @@ public class ServiceTest {
   protected static final String ENTITY_NAME = "User";
 
   protected static String outputPath = "E:/demo";
-  protected static String packageName = "com.github.hualuomoli";
+  protected static String packageName = "com.github.hualuomoli.base";
 
   @Autowired
   protected WebApplicationContext wac;

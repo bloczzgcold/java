@@ -1,14 +1,14 @@
-package ${packageName}.base.mapper;
+package ${packageName}.mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import ${packageName}.base.entity.${javaName};
+import ${packageName}.entity.${javaName};
 
 // ${comment!''}
-@Repository(value = "${packageName}.base.mapper.${javaName}BaseMapper")
+@Repository(value = "${packageName}.mapper.${javaName}BaseMapper")
 public interface ${javaName}BaseMapper {
   <#list columns as column>
     <#if column.primary>

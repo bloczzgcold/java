@@ -22,7 +22,7 @@ import com.github.hualuomoli.sample.framework.enums.StatusEnum;
 public class EntityCratorTest extends ServiceTest {
 
   private static String outputPath = null;
-  private String packageName = "com.github.hualuomoli.sample.framework";
+  private String packageName = "com.github.hualuomoli.sample.framework.base";
 
   @Autowired
   private ReversService reversService;

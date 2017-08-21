@@ -1,6 +1,6 @@
 package ${packageName}.query.entity;
 
-import ${packageName}.base.entity.${javaName};
+import ${packageName}.entity.${javaName};
 
 // ${comment!''}
 public class ${javaName}Query extends ${javaName} {

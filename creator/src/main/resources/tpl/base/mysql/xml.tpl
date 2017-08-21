@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${packageName}.base.mapper.${javaName}BaseMapper">
+<mapper namespace="${packageName}.mapper.${javaName}BaseMapper">
 
   <!-- 返回的列 -->
   <sql id="columns">
@@ -29,7 +29,7 @@
   <#list columns as column>
     <#if column.primary>
   <!-- 根据主键${column.javaName}查询 -->
-  <select id="get" resultType="${packageName}.base.entity.${javaName}">
+  <select id="get" resultType="${packageName}.entity.${javaName}">
     select 
       <include refid="columns" />
     from `${tableName}`
@@ -41,7 +41,7 @@
   <#list columns as column>
     <#if column.unique>
   <!-- 根据唯一索引${column.javaName}查询 -->
-  <select id="findBy${column.javaName?cap_first}" resultType="${packageName}.base.entity.${javaName}">
+  <select id="findBy${column.javaName?cap_first}" resultType="${packageName}.entity.${javaName}">
     select 
       <include refid="columns" />
     from `${tableName}`
@@ -181,7 +181,7 @@
   </#list>
   
   <!-- 查询列表 -->
-  <select id="findList" resultType="${packageName}.base.entity.${javaName}">
+  <select id="findList" resultType="${packageName}.entity.${javaName}">
     select
       <include refid="columns" />
     from `${tableName}`

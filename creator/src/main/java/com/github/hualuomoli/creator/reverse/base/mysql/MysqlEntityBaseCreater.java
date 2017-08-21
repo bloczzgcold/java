@@ -25,7 +25,7 @@ public class MysqlEntityBaseCreater implements EntityBaseCreater {
     data.put("javaName", entityName);
     data.put("columns", javaColumns);
 
-    TemplateUtils.processByResource("tpl/base/mysql", "entity.tpl", data, new File(outputPath + "/base/entity", entityName + ".java"));
+    TemplateUtils.processByResource("tpl/base/mysql", "entity.tpl", data, new File(outputPath + "/entity", entityName + ".java"));
   }
 
 }

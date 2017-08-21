@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import ${packageName}.base.entity.${javaName};
+import ${packageName}.entity.${javaName};
 import ${packageName}.query.entity.${javaName}Query;
 
 // ${comment!''}

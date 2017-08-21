@@ -1,4 +1,4 @@
-package ${packageName}.base.entity;
+package ${packageName}.entity;
 
 // ${comment!''}
 public class ${javaName} {

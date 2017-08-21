@@ -6,7 +6,7 @@ CREATE USER 'hualuomoli'@'%';
 -- 赋权
 GRANT ALL ON `hualuomoli`.* to 'hualuomoli'@'%';
 
-CREATE TABLE `t_user` (
+CREATE TABLE `hualuomoli`.`t_user` (
   `id` varchar(32) NOT NULL COMMENT 'id',
   `username` varchar(32) NOT NULL COMMENT '用户名',
   `nickname` varchar(32) DEFAULT NULL COMMENT '昵称',

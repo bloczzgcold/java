@@ -25,7 +25,7 @@ public class MysqlServiceBaseCreater implements ServiceBaseCreater {
     data.put("javaName", entityName);
     data.put("columns", javaColumns);
 
-    TemplateUtils.processByResource("tpl/base/mysql", "service.tpl", data, new File(outputPath + "/base/service", entityName + "BaseService.java"));
+    TemplateUtils.processByResource("tpl/base/mysql", "service.tpl", data, new File(outputPath + "/service", entityName + "BaseService.java"));
   }
 
 }

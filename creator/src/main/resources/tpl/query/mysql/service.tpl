@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hualuomoli.framework.entity.Page;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
-import ${packageName}.base.entity.${javaName};
+import ${packageName}.entity.${javaName};
 import ${packageName}.query.entity.${javaName}Query;
 import ${packageName}.query.mapper.${javaName}QueryMapper;
 
