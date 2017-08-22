@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
@@ -13,9 +12,9 @@ import com.github.hualuomoli.validator.lang.InvalidParameterException;
 /**
  * 验证器工具
  */
-public class Validate {
+public class Validator {
 
-  private static Validator validator;
+  private static javax.validation.Validator validator;
 
   /**
    * 验证实体类是否有效
@@ -66,7 +65,7 @@ public class Validate {
     }
 
     // 获取验证器
-    Validator validator = getValidator();
+    javax.validation.Validator validator = getValidator();
 
     // 验证
     return validator.validate(object, groups);
@@ -76,7 +75,7 @@ public class Validate {
    * 获取验证器
    * @return 验证器
    */
-  private static Validator getValidator() {
+  private static javax.validation.Validator getValidator() {
     if (validator == null) {
       validator = Validation.buildDefaultValidatorFactory().getValidator();
     }

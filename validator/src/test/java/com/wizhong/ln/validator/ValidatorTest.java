@@ -15,21 +15,21 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hualuomoli.validator.Validate;
+import com.github.hualuomoli.validator.Validator;
 import com.github.hualuomoli.validator.constraints.Greater;
 import com.github.hualuomoli.validator.constraints.Less;
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
 
-public class ValidateTest {
+public class ValidatorTest {
 
-  private static final Logger logger = LoggerFactory.getLogger(ValidateTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
   @Test(expected = InvalidParameterException.class)
   public void testBasic() {
-    ValidateTest.Basic basic = new ValidateTest.Basic();
+    ValidatorTest.Basic basic = new ValidatorTest.Basic();
     basic.age = 18;
     try {
-      Validate.valid(basic);
+      Validator.valid(basic);
     } catch (Exception e) {
       logger.info("{}", e.getMessage());
       throw e;
@@ -88,23 +88,23 @@ public class ValidateTest {
 
   @Test(expected = InvalidParameterException.class)
   public void testUser() {
-    ValidateTest.User user = new ValidateTest.User();
+    ValidatorTest.User user = new ValidatorTest.User();
     user.setUsername("hualuomoli");
 
     // 级联验证
-    ValidateTest.User.Info info = new ValidateTest.User.Info();
+    ValidatorTest.User.Info info = new ValidatorTest.User.Info();
     info.setIdNumber("123456789012345678");
     info.setBirthday("0101");
     user.setInfo(info);
 
     // list
-    List<ValidateTest.User.Address> addresses = new ArrayList<ValidateTest.User.Address>();
-    ValidateTest.User.Address address1 = new ValidateTest.User.Address();
+    List<ValidatorTest.User.Address> addresses = new ArrayList<ValidatorTest.User.Address>();
+    ValidatorTest.User.Address address1 = new ValidatorTest.User.Address();
     address1.setProvince("山东省");
     //		address1.setCity("青岛市");
     address1.setCounty("市北区");
 
-    ValidateTest.User.Address address2 = new ValidateTest.User.Address();
+    ValidatorTest.User.Address address2 = new ValidatorTest.User.Address();
     address2.setProvince("山东省");
     address2.setCity("青岛市");
     addresses.add(address1);
@@ -112,11 +112,11 @@ public class ValidateTest {
     user.setAddresses(addresses);
 
     // 不级联验证
-    ValidateTest.User.Relation relation = new ValidateTest.User.Relation();
+    ValidatorTest.User.Relation relation = new ValidatorTest.User.Relation();
     user.setRelation(relation);
 
     try {
-      Validate.valid(user);
+      Validator.valid(user);
     } catch (Exception e) {
       logger.info("{}", e.getMessage());
       throw e;
