@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>hualuomoli-ws-provider</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <properties>
 
