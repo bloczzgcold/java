@@ -33,7 +33,6 @@
       <groupId>com.github.hualuomoli</groupId>
       <artifactId>hualuomoli-ws-provider</artifactId>
       <version>${project.parent.version}</version>
-      <type>pom</type>
     </dependency>
     <!-- spring -->
     <dependency>
