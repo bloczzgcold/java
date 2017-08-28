@@ -11,4 +11,9 @@ public abstract class AbstractMessageDealer implements MessageDealer {
     return destinationName;
   }
 
+  @Override
+  public void onError(Exception e) {
+    e.printStackTrace();
+  }
+
 }
