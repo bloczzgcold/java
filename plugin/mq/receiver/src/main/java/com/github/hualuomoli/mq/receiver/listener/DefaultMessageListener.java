@@ -9,7 +9,6 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
 import com.github.hualuomoli.mq.receiver.MessageDealer;
-import com.github.hualuomoli.mq.receiver.lang.MessageListenerException;
 
 /**
  * 默认消息监听器
@@ -38,8 +37,12 @@ public class DefaultMessageListener extends DefaultMessageListenerContainer {
     public void onMessage(TextMessage message, Session session) throws JMSException {
       try {
         messageDealer.onMessage(message.getText());
-      } catch (MessageListenerException e) {
-        throw new JMSException(e.getMessage());
+      } catch (Exception e) {
+        try {
+          messageDealer.onError(e);
+        } catch (Exception e1) {
+          throw new JMSException(e1.getMessage());
+        }
       }
     }
 
