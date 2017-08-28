@@ -7,7 +7,7 @@ import com.github.hualuomoli.mq.receiver.MessageDealer;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.service.ShowService;
 
 @Service(value = "com.github.hualuomoli.sample.plugin.mq.receiver.dealer.queue.QueueMessageDealer2")
-public class QueueMessageDealer2 implements MessageDealer {
+public class QueueMessageDealer2 extends AbstractMessageDealer implements MessageDealer {
 
   @Autowired
   private ShowService showService;

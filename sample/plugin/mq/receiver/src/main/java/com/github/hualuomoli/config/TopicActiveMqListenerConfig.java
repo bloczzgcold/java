@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.github.hualuomoli.mq.receiver.listener.DefaultMessageListener;
+import com.github.hualuomoli.mq.receiver.listener.DefaultTopicMessageListener;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer1;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer2;
 import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessageDealer3;
@@ -16,8 +17,6 @@ import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.topic.TopicMessage
 @Configuration(value = "com.github.hualuomoli.config.TopicActiveMqListenerConfig")
 @Import(value = { ConnectionConfig.class, BaseComponentConfig.class })
 public class TopicActiveMqListenerConfig {
-
-  private String destinationName = "sample_topic";
 
   @Resource(name = "receiveConnectionFactory1")
   private ConnectionFactory receiveConnectionFactory1;
@@ -35,46 +34,19 @@ public class TopicActiveMqListenerConfig {
 
   @Bean
   public DefaultMessageListener topicActiveMqListener1() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory1);
-    listener.setMessageDealer(topicMessageDealer1);
-
-    // 广播需要设置
-    listener.setClientId("client1");
-    listener.setPubSubDomain(true);
-    listener.setSubscriptionDurable(true);
-
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory1, topicMessageDealer1, "client1");
     return listener;
   }
 
   @Bean
   public DefaultMessageListener topicActiveMqListener2() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory2);
-    listener.setMessageDealer(topicMessageDealer2);
-
-    // 广播需要设置
-    listener.setClientId("client2");
-    listener.setPubSubDomain(true);
-    listener.setSubscriptionDurable(true);
-
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory2, topicMessageDealer2, "client2");
     return listener;
   }
 
   @Bean
   public DefaultMessageListener topicActiveMqListener3() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory3);
-    listener.setMessageDealer(topicMessageDealer3);
-
-    // 广播需要设置
-    listener.setClientId("client3");
-    listener.setPubSubDomain(true);
-    listener.setSubscriptionDurable(true);
-
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory3, topicMessageDealer3, "client3");
     return listener;
   }
 

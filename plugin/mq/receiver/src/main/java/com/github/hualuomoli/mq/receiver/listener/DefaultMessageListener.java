@@ -1,5 +1,6 @@
 package com.github.hualuomoli.mq.receiver.listener;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -15,30 +16,32 @@ import com.github.hualuomoli.mq.receiver.lang.MessageListenerException;
  */
 public class DefaultMessageListener extends DefaultMessageListenerContainer {
 
-  private MessageDealer messageDealer;
-
-  public void setMessageDealer(MessageDealer messageDealer) {
-    this.messageDealer = messageDealer;
+  public DefaultMessageListener(ConnectionFactory connectionFactory, MessageDealer messageDealer) {
+    // 连接工厂
+    this.setConnectionFactory(connectionFactory);
+    // 目的地
+    this.setDestinationName(messageDealer.getDestinationName());
+    // 监听器
+    this.setMessageListener(new TextMessageListener(messageDealer));
   }
 
-  public DefaultMessageListener() {
-    this.init();
-  }
+  // 文本监听器
+  private class TextMessageListener implements SessionAwareMessageListener<TextMessage> {
 
-  // 初始化
-  private void init() {
+    private MessageDealer messageDealer;
 
-    this.setMessageListener(new SessionAwareMessageListener<TextMessage>() {
+    TextMessageListener(MessageDealer messageDealer) {
+      this.messageDealer = messageDealer;
+    }
 
-      @Override
-      public void onMessage(TextMessage message, Session session) throws JMSException {
-        try {
-          messageDealer.onMessage(message.getText());
-        } catch (MessageListenerException e) {
-          throw new JMSException(e.getMessage());
-        }
+    @Override
+    public void onMessage(TextMessage message, Session session) throws JMSException {
+      try {
+        messageDealer.onMessage(message.getText());
+      } catch (MessageListenerException e) {
+        throw new JMSException(e.getMessage());
       }
-    });
+    }
 
   }
 

@@ -27,7 +27,7 @@ import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
-import com.github.hualuomoli.validator.Validate;
+import com.github.hualuomoli.validator.Validator;
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -84,7 +84,7 @@ public class GatewayBusinessHandlerConfig {
 
       private void valid(Object object) {
         try {
-          Validate.valid(object);
+          Validator.valid(object);
         } catch (InvalidParameterException ipe) {
           GatewaySubErrorEnum e = GatewaySubErrorEnum.INVALID_PARAMETER;
           throw new BusinessException(e, ipe.getMessage(), e.getErrorCode());

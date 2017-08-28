@@ -17,8 +17,6 @@ import com.github.hualuomoli.sample.plugin.mq.receiver.dealer.queue.QueueMessage
 @Import(value = { ConnectionConfig.class, BaseComponentConfig.class })
 public class QueueActiveMqListenerConfig {
 
-  private String destinationName = "sample_queue";
-
   @Resource(name = "receiveConnectionFactory1")
   private ConnectionFactory receiveConnectionFactory1;
   @Resource(name = "receiveConnectionFactory2")
@@ -35,28 +33,19 @@ public class QueueActiveMqListenerConfig {
 
   @Bean
   public DefaultMessageListener queueActiveMqListener1() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory1);
-    listener.setMessageDealer(queueMessageDealer1);
+    DefaultMessageListener listener = new DefaultMessageListener(receiveConnectionFactory1, queueMessageDealer1);
     return listener;
   }
 
   @Bean
   public DefaultMessageListener queueActiveMqListener2() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory2);
-    listener.setMessageDealer(queueMessageDealer2);
+    DefaultMessageListener listener = new DefaultMessageListener(receiveConnectionFactory2, queueMessageDealer2);
     return listener;
   }
 
   @Bean
   public DefaultMessageListener queueActiveMqListener3() {
-    DefaultMessageListener listener = new DefaultMessageListener();
-    listener.setDestinationName(destinationName);
-    listener.setConnectionFactory(receiveConnectionFactory3);
-    listener.setMessageDealer(queueMessageDealer3);
+    DefaultMessageListener listener = new DefaultMessageListener(receiveConnectionFactory3, queueMessageDealer3);
     return listener;
   }
 
