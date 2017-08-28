@@ -2,14 +2,14 @@ package com.github.hualuomoli.mq.receiver.listener;
 
 import javax.jms.ConnectionFactory;
 
-import com.github.hualuomoli.mq.receiver.MessageDealer;
+import com.github.hualuomoli.mq.receiver.TopicMessageDealer;
 
 public class DefaultTopicMessageListener extends DefaultMessageListener {
 
-  public DefaultTopicMessageListener(ConnectionFactory connectionFactory, MessageDealer messageDealer, String clientId) {
+  public DefaultTopicMessageListener(ConnectionFactory connectionFactory, TopicMessageDealer messageDealer) {
     super(connectionFactory, messageDealer);
     // 广播
-    this.setClientId(clientId);
+    this.setClientId(messageDealer.getClientId());
     this.setPubSubDomain(true);
     this.setSubscriptionDurable(true);
   }

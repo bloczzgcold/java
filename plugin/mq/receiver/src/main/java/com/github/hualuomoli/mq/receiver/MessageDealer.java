@@ -20,8 +20,9 @@ public interface MessageDealer {
 
   /**
    * 业务处理错误{@linkplain #onMessage(String)}
+   * @param data 消息信息
    * @param e 错误信息
    */
-  void onError(Exception e);
+  void onError(String data, Exception e);
 
 }

@@ -12,7 +12,7 @@ public abstract class AbstractMessageDealer implements MessageDealer {
   }
 
   @Override
-  public void onError(Exception e) {
+  public void onError(String data, Exception e) {
     e.printStackTrace();
   }
 

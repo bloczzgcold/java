@@ -34,19 +34,19 @@ public class TopicActiveMqListenerConfig {
 
   @Bean
   public DefaultMessageListener topicActiveMqListener1() {
-    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory1, topicMessageDealer1, "client1");
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory1, topicMessageDealer1);
     return listener;
   }
 
   @Bean
   public DefaultMessageListener topicActiveMqListener2() {
-    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory2, topicMessageDealer2, "client2");
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory2, topicMessageDealer2);
     return listener;
   }
 
   @Bean
   public DefaultMessageListener topicActiveMqListener3() {
-    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory3, topicMessageDealer3, "client3");
+    DefaultMessageListener listener = new DefaultTopicMessageListener(receiveConnectionFactory3, topicMessageDealer3);
     return listener;
   }
 

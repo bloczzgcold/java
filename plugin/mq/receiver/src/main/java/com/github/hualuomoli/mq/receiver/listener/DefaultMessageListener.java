@@ -35,11 +35,12 @@ public class DefaultMessageListener extends DefaultMessageListenerContainer {
 
     @Override
     public void onMessage(TextMessage message, Session session) throws JMSException {
+      String data = message.getText();
       try {
-        messageDealer.onMessage(message.getText());
+        messageDealer.onMessage(data);
       } catch (Exception e) {
         try {
-          messageDealer.onError(e);
+          messageDealer.onError(data, e);
         } catch (Exception e1) {
           throw new JMSException(e1.getMessage());
         }

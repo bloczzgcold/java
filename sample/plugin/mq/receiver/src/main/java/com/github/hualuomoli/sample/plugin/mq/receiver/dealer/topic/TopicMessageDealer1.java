@@ -19,7 +19,7 @@ public class TopicMessageDealer1 extends AbstractMessageDealer implements TopicM
 
   @Override
   public String getClientId() {
-    return "client2";
+    return "client1";
   }
 
 }

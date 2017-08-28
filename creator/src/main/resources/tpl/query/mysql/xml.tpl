@@ -15,6 +15,9 @@
     <#if !column.primary && !column.unique>
       <#if column.enum>
       <#-- 枚举 -->
+    <if test="${column.javaName} != null">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}Ins != null">
       <foreach collection="${column.javaName}Ins" item="obj" open="and (" close=")" separator="or">
         `${column.dbName}` = ${r"#{"}obj${r"}"}
@@ -27,6 +30,9 @@
     </if>
       <#elseif column.javaTypeName == 'java.lang.String'>
       <#-- 字符串 -->
+    <if test="${column.javaName} != null and ${column.javaName} != ''">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}LeftLike != null and ${column.javaName}LeftLike != ''"> 
       and `${column.dbName}` like CONCAT(${r"#{"}${column.javaName}LeftLike${r"}"}, '%')
     </if>
@@ -38,6 +44,9 @@
     </if>
       <#elseif column.javaTypeName == 'java.lang.Integer'>
       <#-- Integer -->
+    <if test="${column.javaName} != null">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}GreaterThan != null"> 
       and `${column.dbName}` <![CDATA[ > ]]> ${r"#{"}${column.javaName}GreaterThan${r"}"}
     </if>
@@ -52,6 +61,9 @@
     </if>
       <#elseif column.javaTypeName == 'java.lang.Long'>
       <#-- Long -->
+    <if test="${column.javaName} != null">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}GreaterThan != null"> 
       and `${column.dbName}` <![CDATA[ > ]]> ${r"#{"}${column.javaName}GreaterThan${r"}"}
     </if>
@@ -66,6 +78,9 @@
     </if>
       <#elseif column.javaTypeName == 'java.lang.Double'>
       <#-- Double -->
+    <if test="${column.javaName} != null">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}GreaterThan != null"> 
       and `${column.dbName}` <![CDATA[ > ]]> ${r"#{"}${column.javaName}GreaterThan${r"}"}
     </if>
@@ -80,6 +95,9 @@
     </if>
       <#elseif column.javaTypeName == 'java.util.Date'>
       <#-- Date -->
+    <if test="${column.javaName} != null">
+      and `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"}
+    </if>
     <if test="${column.javaName}GreaterThan != null"> 
       and `${column.dbName}` <![CDATA[ > ]]> ${r"#{"}${column.javaName}GreaterThan${r"}"}
     </if>
