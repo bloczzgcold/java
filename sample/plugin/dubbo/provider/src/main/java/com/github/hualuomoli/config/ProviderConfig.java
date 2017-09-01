@@ -14,7 +14,7 @@ public class ProviderConfig {
 
   @Bean
   public ApplicationConfig applicationConfig() {
-    return new ApplicationConfig("provider");
+    return new ApplicationConfig("hualuomoli-sample");
   }
 
   @Bean
