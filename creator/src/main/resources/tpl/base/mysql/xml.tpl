@@ -38,18 +38,6 @@
     </#if>
   </#list>
   
-  <#list columns as column>
-    <#if column.unique>
-  <!-- 根据唯一索引${column.javaName}查询 -->
-  <select id="findBy${column.javaName?cap_first}" resultType="${packageName}.entity.${javaName}">
-    select 
-      <include refid="columns" />
-    from `${tableName}`
-    where `${column.dbName}` =  ${r"#{"}${column.javaName}${r"}"}
-  </select>
-    </#if>
-  </#list>
-
   <!-- 添加 -->
   <insert id="insert">
     insert into `${tableName}` (
@@ -85,8 +73,8 @@
     update `${tableName}`
     <set>
     <#list columns as column>
-      <#if !column.primary && !column.unique>
-      <#-- 主键或唯一索引不参与修改 -->
+      <#if !column.primary>
+      <#-- 主键不参与修改 -->
         <#if column.javaTypeName == 'java.lang.String'>
         <#-- 字符串 -->
       <if test="${column.javaName} != null and ${column.javaName} != ''"> 
@@ -105,48 +93,40 @@
   </update>
     </#if>
   </#list>
-  
-  <#list columns as column>
-    <#if column.unique>
-  <!-- 根据唯一索引${column.javaName}修改 -->
-  <update id="updateBy${column.javaName?cap_first}">
+
+  <#list uniques as unique>
+  <!-- 根据唯一索引修改 -->
+  <update id="updateBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>">
     update `${tableName}`
     <set>
-    <#list columns as c>
-      <#if !c.primary && !c.unique>
+    <#list columns as column>
+      <#if !column.primary && !column.unique>
       <#-- 主键或唯一索引不参与修改 -->
-        <#if c.javaTypeName == 'java.lang.String'>
+        <#if column.javaTypeName == 'java.lang.String'>
         <#-- 字符串 -->
-      <if test="${c.javaName} != null"> 
-        `${c.dbName}` = ${r"#{"}${c.javaName}${r"}"},
+      <if test="${column.javaName} != null and ${column.javaName} != ''"> 
+        `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
       </if>
         <#else>
         <#-- 普通类型 -->
-      <if test="${c.javaName} != null"> 
-        `${c.dbName}` = ${r"#{"}${c.javaName}${r"}"},
+      <if test="${column.javaName} != null"> 
+        `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
       </if>
         </#if>
       </#if>
     </#list>
     </set>
-    where ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
+    where ${unique.firstJavaColumn.dbName} =  ${r"#{"}${unique.firstJavaColumn.javaName}${r"}"}
+    <#list unique.nextJavaColumns as nextJavaColumn>
+    and ${nextJavaColumn.dbName} =  ${r"#{"}${nextJavaColumn.javaName}${r"}"}
+    </#list>
   </update>
-    </#if>
   </#list>
   
   <#list columns as column>
     <#if column.primary>
   <!-- 根据主键${column.javaName}删除 -->
   <delete id="delete">
-    delete from `${tableName}` where ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
-  </delete>
-    </#if>
-  </#list>
-  
-  <#list columns as column>
-    <#if column.unique>
-  <!-- 根据唯一索引${column.javaName}删除 -->
-  <delete id="deleteBy${column.javaName?cap_first}">
     delete from `${tableName}` where ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
   </delete>
     </#if>
@@ -160,20 +140,6 @@
     <where>
       <foreach collection="${column.javaName}s" item="${column.javaName}" separator="or">
         ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
-      </foreach>
-      </where>
-  </delete>
-    </#if>
-  </#list>
-  
-  <#list columns as column>
-    <#if column.unique>
-  <!-- 根据唯一索引${column.javaName}数组删除 -->
-  <delete id="deleteBy${column.javaName?cap_first}Array">
-    delete from `${tableName}`
-    <where>
-      <foreach collection="${column.javaName}s" item="${column.javaName}" separator="or">
-          ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
       </foreach>
       </where>
   </delete>

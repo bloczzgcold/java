@@ -6,7 +6,7 @@ import ${packageName}.entity.${javaName};
 public class ${javaName}Query extends ${javaName} {
 
   <#list columns as column>
-    <#if !column.primary && !column.unique>
+    <#if !column.primary>
   /** ${column.comment!''} */
       <#if column.enum>
       <#-- 枚举 -->
@@ -53,7 +53,7 @@ public class ${javaName}Query extends ${javaName} {
 
   // getter and setter
   <#list columns as column>
-    <#if !column.primary && !column.unique>
+    <#if !column.primary>
 
       <#if column.enum>
       <#-- 枚举 -->

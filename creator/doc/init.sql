@@ -15,6 +15,7 @@ CREATE TABLE `hualuomoli`.`t_user` (
   `state` int(1) DEFAULT NULL COMMENT '数据状态1=正常',
   `status` varchar(10) DEFAULT NULL COMMENT '数据状态',
   `remark` varchar(200) DEFAULT NULL COMMENT '描述信息',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户';
+ALTER TABLE `hualuomoli`.`t_user` ADD UNIQUE INDEX `user_username`(`username`);
+ALTER TABLE `hualuomoli`.`t_user` ADD UNIQUE INDEX `user_nickname_age`(`nickname`, `age`);

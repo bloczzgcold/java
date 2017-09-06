@@ -11,8 +11,10 @@ public class JavaColumn {
   /** 注释 */
   private String comment;
 
-  private boolean primary; // 主键
-  private boolean unique; // 唯一索引
+  /** 是否是主键 */
+  private boolean primary;
+  /** 是否是唯一索引的列 */
+  private boolean unique;
 
   public JavaColumn() {
   }
@@ -57,6 +59,14 @@ public class JavaColumn {
     this.comment = comment;
   }
 
+  public String getJavaTypeName() {
+    return javaType.getName();
+  }
+
+  public boolean isEnum() {
+    return Enum.class.isAssignableFrom(javaType);
+  }
+
   public boolean isPrimary() {
     return primary;
   }
@@ -73,18 +83,9 @@ public class JavaColumn {
     this.unique = unique;
   }
 
-  public String getJavaTypeName() {
-    return javaType.getName();
-  }
-
-  public boolean isEnum() {
-    return Enum.class.isAssignableFrom(javaType);
-  }
-
   @Override
   public String toString() {
-    return "JavaColumn [dbName=" + dbName + ", javaName=" + javaName + ", javaType=" + javaType + ", comment=" + comment + ", primary=" + primary + ", unique="
-        + unique + "]";
+    return "JavaColumn [dbName=" + dbName + ", javaName=" + javaName + ", javaType=" + javaType + ", comment=" + comment + ", primary=" + primary + ", unique=" + unique + "]";
   }
 
 }

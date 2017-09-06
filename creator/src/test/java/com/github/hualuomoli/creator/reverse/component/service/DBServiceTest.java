@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.github.hualuomoli.creator.ServiceTest;
 import com.github.hualuomoli.creator.reverse.component.entity.DBColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.DBUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.mysql.service.MysqlDBService;
 
 public class DBServiceTest extends ServiceTest {
@@ -24,7 +25,7 @@ public class DBServiceTest extends ServiceTest {
     String comment = dbService.findComment(DATABASE_NAME, TABLE_NAME);
     List<DBColumn> dbColumns = dbService.findList(DATABASE_NAME, TABLE_NAME);
     String primaryKey = dbService.findPrimaryKey(DATABASE_NAME, TABLE_NAME);
-    List<String> uniqueKeys = dbService.findUniqueKey(DATABASE_NAME, TABLE_NAME);
+    List<DBUniqueIndex> uniqueKeys = dbService.findUniqueKey(DATABASE_NAME, TABLE_NAME);
 
     logger.debug("comment={}", comment);
     logger.debug("dbColumns={}", JSON.toJSONString(dbColumns));

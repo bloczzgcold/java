@@ -7,7 +7,9 @@ import com.github.hualuomoli.creator.reverse.base.MapperBaseCreater;
 import com.github.hualuomoli.creator.reverse.base.ServiceBaseCreater;
 import com.github.hualuomoli.creator.reverse.base.XmlBaseCreater;
 import com.github.hualuomoli.creator.reverse.component.entity.DBColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.DBUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.entity.JavaColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.JavaUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.parser.Parser;
 import com.github.hualuomoli.creator.reverse.component.parser.Parser.Resolver;
 import com.github.hualuomoli.creator.reverse.component.service.DBService;
@@ -49,23 +51,24 @@ public abstract class AbstractReversService implements ReversService {
     // 主键
     String primaryKey = this.dbService().findPrimaryKey(db, tableName);
     // 唯一索引
-    List<String> uniques = this.dbService().findUniqueKey(db, tableName);
+    List<DBUniqueIndex> uniques = this.dbService().findUniqueKey(db, tableName);
 
     // java列
-    List<JavaColumn> javaColumns = this.parser().parse(dbColumns, primaryKey, uniques, resolver);
+    List<JavaColumn> javaColumns = this.parser().parse(dbColumns, primaryKey, resolver);
+    List<JavaUniqueIndex> javaUniqueIndexs = this.parser().parse(javaColumns, uniques);
 
     // create
 
     // base
     this.entityBaseCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
-    this.xmlBaseCreater().create(outputProjectPath, rootPackageName, entityName, javaColumns, tableName);
-    this.mapperBaseCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
-    this.serviceBaseCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
+    this.xmlBaseCreater().create(outputProjectPath, rootPackageName, entityName, javaColumns, javaUniqueIndexs, tableName);
+    this.mapperBaseCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns, javaUniqueIndexs);
+    this.serviceBaseCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns, javaUniqueIndexs);
     // query
     this.entityQueryCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
-    this.xmlQueryCreater().create(outputProjectPath, rootPackageName, entityName, javaColumns, tableName);
-    this.mapperQueryCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
-    this.serviceQueryCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns);
+    this.xmlQueryCreater().create(outputProjectPath, rootPackageName, entityName, javaColumns, javaUniqueIndexs, tableName);
+    this.mapperQueryCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns, javaUniqueIndexs);
+    this.serviceQueryCreater().create(outputProjectPath, rootPackageName, entityName, entityComment, javaColumns, javaUniqueIndexs);
   }
 
 }

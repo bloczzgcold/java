@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.hualuomoli.creator.reverse.component.entity.DBColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.DBUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.mysql.mapper.MysqlDbMapper;
 import com.github.hualuomoli.creator.reverse.component.service.DBService;
 
@@ -31,8 +32,8 @@ public class MysqlDBService implements DBService {
   }
 
   @Override
-  public List<String> findUniqueKey(String db, String tableName) {
-    return mysqlDbMapper.findUniqueKey(db, tableName);
+  public List<DBUniqueIndex> findUniqueKey(String db, String tableName) {
+    return mysqlDbMapper.findUniqueKey(db + "/" + tableName);
   }
 
 }

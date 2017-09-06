@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.hualuomoli.creator.ServiceTest;
 import com.github.hualuomoli.creator.reverse.component.entity.DBColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.DBUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.entity.JavaColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.JavaUniqueIndex;
 import com.github.hualuomoli.creator.reverse.component.mysql.parser.MysqlParser;
 import com.github.hualuomoli.creator.reverse.component.mysql.service.MysqlDBService;
 
@@ -25,13 +27,13 @@ public class MysqlMapperBaseCreaterTest extends ServiceTest {
   public void testCreate() {
     List<DBColumn> dbColumns = dbService.findList(DATABASE_NAME, TABLE_NAME);
     String comments = dbService.findComment(DATABASE_NAME, TABLE_NAME);
-
     String primaryKey = dbService.findPrimaryKey(DATABASE_NAME, TABLE_NAME);
-    List<String> uniques = dbService.findUniqueKey(DATABASE_NAME, TABLE_NAME);
+    List<DBUniqueIndex> uniques = dbService.findUniqueKey(DATABASE_NAME, TABLE_NAME);
 
-    List<JavaColumn> javaColumns = parser.parse(dbColumns, primaryKey, uniques, null);
+    List<JavaColumn> javaColumns = parser.parse(dbColumns, primaryKey, null);
+    List<JavaUniqueIndex> javaUniqueIndexs = parser.parse(javaColumns, uniques);
 
-    mapperBaseCreater.create(outputPath, packageName, ENTITY_NAME, comments, javaColumns);
+    mapperBaseCreater.create(outputPath, packageName, ENTITY_NAME, comments, javaColumns, javaUniqueIndexs);
 
     logger.info("mapper created.");
   }

@@ -12,7 +12,7 @@
   <!-- 查询的列 -->
   <sql id="querys">
   <#list columns as column>
-    <#if !column.primary && !column.unique>
+    <#if !column.primary>
       <#if column.enum>
       <#-- 枚举 -->
     <if test="${column.javaName} != null">

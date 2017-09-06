@@ -17,13 +17,6 @@ public interface ${javaName}BaseMapper {
   ${javaName} get(${column.javaTypeName} ${column.javaName});
     </#if>
   </#list>
-  <#list columns as column>
-    <#if column.unique>
-
-  /** 根据唯一索引${column.javaName}查询 */
-  ${javaName} findBy${column.javaName?cap_first}(${column.javaTypeName} ${column.javaName});
-    </#if>
-  </#list>
 
   /** 添加 */
   int insert(${javaName} ${javaName?uncap_first});
@@ -33,16 +26,14 @@ public interface ${javaName}BaseMapper {
   <#list columns as column>
     <#if column.primary>
 
-  /** 根据主键${column.javaName}修改 */
+  /** 根据主键修改 */
   int update(${javaName} ${javaName?uncap_first});
     </#if>
   </#list>
-  <#list columns as column>
-    <#if column.unique>
+  <#list uniques as unique>
 
   /** 根据唯一索引修改 */
-  int updateBy${column.javaName?cap_first}(${javaName} ${javaName?uncap_first});
-    </#if>
+  int updateBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>(${javaName} ${javaName?uncap_first});
   </#list>
   <#list columns as column>
     <#if column.primary>
@@ -52,24 +43,10 @@ public interface ${javaName}BaseMapper {
     </#if>
   </#list>
   <#list columns as column>
-    <#if column.unique>
-
-  /** 根据唯一索引删除 */
-  int deleteBy${column.javaName?cap_first}(${column.javaTypeName} ${column.javaName});
-    </#if>
-  </#list>
-  <#list columns as column>
     <#if column.primary>
 
   /** 根据主键批量删除 */
   int deleteByArray(@Param(value = "${column.javaName}s") ${column.javaTypeName}[] ${column.javaName});
-    </#if>
-  </#list>
-  <#list columns as column>
-    <#if column.unique>
-
-  /** 根据唯一索引批量删除 */
-  int deleteBy${column.javaName?cap_first}Array(@Param(value = "${column.javaName}s") ${column.javaTypeName}[] ${column.javaName});
     </#if>
   </#list>
 

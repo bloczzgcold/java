@@ -28,11 +28,9 @@ public class MysqlEntityBaseCreaterTest extends ServiceTest {
   public void testCreate() {
     List<DBColumn> dbColumns = dbService.findList(DATABASE_NAME, TABLE_NAME);
     String comments = dbService.findComment(DATABASE_NAME, TABLE_NAME);
-
     String primaryKey = dbService.findPrimaryKey(DATABASE_NAME, TABLE_NAME);
-    List<String> uniques = dbService.findUniqueKey(DATABASE_NAME, TABLE_NAME);
 
-    List<JavaColumn> javaColumns = parser.parse(dbColumns, primaryKey, uniques, new Resolver() {
+    List<JavaColumn> javaColumns = parser.parse(dbColumns, primaryKey, new Resolver() {
 
       @Override
       public Class<?> resolverJavaType(Class<?> javaType, String javaName, String dbName) {

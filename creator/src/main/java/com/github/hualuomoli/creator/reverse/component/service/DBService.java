@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hualuomoli.creator.reverse.component.entity.DBColumn;
+import com.github.hualuomoli.creator.reverse.component.entity.DBUniqueIndex;
 
 @Transactional(readOnly = true)
 public interface DBService {
@@ -39,6 +40,6 @@ public interface DBService {
    * @param tableName 表名
    * @return 表的唯一索引
    */
-  List<String> findUniqueKey(String db, String tableName);
+  List<DBUniqueIndex> findUniqueKey(String db, String tableName);
 
 }
