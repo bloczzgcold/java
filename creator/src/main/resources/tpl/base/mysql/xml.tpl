@@ -132,6 +132,17 @@
     </#if>
   </#list>
   
+  <#list uniques as unique>
+  <!-- 根据唯一索引删除 -->
+  <delete id="deleteBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>">
+    delete from `${tableName}`
+    where ${unique.firstJavaColumn.dbName} =  ${r"#{"}${unique.firstJavaColumn.javaName}${r"}"}
+    <#list unique.nextJavaColumns as nextJavaColumn>
+    and ${nextJavaColumn.dbName} =  ${r"#{"}${nextJavaColumn.javaName}${r"}"}
+    </#list>
+  </delete>
+  </#list>
+
   <#list columns as column>
     <#if column.primary>
   <!-- 根据主键${column.javaName}数组删除 -->

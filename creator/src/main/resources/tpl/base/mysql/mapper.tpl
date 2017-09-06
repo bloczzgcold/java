@@ -42,6 +42,11 @@ public interface ${javaName}BaseMapper {
   int delete(${column.javaTypeName} ${column.javaName});
     </#if>
   </#list>
+  <#list uniques as unique>
+
+  /** 根据唯一索引删除 */
+  int deleteBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>(${javaName} ${javaName?uncap_first});
+  </#list>
   <#list columns as column>
     <#if column.primary>
 

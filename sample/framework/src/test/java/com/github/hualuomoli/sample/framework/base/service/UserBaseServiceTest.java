@@ -88,7 +88,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(this.getId());
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18);
       user.setSex("M");
       user.setState(StateEnum.NOMAL);
@@ -147,7 +147,7 @@ public class UserBaseServiceTest extends ServiceTest {
 
     // 根据主键修改
     User update = new User();
-    update.setAge(20);
+    update.setRemark("备注修改");
     updated = userBaseService.updateByUsername("hualuomoli", update);
     Assert.assertEquals(1, updated);
 
@@ -156,7 +156,7 @@ public class UserBaseServiceTest extends ServiceTest {
     Assert.assertNotNull(u);
     Assert.assertEquals(id, u.getId());
     Assert.assertEquals("hualuomoli", u.getUsername());
-    Assert.assertEquals(20, u.getAge().intValue());
+    Assert.assertEquals("备注修改", u.getRemark());
   }
 
   @Test
@@ -207,7 +207,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(id);
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18);
       user.setSex("M");
       user.setState(StateEnum.NOMAL);
@@ -225,33 +225,6 @@ public class UserBaseServiceTest extends ServiceTest {
   }
 
   @Test
-  public void testDeleteByUsernameArray() {
-    List<String> usernames = Lists.newArrayList();
-    // 添加
-    List<User> users = Lists.newArrayList();
-    for (int i = 0; i < 100; i++) {
-      String useranme = "hualuomoli" + i;
-      User user = new User();
-      user.setId(this.getId());
-      user.setUsername(useranme);
-      user.setNickname("花落莫离");
-      user.setAge(18);
-      user.setSex("M");
-      user.setState(StateEnum.NOMAL);
-      user.setStatus(StatusEnum.NOMAL);
-      user.setRemark("备注信息");
-      users.add(user);
-      usernames.add(useranme);
-    }
-    int updated = userBaseService.batchInsert(users, users.size());
-    Assert.assertEquals(100, updated);
-
-    // 根据主键数组删除
-    updated = userBaseService.deleteByUsernameArray(usernames.toArray(new String[] {}));
-    Assert.assertEquals(100, updated);
-  }
-
-  @Test
   public void testFindListUser() {
     // 添加
     List<User> users = Lists.newArrayList();
@@ -259,7 +232,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(this.getId());
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18 + (i % 3));
       user.setSex(i % 2 == 0 ? "M" : "F");
       user.setState(StateEnum.NOMAL);
@@ -286,7 +259,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(this.getId());
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18 + (i % 3));
       user.setSex(i % 2 == 0 ? "M" : "F");
       user.setState(StateEnum.NOMAL);
@@ -313,7 +286,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(this.getId());
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18 + (i % 3));
       user.setSex(i % 2 == 0 ? "M" : "F");
       user.setState(StateEnum.NOMAL);
@@ -344,7 +317,7 @@ public class UserBaseServiceTest extends ServiceTest {
       User user = new User();
       user.setId(this.getId());
       user.setUsername("hualuomoli" + i);
-      user.setNickname("花落莫离");
+      user.setNickname("花落莫离" + i);
       user.setAge(18 + (i % 3));
       user.setSex(i % 2 == 0 ? "M" : "F");
       user.setState(StateEnum.NOMAL);

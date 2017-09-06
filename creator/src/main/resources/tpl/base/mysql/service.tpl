@@ -111,6 +111,24 @@ public class ${javaName}BaseService {
   }
     </#if>
   </#list>
+  <#list uniques as unique>
+
+  /** 根据唯一索引删除 */
+  @Transactional(readOnly = false)
+  public int deleteBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>(${unique.firstJavaColumn.javaTypeName} ${unique.firstJavaColumn.javaName}<#list unique.nextJavaColumns as nextJavaColumn>, ${nextJavaColumn.javaTypeName} ${nextJavaColumn.javaName}</#list>) {
+    Validate.notNull(${unique.firstJavaColumn.javaName}, "${unique.firstJavaColumn.javaName} is null.");
+    <#list unique.nextJavaColumns as nextJavaColumn>
+    Validate.notNull(${nextJavaColumn.javaName}, "${nextJavaColumn.javaName} is null.");
+    </#list>
+
+    ${javaName} ${javaName?uncap_first} = new ${javaName}();
+    ${javaName?uncap_first}.set${unique.firstJavaColumn.javaName?cap_first}(${unique.firstJavaColumn.javaName});
+    <#list unique.nextJavaColumns as nextJavaColumn>
+    ${javaName?uncap_first}.set${nextJavaColumn.javaName?cap_first}(${nextJavaColumn.javaName});
+    </#list>
+    return ${javaName?uncap_first}BaseMapper.deleteBy${unique.firstJavaColumn.javaName?cap_first}<#list unique.nextJavaColumns as nextJavaColumn>And${nextJavaColumn.javaName?cap_first}</#list>(${javaName?uncap_first});
+  }
+  </#list>
   <#list columns as column>
     <#if column.primary>
 

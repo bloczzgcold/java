@@ -2,6 +2,7 @@ package com.github.hualuomoli.sample.framework.base.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +22,46 @@ public class UserBaseService {
 
   /** 根据主键id查询 */
   public User get(java.lang.String id) {
+    Validate.notNull(id, "id is null.");
+
     return userBaseMapper.get(id);
   }
 
-  /** 根据唯一索引username查询 */
+  /** 根据唯一索引查询 */
   public User findByUsername(java.lang.String username) {
-    return userBaseMapper.findByUsername(username);
+    Validate.notNull(username, "username is null.");
+
+    User user = new User();
+    user.setUsername(username);
+    List<User> list = userBaseMapper.findList(user);
+    if (list == null || list.size() == 0) {
+      return null;
+    }
+    Validate.isTrue(list.size() == 1, "More Data found.");
+    return list.get(0);
+  }
+
+  /** 根据唯一索引查询 */
+  public User findByNicknameAndAge(java.lang.String nickname, java.lang.Integer age) {
+    Validate.notNull(nickname, "nickname is null.");
+    Validate.notNull(age, "age is null.");
+
+    User user = new User();
+    user.setNickname(nickname);
+    user.setAge(age);
+    List<User> list = userBaseMapper.findList(user);
+    if (list == null || list.size() == 0) {
+      return null;
+    }
+    Validate.isTrue(list.size() == 1, "More Data found.");
+    return list.get(0);
   }
 
   /** 添加 */
   @Transactional(readOnly = false)
   public int insert(User user) {
+    Validate.notNull(user, "user is null.");
+
     return userBaseMapper.insert(user);
   }
 
@@ -47,26 +77,61 @@ public class UserBaseService {
   /** 根据主键id修改 */
   @Transactional(readOnly = false)
   public int update(User user) {
+    Validate.notNull(user, "user is null.");
+
     return userBaseMapper.update(user);
   }
 
   /** 根据唯一索引修改 */
   @Transactional(readOnly = false)
   public int updateByUsername(java.lang.String username, User user) {
+    Validate.notNull(username, "username is null.");
+    Validate.notNull(user, "user is null.");
+
     user.setUsername(username);
     return userBaseMapper.updateByUsername(user);
+  }
+
+  /** 根据唯一索引修改 */
+  @Transactional(readOnly = false)
+  public int updateByNicknameAndAge(java.lang.String nickname, java.lang.Integer age, User user) {
+    Validate.notNull(nickname, "nickname is null.");
+    Validate.notNull(age, "age is null.");
+    Validate.notNull(user, "user is null.");
+
+    user.setNickname(nickname);
+    user.setAge(age);
+    return userBaseMapper.updateByNicknameAndAge(user);
   }
 
   /** 根据主键删除 */
   @Transactional(readOnly = false)
   public int delete(java.lang.String id) {
+    Validate.notNull(id, "id is null.");
+
     return userBaseMapper.delete(id);
   }
 
   /** 根据唯一索引删除 */
   @Transactional(readOnly = false)
   public int deleteByUsername(java.lang.String username) {
-    return userBaseMapper.deleteByUsername(username);
+    Validate.notNull(username, "username is null.");
+
+    User user = new User();
+    user.setUsername(username);
+    return userBaseMapper.deleteByUsername(user);
+  }
+
+  /** 根据唯一索引删除 */
+  @Transactional(readOnly = false)
+  public int deleteByNicknameAndAge(java.lang.String nickname, java.lang.Integer age) {
+    Validate.notNull(nickname, "nickname is null.");
+    Validate.notNull(age, "age is null.");
+
+    User user = new User();
+    user.setNickname(nickname);
+    user.setAge(age);
+    return userBaseMapper.deleteByNicknameAndAge(user);
   }
 
   /** 根据主键批量删除 */
@@ -78,22 +143,18 @@ public class UserBaseService {
     return userBaseMapper.deleteByArray(ids);
   }
 
-  /** 根据唯一索引批量删除 */
-  @Transactional(readOnly = false)
-  public int deleteByUsernameArray(java.lang.String[] usernames) {
-    if (usernames == null || usernames.length == 0) {
-      return 0;
-    }
-    return userBaseMapper.deleteByUsernameArray(usernames);
-  }
-
   /** 查询列表 */
   public List<User> findList(User user) {
+    Validate.notNull(user, "user is null.");
+
     return userBaseMapper.findList(user);
   }
 
   /** 查询列表排序 */
   public List<User> findList(User user, String orderBy) {
+    Validate.notNull(user, "user is null.");
+    Validate.notNull(orderBy, "orderBy is blank.");
+
     // 设置排序
     PaginationInterceptor.setOrderBy(orderBy);
     // 查询列表
@@ -102,6 +163,12 @@ public class UserBaseService {
 
   /** 查询分页 */
   public Page findPage(User user, Integer pageNo, Integer pageSize) {
+    Validate.notNull(user, "user is null.");
+    Validate.notNull(pageNo, "pageNo is null.");
+    Validate.isTrue(pageNo > 0, "invalid pageNo.");
+    Validate.notNull(pageSize, "pageSize is null.");
+    Validate.isTrue(pageSize > 0, "invalid pageSize.");
+
     // 设置分页
     PaginationInterceptor.setPagination(pageNo, pageSize);
     // 查询
@@ -114,6 +181,13 @@ public class UserBaseService {
 
   /** 查询分页 */
   public Page findPage(User user, Integer pageNo, Integer pageSize, String orderBy) {
+    Validate.notNull(user, "user is null.");
+    Validate.notNull(pageNo, "pageNo is null.");
+    Validate.isTrue(pageNo > 0, "invalid pageNo.");
+    Validate.notNull(pageSize, "pageSize is null.");
+    Validate.isTrue(pageSize > 0, "invalid pageSize.");
+    Validate.notNull(orderBy, "orderBy is blank.");
+
     // 设置排序
     PaginationInterceptor.setOrderBy(orderBy);
     // 设置分页

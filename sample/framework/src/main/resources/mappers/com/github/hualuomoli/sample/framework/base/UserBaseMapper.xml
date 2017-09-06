@@ -50,14 +50,6 @@
     where `id` =  #{id}
   </select>
   
-  <!-- 根据唯一索引username查询 -->
-  <select id="findByUsername" resultType="com.github.hualuomoli.sample.framework.base.entity.User">
-    select 
-      <include refid="columns" />
-    from `t_user`
-    where `username` =  #{username}
-  </select>
-
   <!-- 添加 -->
   <insert id="insert">
     insert into `t_user` (
@@ -110,6 +102,9 @@
   <update id="update">
     update `t_user`
     <set>
+      <if test="username != null and username != ''"> 
+        `username` = #{username},
+      </if>
       <if test="nickname != null and nickname != ''"> 
         `nickname` = #{nickname},
       </if>
@@ -131,18 +126,12 @@
     </set>
     where id =  #{id}
   </update>
-  
-  <!-- 根据唯一索引username修改 -->
+
+  <!-- 根据唯一索引修改 -->
   <update id="updateByUsername">
     update `t_user`
     <set>
-      <if test="nickname != null"> 
-        `nickname` = #{nickname},
-      </if>
-      <if test="age != null"> 
-        `age` = #{age},
-      </if>
-      <if test="sex != null"> 
+      <if test="sex != null and sex != ''"> 
         `sex` = #{sex},
       </if>
       <if test="state != null"> 
@@ -151,11 +140,31 @@
       <if test="status != null"> 
         `status` = #{status},
       </if>
-      <if test="remark != null"> 
+      <if test="remark != null and remark != ''"> 
         `remark` = #{remark},
       </if>
     </set>
     where username =  #{username}
+  </update>
+  <!-- 根据唯一索引修改 -->
+  <update id="updateByNicknameAndAge">
+    update `t_user`
+    <set>
+      <if test="sex != null and sex != ''"> 
+        `sex` = #{sex},
+      </if>
+      <if test="state != null"> 
+        `state` = #{state},
+      </if>
+      <if test="status != null"> 
+        `status` = #{status},
+      </if>
+      <if test="remark != null and remark != ''"> 
+        `remark` = #{remark},
+      </if>
+    </set>
+    where nickname =  #{nickname}
+    and age =  #{age}
   </update>
   
   <!-- 根据主键id删除 -->
@@ -163,27 +172,24 @@
     delete from `t_user` where id =  #{id}
   </delete>
   
-  <!-- 根据唯一索引username删除 -->
+  <!-- 根据唯一索引删除 -->
   <delete id="deleteByUsername">
-    delete from `t_user` where username =  #{username}
+    delete from `t_user`
+    where username =  #{username}
   </delete>
-  
+  <!-- 根据唯一索引删除 -->
+  <delete id="deleteByNicknameAndAge">
+    delete from `t_user`
+    where nickname =  #{nickname}
+    and age =  #{age}
+  </delete>
+
   <!-- 根据主键id数组删除 -->
   <delete id="deleteByArray">
     delete from `t_user`
     <where>
       <foreach collection="ids" item="id" separator="or">
         id =  #{id}
-      </foreach>
-      </where>
-  </delete>
-  
-  <!-- 根据唯一索引username数组删除 -->
-  <delete id="deleteByUsernameArray">
-    delete from `t_user`
-    <where>
-      <foreach collection="usernames" item="username" separator="or">
-          username =  #{username}
       </foreach>
       </where>
   </delete>

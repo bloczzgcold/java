@@ -5,6 +5,10 @@ import com.github.hualuomoli.sample.framework.base.entity.User;
 // 用户
 public class UserQuery extends User {
 
+  /** 用户名 */
+  private java.lang.String usernameLeftLike;
+  private java.lang.String usernameRightLike;
+  private java.lang.String usernameLike;
   /** 昵称 */
   private java.lang.String nicknameLeftLike;
   private java.lang.String nicknameRightLike;
@@ -33,6 +37,30 @@ public class UserQuery extends User {
   }
 
   // getter and setter
+
+  public java.lang.String getUsernameLeftLike() {
+    return usernameLeftLike;
+  }
+
+  public void setUsernameLeftLike(java.lang.String usernameLeftLike) {
+    this.usernameLeftLike = usernameLeftLike;
+  }
+
+  public java.lang.String getUsernameRightLike() {
+    return usernameRightLike;
+  }
+
+  public void setUsernameRightLike(java.lang.String usernameRightLike) {
+    this.usernameRightLike = usernameRightLike;
+  }
+
+  public java.lang.String getUsernameLike() {
+    return usernameLike;
+  }
+
+  public void setUsernameLike(java.lang.String usernameLike) {
+    this.usernameLike = usernameLike;
+  }
 
   public java.lang.String getNicknameLeftLike() {
     return nicknameLeftLike;
