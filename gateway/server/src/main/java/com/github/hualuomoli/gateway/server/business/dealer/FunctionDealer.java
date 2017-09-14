@@ -8,6 +8,11 @@ import com.github.hualuomoli.gateway.server.business.entity.Function;
 public interface FunctionDealer {
 
   /**
+   * 初始化
+   */
+  void init();
+
+  /**
    * 获取请求对应的Function
    * @param method 请求方法
    * @param request HTTP请求

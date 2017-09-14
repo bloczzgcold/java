@@ -23,7 +23,7 @@ import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 /**
  * 业务处理者
  */
-public abstract class AbstractBusinessHandler implements BusinessHandler {
+public class AbstractBusinessHandler implements BusinessHandler {
 
   private static boolean success = false;
   private static final Object LOCK = new Object();
@@ -71,12 +71,10 @@ public abstract class AbstractBusinessHandler implements BusinessHandler {
       }
       success = true;
       System.out.println("初始化网关functions");
-      this.init();
+      functionDealer.init();
     }
 
   }
-
-  protected abstract void init();
 
   @Override
   public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {

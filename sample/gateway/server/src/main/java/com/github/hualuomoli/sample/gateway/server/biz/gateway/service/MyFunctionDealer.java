@@ -35,13 +35,10 @@ public class MyFunctionDealer implements FunctionDealer, ApplicationContextAware
   private static final Map<String, List<VersionFunction>> functionMap = Maps.newHashMap();
 
   private ApplicationContext context;
-  private boolean init = false;
 
   @SuppressWarnings("unchecked")
   @Override
   public VersionFunction getFunction(String method, HttpServletRequest request) throws NoRouterException {
-    this.init(context);
-
     String url = "/" + StringUtils.replace(method, ".", "/");
     logger.debug("searching method {} for url {}", method, url);
 
@@ -131,17 +128,14 @@ public class MyFunctionDealer implements FunctionDealer, ApplicationContextAware
     return context.getBean(function.getClazz());
   }
 
-  private synchronized void init(ApplicationContext context) {
-    if (init) {
-      return;
-    }
+  @Override
+  public void init() {
     logger.info("instance gateway functions.............");
     Map<String, Object> map = context.getBeansWithAnnotation(RequestMapping.class);
     Collection<Object> dealers = map.values();
     for (Object dealer : dealers) {
       Tool.parse(dealer.getClass());
     }
-    init = true;
   }
 
   private static class Tool {
