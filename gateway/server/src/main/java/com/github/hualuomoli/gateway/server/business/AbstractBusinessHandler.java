@@ -23,7 +23,10 @@ import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 /**
  * 业务处理者
  */
-public class AbstractBusinessHandler implements BusinessHandler {
+public abstract class AbstractBusinessHandler implements BusinessHandler {
+
+  private static boolean success = false;
+  private static final Object LOCK = new Object();
 
   // 业务拦截器
   private List<BusinessInterceptor> interceptors = new ArrayList<BusinessInterceptor>();
@@ -56,8 +59,28 @@ public class AbstractBusinessHandler implements BusinessHandler {
     this.packageNames = packageNames;
   }
 
+  // 验证并初始化
+  private void checkAndInit() {
+    if (success) {
+      return;
+    }
+
+    synchronized (LOCK) {
+      if (success) {
+        return;
+      }
+      success = true;
+      System.out.println("初始化网关functions");
+      this.init();
+    }
+
+  }
+
+  protected abstract void init();
+
   @Override
   public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {
+    this.checkAndInit();
 
     // 设置信息到本地线程
     Local.setPartnerId(partnerId);
