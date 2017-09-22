@@ -124,7 +124,7 @@ public class TypeControllerTest extends ClientControllerTest {
 
   // 执行
   private String execute(String method, String bizContent) {
-    return client.call(method, bizContent);
+    return client.execute(method, bizContent);
   }
 
 }

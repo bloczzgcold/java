@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.github.hualuomoli.gateway.api.anno.ApiMethod;
+import com.github.hualuomoli.sample.gateway.server.anno.ApiMethod;
 
 /**
  * 输入array

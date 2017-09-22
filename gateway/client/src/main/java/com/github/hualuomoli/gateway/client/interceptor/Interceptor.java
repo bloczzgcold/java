@@ -1,8 +1,7 @@
 package com.github.hualuomoli.gateway.client.interceptor;
 
-import com.github.hualuomoli.gateway.api.entity.Request;
-import com.github.hualuomoli.gateway.api.entity.Response;
-import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
+import com.github.hualuomoli.gateway.client.entity.Request;
+import com.github.hualuomoli.gateway.client.entity.Response;
 
 /**
  * 拦截器
@@ -11,17 +10,17 @@ public interface Interceptor {
 
   /**
    * 执行业务前置处理
+   * @param partnerId 合作伙伴ID
    * @param request 网关请求
-   * @throws InvalidDataException 不合法的数据
    */
-  void preHandle(Request request);
+  void preHandle(String partnerId, Request request);
 
   /**
    * 执行业务后置处理
+   * @param partnerId 合作伙伴ID
    * @param request 网关请求
    * @param response 网关响应
-   * @throws InvalidDataException 不合法的数据
    */
-  void postHandle(Request request, Response response) throws InvalidDataException;
+  void postHandle(String partnerId, Request request, Response response);
 
 }

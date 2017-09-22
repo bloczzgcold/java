@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.hualuomoli.framework.mvc.version.annotation.ApiVersion;
-import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.entity.Function;
+import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

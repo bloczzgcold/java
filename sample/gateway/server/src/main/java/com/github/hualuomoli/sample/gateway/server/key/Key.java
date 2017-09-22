@@ -1,6 +1,6 @@
 package com.github.hualuomoli.sample.gateway.server.key;
 
-import com.github.hualuomoli.gateway.api.support.security.Base64;
+import com.github.hualuomoli.tool.security.Base64;
 
 public class Key {
 

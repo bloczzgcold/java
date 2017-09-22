@@ -3,10 +3,10 @@ package com.github.hualuomoli.gateway.server.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.api.entity.Request;
-import com.github.hualuomoli.gateway.api.entity.Response;
-import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
+import com.github.hualuomoli.gateway.server.entity.Request;
+import com.github.hualuomoli.gateway.server.entity.Response;
+import com.github.hualuomoli.gateway.server.lang.NoPartnerException;
+import com.github.hualuomoli.gateway.server.lang.SecurityException;
 
 /**
  * 拦截器,用于权限验证/数据加解密
@@ -16,12 +16,11 @@ public interface Interceptor {
   /**
    * 执行业务前置处理
    * @param req HTTP请求
-   * @param res HTTP响应
    * @param request 网关请求
    * @throws NoPartnerException 合作伙伴未注册
-   * @throws InvalidDataException 不合法的数据
+   * @throws SecurityException 安全错误
    */
-  void preHandle(HttpServletRequest req, HttpServletResponse res, Request request) throws NoPartnerException, InvalidDataException;
+  void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, SecurityException;
 
   /**
    * 执行业务后置处理

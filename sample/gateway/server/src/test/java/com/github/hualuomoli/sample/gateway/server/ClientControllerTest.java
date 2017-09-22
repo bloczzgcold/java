@@ -1,40 +1,55 @@
 package com.github.hualuomoli.sample.gateway.server;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.hualuomoli.gateway.api.anno.ApiMethod;
-import com.github.hualuomoli.gateway.api.entity.Request;
-import com.github.hualuomoli.gateway.api.entity.Response;
-import com.github.hualuomoli.gateway.api.enums.EncryptionEnum;
-import com.github.hualuomoli.gateway.api.enums.SignatureEnum;
-import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.parser.JSONParser;
-import com.github.hualuomoli.gateway.api.support.security.AES;
-import com.github.hualuomoli.gateway.api.support.security.RSA;
 import com.github.hualuomoli.gateway.client.GatewayGenericClient;
-import com.github.hualuomoli.gateway.client.Parser;
-import com.github.hualuomoli.gateway.client.dealer.EncryptionDealer;
-import com.github.hualuomoli.gateway.client.dealer.SignatureDealer;
+import com.github.hualuomoli.gateway.client.entity.HttpHeader;
+import com.github.hualuomoli.gateway.client.entity.Request;
+import com.github.hualuomoli.gateway.client.entity.Response;
+import com.github.hualuomoli.gateway.client.http.HttpInvoker;
 import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
-import com.github.hualuomoli.gateway.client.interceptor.encrypt.EncryptionInterceptor;
-import com.github.hualuomoli.gateway.client.interceptor.sign.SignatureInterceptor;
-import com.github.hualuomoli.gateway.client.invoker.ClientInvoker;
+import com.github.hualuomoli.gateway.client.parser.GenericParser;
+import com.github.hualuomoli.gateway.client.parser.JSONParser;
+import com.github.hualuomoli.gateway.client.parser.Parser;
+import com.github.hualuomoli.sample.gateway.server.anno.ApiMethod;
+import com.github.hualuomoli.sample.gateway.server.entity.GatewayClientRequest;
+import com.github.hualuomoli.sample.gateway.server.entity.GatewayClientResponse;
 import com.github.hualuomoli.sample.gateway.server.key.Key;
-import com.github.hualuomoli.tool.http.Header;
-import com.github.hualuomoli.tool.http.HttpClient;
-import com.github.hualuomoli.tool.http.HttpDefaultClient;
-import com.github.hualuomoli.tool.http.parser.DefaultParser;
+import com.github.hualuomoli.tool.security.AES;
+import com.github.hualuomoli.tool.security.RSA;
+import com.github.hualuomoli.tool.util.ClassUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -45,23 +60,16 @@ public class ClientControllerTest {
 
   private static final String serverURL = "http://localhost/gateway";
 
-  private static com.github.hualuomoli.tool.http.parser.Parser httpParser = new DefaultParser();
-  private static HttpClient httpClient;
-
-  protected GatewayGenericClient client;
-  protected ClientInvoker invoker;
-
-  @BeforeClass
-  public static void beforeClass() {
-    httpClient = new HttpDefaultClient(serverURL);
-  }
+  protected GatewayGenericClient<GatewayClientRequest, GatewayClientResponse> client;
+  protected HttpInvoker httpInvoker;
 
   @Before
   public void before() {
 
     String partnerId = "tester";
 
-    client = new GatewayGenericClient("1.0.0", partnerId);
+    client = new GatewayGenericClient<GatewayClientRequest, GatewayClientResponse>(serverURL, partnerId, GatewayClientRequest.class,
+        GatewayClientResponse.class);
     client.setJsonParser(new JSONParser() {
 
       @Override
@@ -105,15 +113,15 @@ public class ClientControllerTest {
         return map;
       }
     });
-    client.setParser(new Parser() {
+    client.setGenericParser(new GenericParser() {
 
       @Override
-      public String method(Object object) {
+      public String getMethod(Object object) {
         return object.getClass().getAnnotation(ApiMethod.class).value();
       }
 
       @Override
-      public PageName pageName() {
+      public PageName getPageName() {
         return new PageName() {
 
           @Override
@@ -138,117 +146,257 @@ public class ClientControllerTest {
         };
       }
     });
-    client.setInvoker(invoker = new ClientInvoker() {
-
-      private String result;
-      private List<Header> requestHeaders = Lists.newArrayList();
-      private List<Header> responseHeaders = Lists.newArrayList();
+    client.setParser(new Parser() {
 
       @Override
-      public String getResult() {
-        return result;
-      }
-
-      @Override
-      public Set<String> getReponseHeaders() {
-        Set<String> names = Sets.newHashSet();
-        for (Header header : responseHeaders) {
-          names.add(header.getName());
-        }
-        return names;
-      }
-
-      @Override
-      public String[] getReponseHeader(String name) {
-        if (StringUtils.isBlank(name)) {
-          return null;
-        }
-        for (Header header : responseHeaders) {
-          if (StringUtils.equals(name, header.getName())) {
-            return header.getValue();
+      public String getRequestContent(Request request) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        StringBuilder buffer = new StringBuilder();
+        Class<? extends Request> clazz = req.getClass();
+        List<Field> fields = ClassUtils.getFields(clazz);
+        for (Field field : fields) {
+          Object obj = ClassUtils.getFieldValue(field, req);
+          if (obj == null) {
+            continue;
           }
+          String value = obj.toString();
+          buffer.append("&").append(field.getName()).append("=").append(this.encoded(value));
         }
-        return null;
+        return buffer.toString().substring(1);
+      }
+
+      private String encoded(String value) {
+        try {
+          return URLEncoder.encode(value, "UTF-8");
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
       }
 
       @Override
-      public ClientInvoker call(Request request) throws IOException {
-        this.result = httpClient.urlencoded(httpParser.parse(request, null), requestHeaders, responseHeaders);
-        return this;
-      }
-
-      @Override
-      public ClientInvoker addRequestHeader(String name, String value) {
-        requestHeaders.add(new Header(name, new String[] { value }));
-        return this;
+      public <Res extends Response> Res parse(String result, Class<Res> responseClazz) {
+        return JSON.parseObject(result, responseClazz);
       }
     });
+    client.setHttpInvoker(httpInvoker = new HttpInvoker() {
 
-    // add 先签名再加密
-    client.addInterceptor(this.logIntercetpro());
-    client.addSignatureInterceptor(new SignatureInterceptor(Lists.newArrayList(this.signatureDealer())));
-    client.addEncryptionInterceptor(new EncryptionInterceptor(Lists.newArrayList(this.encryptionDealer())));
+      @Override
+      public HttpResult invoke(String url, String content, List<HttpHeader> headers) throws IOException {
+        HttpURLConnection conn = null;
+        OutputStream os = null;
+        InputStream is = null;
 
-    // default use RSA sign, AES encrypt
-    client.addSignature(SignatureEnum.RSA);
-    client.addEncryption(EncryptionEnum.AES);
-  }
+        try {
+          // 信任所有的https
+          this.initCertification(url);
 
-  private Interceptor logIntercetpro() {
-    return new Interceptor() {
+          conn = (HttpURLConnection) new URL(url).openConnection();
+          conn.setRequestMethod("POST");
+          conn.setConnectTimeout(2000); // 连接超时时间
+          conn.setReadTimeout(2000); // 从主机读取数据超时时间
+          conn.setDoInput(true); // 设置是否读入
+          conn.setDoOutput(true); // 设置是否输出
+          conn.setUseCaches(false);// 不使用缓存
+
+          // set request header
+          for (HttpHeader header : headers) {
+            List<String> values = header.getHeaderValues();
+            for (String value : values) {
+              conn.addRequestProperty(header.getHeaderName(), value);
+            }
+          }
+          conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+          // flush data
+          if (StringUtils.isNotBlank(content)) {
+            os = conn.getOutputStream();
+            os.write(content.getBytes());
+          }
+
+          // get response header
+          final List<HttpHeader> responseHeaders = Lists.newArrayList();
+          Map<String, List<String>> resHeaderMap = conn.getHeaderFields();
+          for (String headerName : resHeaderMap.keySet()) {
+            headers.add(new HttpHeader(headerName, resHeaderMap.get(headerName)));
+          }
+
+          if (conn.getResponseCode() == 200) {
+            is = conn.getInputStream();
+            final String result = IOUtils.toString(is, "UTF-8");
+            return new HttpResult() {
+
+              @Override
+              public String getResult() {
+                return result;
+              }
+
+              @Override
+              public List<HttpHeader> getHeaders() {
+                return responseHeaders;
+              }
+            };
+          } else if (conn.getResponseCode() == 500) {
+            // 失败
+            is = conn.getErrorStream();
+            throw new IOException(IOUtils.toString(is, "UTF-8"));
+          } else {
+            // 其他错误
+            throw new IOException(conn.getResponseCode() + "");
+          }
+        } finally {
+          if (is != null) {
+            is.close();
+          }
+          if (os != null) {
+            os.close();
+          }
+          if (conn != null) {
+            conn.disconnect();
+          }
+        }
+
+        // end
+      }
+
+      /**
+       * 初始化证书
+       * @param url 请求的URL
+       */
+      private void initCertification(String url) {
+        if (!url.startsWith("https://")) {
+          return;
+        }
+        try {
+          HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+              return true;
+            }
+          });
+          SSLContext context = SSLContext.getInstance("TLS");
+          context.init(null, new X509TrustManager[] { new X509TrustManager() {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+              return new X509Certificate[0];
+            }
+
+          } }, new SecureRandom());
+          HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+
+    });
+
+    // 日志
+    client.addInterceptor(new Interceptor() {
+
       final Logger logger = LoggerFactory.getLogger(Interceptor.class);
 
       @Override
-      public void preHandle(Request request) {
-        logger.debug("请求业务内容={}", request.getBizContent());
+      public void preHandle(String partnerId, Request request) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        logger.debug("请求业务内容={}", req.getBizContent());
       }
 
       @Override
-      public void postHandle(Request request, Response response) throws InvalidDataException {
+      public void postHandle(String partnerId, Request request, Response response) {
         logger.debug("响应业务内容={}", response.getResult());
       }
-    };
-  }
+    });
 
-  private EncryptionDealer encryptionDealer() {
-    return new EncryptionDealer() {
+    // 添加其他信息
+    client.addInterceptor(new Interceptor() {
 
       @Override
-      public boolean support(EncryptionEnum encryption) {
-        return encryption == EncryptionEnum.AES;
+      public void preHandle(String partnerId, Request request) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        req.setEncryptType("AES");
+        req.setSignType("RSA");
+        req.setVersion("1.0.0");
+        req.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        req.setNonceStr(UUID.randomUUID().toString().replaceAll("[-]", ""));
       }
 
       @Override
-      public String encrypt(String data, String partnerId) {
-        return AES.encrypt(Key.SALT, data);
+      public void postHandle(String partnerId, Request request, Response response) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        GatewayClientResponse res = (GatewayClientResponse) response;
+        Validate.isTrue(StringUtils.equals(req.getNonceStr(), res.getNonceStr()));
+      }
+    });
+
+    // 签名
+    client.addInterceptor(new Interceptor() {
+
+      @Override
+      public void preHandle(String partnerId, Request request) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        String origin = this.getSignOrigin(req, Sets.newHashSet("sign"));
+        logger.debug("客户端请求签名原文={}", origin);
+        req.setSign(RSA.sign(Key.CLIENT_PRIVATE_KEY, origin));
       }
 
       @Override
-      public String decrypt(String data, String partnerId) throws InvalidDataException {
-        return AES.decrypt(Key.SALT, data);
+      public void postHandle(String partnerId, Request request, Response response) {
+        GatewayClientResponse res = (GatewayClientResponse) response;
+        String origin = this.getSignOrigin(res, Sets.newHashSet("sign"));
+        logger.debug("客户端响应签名原文={}", origin);
+        Validate.isTrue(RSA.verify(Key.SERVER_PUBLIC_KEY, origin, res.getSign()));
       }
-    };
-  }
 
-  private SignatureDealer signatureDealer() {
-    return new SignatureDealer() {
+      private String getSignOrigin(Object obj, Set<String> ignores) {
+        Class<? extends Object> clazz = obj.getClass();
+        List<Field> fields = ClassUtils.getFields(clazz);
+        Collections.sort(fields, new Comparator<Field>() {
+
+          @Override
+          public int compare(Field o1, Field o2) {
+            return o1.getName().compareTo(o2.getName());
+          }
+        });
+
+        StringBuilder buffer = new StringBuilder();
+        for (Field field : fields) {
+          if (ignores.contains(field.getName())) {
+            continue;
+          }
+          Object value = ClassUtils.getFieldValue(field, obj);
+          if (value == null) {
+            continue;
+          }
+          buffer.append("&").append(field.getName()).append("=").append(value.toString());
+        }
+
+        return buffer.toString().substring(1);
+      }
+
+    });
+    client.addInterceptor(new Interceptor() {
 
       @Override
-      public boolean support(SignatureEnum signature) {
-        return signature == SignatureEnum.RSA;
+      public void preHandle(String partnerId, Request request) {
+        GatewayClientRequest req = (GatewayClientRequest) request;
+        req.setBizContent(AES.encrypt(Key.SALT, req.getBizContent()));
       }
 
       @Override
-      public String sign(String origin, String partnerId) {
-        return RSA.sign(Key.CLIENT_PRIVATE_KEY, origin);
+      public void postHandle(String partnerId, Request request, Response response) {
+        GatewayClientResponse res = (GatewayClientResponse) response;
+        res.setResult(AES.decrypt(Key.SALT, res.getResult()));
       }
-
-      @Override
-      public boolean verify(String origin, String sign, String partnerId) throws InvalidDataException {
-        return RSA.verify(Key.SERVER_PUBLIC_KEY, origin, sign);
-      }
-
-    };
+    });
+    // end
   }
 
 }

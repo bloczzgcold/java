@@ -3,8 +3,8 @@ package com.github.hualuomoli.gateway.server.business;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.api.lang.BusinessException;
-import com.github.hualuomoli.gateway.api.lang.NoRouterException;
+import com.github.hualuomoli.gateway.server.lang.BusinessException;
+import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 
 /**
  * 业务处理器
@@ -23,6 +23,7 @@ public interface BusinessHandler {
    * @throws BusinessException 业务处理失败
    */
   String execute(HttpServletRequest req, HttpServletResponse res//
-      , String partnerId, String method, String bizContent) throws NoRouterException, BusinessException;
+      , String partnerId, String method, String bizContent) //
+      throws NoRouterException, BusinessException;
 
 }

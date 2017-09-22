@@ -6,20 +6,19 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.api.entity.Request;
-import com.github.hualuomoli.gateway.api.entity.Response;
-import com.github.hualuomoli.gateway.api.enums.CodeEnum;
-import com.github.hualuomoli.gateway.api.lang.BusinessException;
-import com.github.hualuomoli.gateway.api.lang.InvalidDataException;
-import com.github.hualuomoli.gateway.api.lang.NoPartnerException;
-import com.github.hualuomoli.gateway.api.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
+import com.github.hualuomoli.gateway.server.entity.Request;
+import com.github.hualuomoli.gateway.server.entity.Response;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
+import com.github.hualuomoli.gateway.server.lang.BusinessException;
+import com.github.hualuomoli.gateway.server.lang.NoPartnerException;
+import com.github.hualuomoli.gateway.server.lang.NoRouterException;
+import com.github.hualuomoli.gateway.server.lang.SecurityException;
 
 /**
  * 网关服务器
  */
-public class GatewayServer {
+public abstract class GatewayServer {
 
   private BusinessHandler businessHandler;
   private List<Interceptor> interceptors = new ArrayList<Interceptor>();
@@ -32,51 +31,39 @@ public class GatewayServer {
     this.interceptors = interceptors;
   }
 
-  public Response execute(HttpServletRequest req, HttpServletResponse res) {
-    Request request = this.parse(req);
+  public <R extends Response> R execute(HttpServletRequest req, HttpServletResponse res, Class<R> clazz) throws NoPartnerException, SecurityException, NoRouterException, BusinessException {
+    Request request = this.parseRequest(req);
 
-    Response response = new Response();
-    response.setNonceStr(request.getNonceStr());
-    try {
-      // 前置拦截
-      for (int i = 0, size = interceptors.size(); i < size; i++) {
-        interceptors.get(i).preHandle(req, res, request);
-      }
+    R response = this.newInstance(clazz);
+    // 前置拦截
+    for (int i = 0, size = interceptors.size(); i < size; i++) {
+      interceptors.get(i).preHandle(req, request);
+    }
 
-      // 执行业务 
-      String result = businessHandler.execute(req, res, request.getPartnerId(), request.getMethod(), request.getBizContent());
+    // 执行业务 
+    String result = businessHandler.execute(req, res, request.getPartnerId(), request.getMethod(), request.getBizContent());
+    response.setResult(result);
 
-      // 设置返回信息
-      response.setCode(CodeEnum.SUCCESS);
-      response.setMessage("处理成功");
-      response.setResult(result);
-
-    } catch (InvalidDataException e) {
-      response.setCode(CodeEnum.INVALID_DATA);
-      response.setMessage(e.getMessage());
-    } catch (NoPartnerException e) {
-      response.setCode(CodeEnum.NO_PARTNER);
-      response.setMessage(e.getMessage());
-    } catch (NoRouterException e) {
-      response.setCode(CodeEnum.NO_ROUTER);
-      response.setMessage(e.getMessage());
-    } catch (BusinessException e) {
-      response.setCode(CodeEnum.BUSINESS);
-      response.setMessage("业务处理错误");
-      response.setSubCode(e.getSubCode());
-      response.setSubMessage(e.getSubMessage());
-      response.setSubErrorCode(e.getSubErrorCode());
-    } catch (Exception e) {
-      response.setCode(CodeEnum.ERROR);
-      response.setMessage(e.getMessage());
-    } finally {
-      // 后置拦截
-      for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
-        interceptors.get(i).postHandle(req, res, request, response);
-      }
+    // 后置拦截
+    for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
+      interceptors.get(i).postHandle(req, res, request, response);
     }
 
     return response;
+  }
+
+  /**
+   * 实例化响应
+   * @param clazz 类类型
+   * @return 实例
+   */
+  private <R extends Response> R newInstance(Class<R> clazz) {
+    try {
+      return clazz.newInstance();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    // end
   }
 
   /**
@@ -84,18 +71,6 @@ public class GatewayServer {
    * @param req HTTP请求
    * @return 请求信息
    */
-  private Request parse(HttpServletRequest req) {
-    Request request = new Request();
-    request.setVersion(req.getParameter("version"));
-    request.setPartnerId(req.getParameter("partnerId"));
-    request.setMethod(req.getParameter("method"));
-    request.setTimestamp(req.getParameter("timestamp"));
-    request.setNonceStr(req.getParameter("nonceStr"));
-    request.setBizContent(req.getParameter("bizContent"));
-    request.setSignType(req.getParameter("signType"));
-    request.setSign(req.getParameter("sign"));
-    request.setEncryptType(req.getParameter("encryptType"));
-    return request;
-  }
+  protected abstract Request parseRequest(HttpServletRequest req);
 
 }

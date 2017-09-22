@@ -5,7 +5,7 @@
 
   <groupId>com.github.hualuomoli</groupId>
   <artifactId>hualuomoli</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.5</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -15,10 +15,9 @@
     <module>./framework/core</module>
     <module>./framework/mvc</module>
     <module>./framework/mvcversion</module>
-    <module>./gateway/api</module>
     <module>./gateway/server</module>
+    <module>./gateway/server-business</module>
     <module>./gateway/client</module>
-    <module>./gateway/android</module>
     <module>./plugin/atomikos</module>
     <module>./plugin/dubbo/consumer</module>
     <module>./plugin/dubbo/provider</module>

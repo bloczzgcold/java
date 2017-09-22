@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.hualuomoli</groupId>
     <artifactId>hualuomoli</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.5</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -15,12 +15,6 @@
 
   <dependencies>
 
-    <!-- api -->
-    <dependency>
-      <groupId>com.github.hualuomoli</groupId>
-      <artifactId>hualuomoli-gateway-api</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
     <!-- slf4j -->
     <dependency>
       <groupId>org.slf4j</groupId>

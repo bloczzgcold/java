@@ -5,7 +5,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.github.hualuomoli.gateway.api.enums.CodeEnum;
+import com.github.hualuomoli.gateway.client.entity.HttpHeader;
 import com.github.hualuomoli.gateway.client.lang.ClientException;
 import com.github.hualuomoli.sample.gateway.server.ClientControllerTest;
 
@@ -16,13 +16,9 @@ import com.github.hualuomoli.sample.gateway.server.ClientControllerTest;
 public class ApiVersionGatewayTest extends ClientControllerTest {
 
   // 低于最低版本
-  @Test
+  @Test(expected = ClientException.class)
   public void test01LessFirst() {
-    try {
-      this.execute("0.0.0.1");
-    } catch (ClientException e) {
-      Assert.assertTrue(e.getCode() == CodeEnum.NO_ROUTER);
-    }
+    this.execute("0.0.0.1");
   }
 
   // 等于第一个版本
@@ -83,8 +79,8 @@ public class ApiVersionGatewayTest extends ClientControllerTest {
 
   // 执行
   private String execute(String apiVersion) {
-    invoker.addRequestHeader("api-version", apiVersion);
-    return client.call("version.find", "");
+    client.addRequestHeader(new HttpHeader("api-version", apiVersion));
+    return client.execute("version.find", "");
   }
 
 }

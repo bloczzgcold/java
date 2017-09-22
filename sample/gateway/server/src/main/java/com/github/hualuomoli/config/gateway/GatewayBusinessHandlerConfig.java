@@ -19,14 +19,14 @@ import org.springframework.context.annotation.Configuration;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.hualuomoli.enums.GatewaySubErrorEnum;
-import com.github.hualuomoli.gateway.api.lang.BusinessException;
-import com.github.hualuomoli.gateway.api.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.business.AbstractBusinessHandler;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
 import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
+import com.github.hualuomoli.gateway.server.business.parser.JSONParser;
+import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.validator.Validator;
 import com.github.hualuomoli.validator.lang.InvalidParameterException;
 import com.google.common.collect.Lists;
@@ -59,7 +59,7 @@ public class GatewayBusinessHandlerConfig {
     interceptors.add(new BusinessInterceptor() {
 
       @Override
-      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
+      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
         String partnerId = Local.getPartnerId();
         String m = Local.getMethod();
         // 权限认证
@@ -92,7 +92,7 @@ public class GatewayBusinessHandlerConfig {
       }
 
       @Override
-      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
+      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
         if (params == null || params.length == 0) {
           return;
         }
@@ -132,7 +132,7 @@ public class GatewayBusinessHandlerConfig {
     interceptors.add(new BusinessInterceptor() {
 
       @Override
-      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
+      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
         logger.debug("业务处理前日志输出 partnerId={},method={},bizContent={}", Local.getPartnerId(), Local.getMethod(), Local.getBizContent());
       }
 
