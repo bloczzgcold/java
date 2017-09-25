@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.entity.Function;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 import com.github.hualuomoli.gateway.server.business.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.lang.BusinessException;
@@ -78,11 +77,6 @@ public class AbstractBusinessHandler implements BusinessHandler {
   @Override
   public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {
     this.checkAndInit();
-
-    // 设置信息到本地线程
-    Local.setPartnerId(partnerId);
-    Local.setMethod(method);
-    Local.setBizContent(bizContent);
 
     Function function = functionDealer.getFunction(method, req);
     // 处理类
