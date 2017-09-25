@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import com.github.hualuomoli.gateway.server.business.AbstractBusinessHandler;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.business.local.Local;
 import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 import com.github.hualuomoli.gateway.server.business.parser.JSONParser;
 import com.github.hualuomoli.gateway.server.lang.BusinessException;
@@ -56,29 +54,6 @@ public class GatewayBusinessHandlerConfig {
   private List<BusinessInterceptor> interceptors() {
     List<BusinessInterceptor> interceptors = Lists.newArrayList();
 
-    interceptors.add(new BusinessInterceptor() {
-
-      @Override
-      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
-        String partnerId = Local.getPartnerId();
-        String m = Local.getMethod();
-        // 权限认证
-        logger.debug("业务权限认证{}是否有{}的访问权限", partnerId, m);
-        if (StringUtils.equals("error.noAuth", m)) {
-          GatewaySubErrorEnum e = GatewaySubErrorEnum.INVALID_AUTHORITY;
-          throw new BusinessException(e, e.getMessage(), e.getErrorCode());
-        }
-      }
-
-      @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Object result) {
-      }
-
-      @Override
-      public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
-      }
-    });
-
     // 验证参数
     interceptors.add(new BusinessInterceptor() {
 
@@ -92,7 +67,7 @@ public class GatewayBusinessHandlerConfig {
       }
 
       @Override
-      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params) {
         if (params == null || params.length == 0) {
           return;
         }
@@ -125,25 +100,6 @@ public class GatewayBusinessHandlerConfig {
 
       @Override
       public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
-      }
-    });
-
-    // 日志
-    interceptors.add(new BusinessInterceptor() {
-
-      @Override
-      public void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params) {
-        logger.debug("业务处理前日志输出 partnerId={},method={},bizContent={}", Local.getPartnerId(), Local.getMethod(), Local.getBizContent());
-      }
-
-      @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Object result) {
-        logger.debug("业务处理后日志输出 partnerId={},method={},result={}", Local.getPartnerId(), Local.getMethod(), result);
-      }
-
-      @Override
-      public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
-        logger.debug("业务处理出现异常 partnerId={},method={},errorMessage={}", Local.getPartnerId(), Local.getMethod(), be.getMessage());
       }
     });
 

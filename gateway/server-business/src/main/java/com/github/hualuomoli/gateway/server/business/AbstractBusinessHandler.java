@@ -147,7 +147,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
 
     // 前置拦截
     for (BusinessInterceptor interceptor : interceptors) {
-      interceptor.preHandle(req, method, handler, params);
+      interceptor.preHandle(req, res, method, handler, params);
     }
 
     // 业务处理

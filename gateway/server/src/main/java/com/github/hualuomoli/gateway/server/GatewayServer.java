@@ -61,7 +61,7 @@ public abstract class GatewayServer<Req extends Request, Res extends Response> {
 
       // 前置拦截
       for (int i = 0, size = interceptors.size(); i < size; i++) {
-        interceptors.get(i).preHandle(req, request);
+        interceptors.get(i).preHandle(req, res, request, response);
       }
 
       // 执行业务 

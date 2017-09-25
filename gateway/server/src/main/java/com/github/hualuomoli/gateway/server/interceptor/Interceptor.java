@@ -16,11 +16,13 @@ public interface Interceptor<Req extends Request, Res extends Response> {
   /**
    * 执行业务前置处理
    * @param req HTTP请求
+   * @param res HTTP响应
    * @param request 网关请求
+   * @param response 网关响应
    * @throws NoPartnerException 合作伙伴未注册
    * @throws SecurityException 安全错误
    */
-  void preHandle(HttpServletRequest req, Req request) throws NoPartnerException, SecurityException;
+  void preHandle(HttpServletRequest req, HttpServletResponse res, Req request, Res response) throws NoPartnerException, SecurityException;
 
   /**
    * 执行业务后置处理

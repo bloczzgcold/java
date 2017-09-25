@@ -14,8 +14,6 @@ public class GatewayServerResponse implements Response {
   private String subMessage;
   /** 业务处理错误编码 */
   private String subErrorCode;
-  /** 随机字符串 */
-  private String nonceStr;
   /** 响应结果 */
   private String result;
   /** 签名 */
@@ -61,14 +59,6 @@ public class GatewayServerResponse implements Response {
     this.subErrorCode = subErrorCode;
   }
 
-  public String getNonceStr() {
-    return nonceStr;
-  }
-
-  public void setNonceStr(String nonceStr) {
-    this.nonceStr = nonceStr;
-  }
-
   public String getResult() {
     return result;
   }
@@ -88,7 +78,7 @@ public class GatewayServerResponse implements Response {
   @Override
   public String toString() {
     return "GatewayServerResponse [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", subErrorCode="
-        + subErrorCode + ", nonceStr=" + nonceStr + ", result=" + result + ", sign=" + sign + "]";
+        + subErrorCode + ", result=" + result + ", sign=" + sign + "]";
   }
 
 }

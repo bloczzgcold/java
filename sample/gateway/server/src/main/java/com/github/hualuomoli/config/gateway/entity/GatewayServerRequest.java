@@ -10,18 +10,10 @@ public class GatewayServerRequest implements Request {
   private String partnerId;
   /** 请求方法 */
   private String method;
-  /** 时间戳 yyyyMMdd HH:mm:ss */
-  private String timestamp;
-  /** 随机字符串 */
-  private String nonceStr;
   /** 请求业务内容 */
   private String bizContent;
-  /** 签名类型 */
-  private String signType;
   /** 签名数据 */
   private String sign;
-  /** 加密类型 */
-  private String encryptType;
 
   public String getVersion() {
     return version;
@@ -47,36 +39,12 @@ public class GatewayServerRequest implements Request {
     this.method = method;
   }
 
-  public String getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp(String timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  public String getNonceStr() {
-    return nonceStr;
-  }
-
-  public void setNonceStr(String nonceStr) {
-    this.nonceStr = nonceStr;
-  }
-
   public String getBizContent() {
     return bizContent;
   }
 
   public void setBizContent(String bizContent) {
     this.bizContent = bizContent;
-  }
-
-  public String getSignType() {
-    return signType;
-  }
-
-  public void setSignType(String signType) {
-    this.signType = signType;
   }
 
   public String getSign() {
@@ -87,18 +55,10 @@ public class GatewayServerRequest implements Request {
     this.sign = sign;
   }
 
-  public String getEncryptType() {
-    return encryptType;
-  }
-
-  public void setEncryptType(String encryptType) {
-    this.encryptType = encryptType;
-  }
-
   @Override
   public String toString() {
-    return "GatewayServerRequest [version=" + version + ", partnerId=" + partnerId + ", method=" + method + ", timestamp=" + timestamp + ", nonceStr="
-        + nonceStr + ", bizContent=" + bizContent + ", signType=" + signType + ", sign=" + sign + ", encryptType=" + encryptType + "]";
+    return "GatewayServerRequest [version=" + version + ", partnerId=" + partnerId + ", method=" + method + ", bizContent=" + bizContent + ", sign=" + sign
+        + "]";
   }
 
 }

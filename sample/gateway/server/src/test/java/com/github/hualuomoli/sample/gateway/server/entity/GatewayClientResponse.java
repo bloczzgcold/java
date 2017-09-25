@@ -16,12 +16,20 @@ public class GatewayClientResponse implements Response {
   private String subMessage;
   /** 业务处理错误编码 */
   private String subErrorCode;
-  /** 随机字符串 */
-  private String nonceStr;
   /** 响应结果 */
   private String result;
   /** 签名 */
   private String sign;
+
+  @Override
+  public boolean success() {
+    return StringUtils.equals(code, "SUCCESS") && StringUtils.equals(subCode, "SUCCESS");
+  }
+
+  @Override
+  public boolean callSuccess() {
+    return StringUtils.equals(code, "SUCCESS");
+  }
 
   public String getCode() {
     return code;
@@ -63,14 +71,6 @@ public class GatewayClientResponse implements Response {
     this.subErrorCode = subErrorCode;
   }
 
-  public String getNonceStr() {
-    return nonceStr;
-  }
-
-  public void setNonceStr(String nonceStr) {
-    this.nonceStr = nonceStr;
-  }
-
   public String getResult() {
     return result;
   }
@@ -90,17 +90,7 @@ public class GatewayClientResponse implements Response {
   @Override
   public String toString() {
     return "GatewayClientResponse [code=" + code + ", message=" + message + ", subCode=" + subCode + ", subMessage=" + subMessage + ", subErrorCode="
-        + subErrorCode + ", nonceStr=" + nonceStr + ", result=" + result + ", sign=" + sign + "]";
-  }
-
-  @Override
-  public boolean success() {
-    return StringUtils.equals(code, "SUCCESS") && StringUtils.equals(subCode, "SUCCESS");
-  }
-
-  @Override
-  public boolean callSuccess() {
-    return StringUtils.equals(code, "SUCCESS");
+        + subErrorCode + ", result=" + result + ", sign=" + sign + "]";
   }
 
 }

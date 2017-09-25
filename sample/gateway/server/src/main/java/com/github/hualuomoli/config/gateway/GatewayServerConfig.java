@@ -117,7 +117,8 @@ public class GatewayServerConfig {
     interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response)
+          throws NoPartnerException, SecurityException {
         request.setBizContent(AES.decrypt(Key.SALT, request.getBizContent()));
       }
 
@@ -131,7 +132,8 @@ public class GatewayServerConfig {
     interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response)
+          throws NoPartnerException, SecurityException {
         String origin = this.getSignOrigin(request, Sets.newHashSet("sign"));
         logger.debug("服务端端请求签名原文={}", origin);
 
@@ -182,7 +184,9 @@ public class GatewayServerConfig {
     interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response)
+          throws NoPartnerException, SecurityException {
+        logger.debug("请求业务内容={}", request.getBizContent());
       }
 
       @Override
@@ -191,7 +195,8 @@ public class GatewayServerConfig {
         response.setMessage("执行成功");
         response.setSubCode("SUCCESS");
         response.setSubMessage("业务处理成功");
-        response.setNonceStr(request.getNonceStr());
+
+        logger.debug("响应业务结果={}", response.getResult());
       }
     });
 
@@ -199,7 +204,8 @@ public class GatewayServerConfig {
     interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+      public void preHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response)
+          throws NoPartnerException, SecurityException {
         logger.debug("请求业务内容={}", request.getBizContent());
       }
 

@@ -15,11 +15,12 @@ public interface BusinessInterceptor {
   /**
    * 前置处理。如验证请求参数是否合法
    * @param req HTTP请求
+   * @param res HTTP响应
    * @param method 处理方法
    * @param handler 处理类
    * @param params 业务参数
    */
-  void preHandle(HttpServletRequest req, Method method, Object handler, Object[] params);
+  void preHandle(HttpServletRequest req, HttpServletResponse res, Method method, Object handler, Object[] params);
 
   /**
    * 后置处理

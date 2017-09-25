@@ -10,14 +10,11 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -317,16 +314,11 @@ public class ClientControllerTest {
 
       @Override
       public void preHandle(String partnerId, GatewayClientRequest request) {
-        request.setEncryptType("AES");
-        request.setSignType("RSA");
         request.setVersion("1.0.0");
-        request.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        request.setNonceStr(UUID.randomUUID().toString().replaceAll("[-]", ""));
       }
 
       @Override
       public void postHandle(String partnerId, GatewayClientRequest request, GatewayClientResponse response) {
-        Validate.isTrue(StringUtils.equals(request.getNonceStr(), response.getNonceStr()));
       }
     });
 
