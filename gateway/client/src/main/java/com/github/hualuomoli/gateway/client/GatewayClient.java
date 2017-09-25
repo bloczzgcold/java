@@ -1,6 +1,8 @@
 package com.github.hualuomoli.gateway.client;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,25 +25,28 @@ public class GatewayClient<Req extends Request, Res extends Response> {
   private static final ThreadLocal<List<HttpHeader>> REQUEST_HEADER_LOCAL = new ThreadLocal<List<HttpHeader>>();
   private static final ThreadLocal<List<HttpHeader>> RESPONSE_HEADER_LOCAL = new ThreadLocal<List<HttpHeader>>();
 
-  private Parser parser;
+  private Class<Req> reqClazz;
+  private Class<Res> resClazz;
+
+  private Parser<Req, Res> parser;
   protected JSONParser jsonParser;
   private HttpInvoker httpInvoker;
-  private List<Interceptor> interceptors = new ArrayList<Interceptor>();
+  private List<Interceptor<Req, Res>> interceptors = new ArrayList<Interceptor<Req, Res>>();
 
   private String url;
   private String partnerId;
-  private Class<Req> requestClazz;
-  private Class<Res> responseClazz;
 
-  public GatewayClient(String url, String partnerId, Class<Req> requestClazz, Class<Res> responseClazz) {
+  @SuppressWarnings("unchecked")
+  public GatewayClient(String url, String partnerId) {
     super();
     this.url = url;
     this.partnerId = partnerId;
-    this.requestClazz = requestClazz;
-    this.responseClazz = responseClazz;
+    reqClazz = (Class<Req>) this.getGenericClass(0);
+    resClazz = (Class<Res>) this.getGenericClass(1);
+
   }
 
-  public GatewayClient<Req, Res> setParser(Parser parser) {
+  public GatewayClient<Req, Res> setParser(Parser<Req, Res> parser) {
     this.parser = parser;
     return this;
   }
@@ -56,12 +61,12 @@ public class GatewayClient<Req extends Request, Res extends Response> {
     return this;
   }
 
-  public GatewayClient<Req, Res> setInterceptors(List<Interceptor> interceptors) {
+  public GatewayClient<Req, Res> setInterceptors(List<Interceptor<Req, Res>> interceptors) {
     this.interceptors = interceptors;
     return this;
   }
 
-  public GatewayClient<Req, Res> addInterceptor(Interceptor interceptor) {
+  public GatewayClient<Req, Res> addInterceptor(Interceptor<Req, Res> interceptor) {
     interceptors.add(interceptor);
     return this;
   }
@@ -110,7 +115,7 @@ public class GatewayClient<Req extends Request, Res extends Response> {
    * @throws ClientException 客户端调用异常
    */
   public String execute(String method, String bizContent) throws BusinessException, ClientException {
-    Req request = this.newInstance(requestClazz);
+    Req request = this.newInstance(reqClazz);
     request.setPartnerId(partnerId);
     request.setMethod(method);
     request.setBizContent(bizContent);
@@ -128,7 +133,7 @@ public class GatewayClient<Req extends Request, Res extends Response> {
       HttpResult httpResult = httpInvoker.invoke(url, content, this.getLocalRequestHeader());
       this.getLocalResponseHeader().addAll(httpResult.getHeaders()); // 设置响应header
       String result = httpResult.getResult();
-      response = parser.parse(result, responseClazz);
+      response = parser.parse(result, resClazz);
 
       // 调用失败
       if (!response.callSuccess()) {
@@ -165,6 +170,19 @@ public class GatewayClient<Req extends Request, Res extends Response> {
       throw new RuntimeException(e);
     }
     // end method
+  }
+
+  /**
+   * 获取泛型类型
+   * @param index 泛型位置,从0开始
+   * @return 泛型类型
+   */
+  protected Class<?> getGenericClass(int index) {
+    Class<?> clazz = this.getClass();
+    ParameterizedType parameterizedType = (ParameterizedType) clazz.getGenericSuperclass();
+    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+    Class<?> resultClazz = (Class<?>) actualTypeArguments[index];
+    return resultClazz;
   }
 
 }

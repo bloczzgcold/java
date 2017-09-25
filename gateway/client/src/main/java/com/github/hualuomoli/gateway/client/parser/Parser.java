@@ -6,14 +6,14 @@ import com.github.hualuomoli.gateway.client.entity.Response;
 /**
  * 请求响应解析器
  */
-public interface Parser {
+public interface Parser<Req extends Request, Res extends Response> {
 
   /**
    * 获取请求内容
    * @param request 请求
    * @return 请求内容字符串
    */
-  String getRequestContent(Request request);
+  String getRequestContent(Req request);
 
   /**
    * 解析响应结果
@@ -21,6 +21,6 @@ public interface Parser {
    * @param responseClazz 响应结果类类型
    * @return 响应结果
    */
-  <Res extends Response> Res parse(String result, Class<Res> responseClazz);
+  Res parse(String result, Class<Res> responseClazz);
 
 }

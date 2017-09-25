@@ -34,7 +34,6 @@ public interface BusinessInterceptor {
    * @param req HTTP请求
    * @param res HTTP响应
    * @param be 业务处理错误
-   * @throws Throwable 处理错误后抛出的错误信息
    */
   void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be);
 

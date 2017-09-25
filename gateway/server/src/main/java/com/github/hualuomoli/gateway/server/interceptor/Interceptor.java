@@ -11,7 +11,7 @@ import com.github.hualuomoli.gateway.server.lang.SecurityException;
 /**
  * 拦截器,用于权限验证/数据加解密
  */
-public interface Interceptor {
+public interface Interceptor<Req extends Request, Res extends Response> {
 
   /**
    * 执行业务前置处理
@@ -20,7 +20,7 @@ public interface Interceptor {
    * @throws NoPartnerException 合作伙伴未注册
    * @throws SecurityException 安全错误
    */
-  void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, SecurityException;
+  void preHandle(HttpServletRequest req, Req request) throws NoPartnerException, SecurityException;
 
   /**
    * 执行业务后置处理
@@ -29,6 +29,6 @@ public interface Interceptor {
    * @param request 网关请求
    * @param response 网关响应
    */
-  void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response);
+  void postHandle(HttpServletRequest req, HttpServletResponse res, Req request, Res response);
 
 }

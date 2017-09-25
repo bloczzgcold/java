@@ -17,8 +17,8 @@ public class GatewayGenericClient<Req extends Request, Res extends Response> ext
 
   private GenericParser genericParser;
 
-  public GatewayGenericClient(String url, String partnerId, Class<Req> requestClazz, Class<Res> responseClazz) {
-    super(url, partnerId, requestClazz, responseClazz);
+  public GatewayGenericClient(String url, String partnerId) {
+    super(url, partnerId);
   }
 
   public GatewayGenericClient<Req, Res> setGenericParser(GenericParser genericParser) {

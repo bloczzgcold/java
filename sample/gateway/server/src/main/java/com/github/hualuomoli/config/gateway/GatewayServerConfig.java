@@ -23,10 +23,11 @@ import com.github.hualuomoli.config.gateway.entity.GatewayServerRequest;
 import com.github.hualuomoli.config.gateway.entity.GatewayServerResponse;
 import com.github.hualuomoli.gateway.server.GatewayServer;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
-import com.github.hualuomoli.gateway.server.entity.Request;
-import com.github.hualuomoli.gateway.server.entity.Response;
+import com.github.hualuomoli.gateway.server.error.ErrorDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
+import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.gateway.server.lang.NoPartnerException;
+import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.lang.SecurityException;
 import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.github.hualuomoli.tool.security.AES;
@@ -40,13 +41,15 @@ import com.google.common.collect.Sets;
 @Import(value = { GatewayBusinessHandlerConfig.class })
 public class GatewayServerConfig {
 
+  private static final Logger logger = LoggerFactory.getLogger(Interceptor.class);
+
   @Autowired
   private BusinessHandler businessHandler;
 
   @Bean
-  public GatewayServer initGateway() {
+  public GatewayServer<GatewayServerRequest, GatewayServerResponse> initGateway() {
 
-    GatewayServer server = new GatewayServer() {
+    GatewayServer<GatewayServerRequest, GatewayServerResponse> server = new GatewayServer<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
       protected GatewayServerRequest parseRequest(HttpServletRequest req) {
@@ -59,57 +62,92 @@ public class GatewayServerConfig {
         }
         return JSON.parseObject(JSON.toJSONString(map), GatewayServerRequest.class);
       }
+
     };
     server.setBusinessHandler(businessHandler);
+    server.setErrorDealer(this.errorDealer());
     server.setInterceptors(this.interceptors());
 
     return server;
   }
 
-  private List<Interceptor> interceptors() {
-    List<Interceptor> interceptors = Lists.newArrayList();
-
-    // 加密、解密
-    interceptors.add(new Interceptor() {
+  // 错误处理器
+  private ErrorDealer<GatewayServerRequest, GatewayServerResponse> errorDealer() {
+    return new ErrorDealer<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, SecurityException {
-        GatewayServerRequest gatewayServerRequest = (GatewayServerRequest) request;
-        gatewayServerRequest.setBizContent(AES.decrypt(Key.SALT, gatewayServerRequest.getBizContent()));
+      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, NoPartnerException npe) {
+        response.setCode("NO_PARTNER");
+        response.setMessage("合作伙伴未注册");
       }
 
       @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response) {
-        GatewayServerResponse gatewayServerResponse = (GatewayServerResponse) response;
-        gatewayServerResponse.setResult(AES.encrypt(Key.SALT, gatewayServerResponse.getResult()));
+      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, SecurityException se) {
+        response.setCode("INVALID_SECURITY");
+        response.setMessage("认证失败");
+      }
+
+      @Override
+      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, NoRouterException nre) {
+        response.setCode("NO_ROUTER");
+        response.setMessage("方法未注册");
+      }
+
+      @Override
+      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, BusinessException be) {
+        response.setCode("SUCCESS");
+        response.setMessage("执行成功");
+        response.setSubCode("9999");
+        response.setSubMessage(be.getMessage());
+      }
+
+      @Override
+      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+        response.setCode("ERROR");
+        response.setMessage("系统错误");
+      }
+    };
+  }
+
+  // 拦截器
+  private List<Interceptor<GatewayServerRequest, GatewayServerResponse>> interceptors() {
+    List<Interceptor<GatewayServerRequest, GatewayServerResponse>> interceptors = Lists.newArrayList();
+
+    // 加密、解密
+    interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
+
+      @Override
+      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+        request.setBizContent(AES.decrypt(Key.SALT, request.getBizContent()));
+      }
+
+      @Override
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response) {
+        response.setResult(AES.encrypt(Key.SALT, response.getResult()));
       }
 
     });
     // 签名、验签
-    interceptors.add(new Interceptor() {
-
-      final Logger logger = LoggerFactory.getLogger(Interceptor.class);
+    interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, SecurityException {
-        GatewayServerRequest gatewayServerRequest = (GatewayServerRequest) request;
-        String origin = this.getSignOrigin(gatewayServerRequest, Sets.newHashSet("sign"));
+      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
+        String origin = this.getSignOrigin(request, Sets.newHashSet("sign"));
         logger.debug("服务端端请求签名原文={}", origin);
 
-        if (!RSA.verify(Key.CLIENT_PUBLIC_KEY, origin, gatewayServerRequest.getSign())) {
+        if (!RSA.verify(Key.CLIENT_PUBLIC_KEY, origin, request.getSign())) {
           throw new SecurityException("签名不合法");
         }
         // end
       }
 
       @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response) {
-        GatewayServerResponse gatewayServerResponse = (GatewayServerResponse) response;
-        String origin = this.getSignOrigin(gatewayServerResponse, Sets.newHashSet("sign"));
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response) {
+        String origin = this.getSignOrigin(response, Sets.newHashSet("sign"));
         String sign = RSA.sign(Key.SERVER_PRIVATE_KEY, origin);
         logger.debug("服务端端响应签名原文={}", origin);
 
-        gatewayServerResponse.setSign(sign);
+        response.setSign(sign);
       }
 
       private String getSignOrigin(Object obj, Set<String> ignores) {
@@ -141,38 +179,33 @@ public class GatewayServerConfig {
     });
 
     // 其它
-    interceptors.add(new Interceptor() {
+    interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, SecurityException {
+      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
       }
 
       @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response) {
-        GatewayServerRequest gatewayServerRequest = (GatewayServerRequest) request;
-        GatewayServerResponse gatewayServerResponse = (GatewayServerResponse) response;
-        gatewayServerResponse.setCode("SUCCESS");
-        gatewayServerResponse.setMessage("执行成功");
-        gatewayServerResponse.setSubCode("SUCCESS");
-        gatewayServerResponse.setSubMessage("业务处理成功");
-        gatewayServerResponse.setNonceStr(gatewayServerRequest.getNonceStr());
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response) {
+        response.setCode("SUCCESS");
+        response.setMessage("执行成功");
+        response.setSubCode("SUCCESS");
+        response.setSubMessage("业务处理成功");
+        response.setNonceStr(request.getNonceStr());
       }
     });
 
     // 日志
-    interceptors.add(new Interceptor() {
-
-      final Logger logger = LoggerFactory.getLogger(Interceptor.class);
+    interceptors.add(new Interceptor<GatewayServerRequest, GatewayServerResponse>() {
 
       @Override
-      public void preHandle(HttpServletRequest req, Request request) throws NoPartnerException, com.github.hualuomoli.gateway.server.lang.SecurityException {
+      public void preHandle(HttpServletRequest req, GatewayServerRequest request) throws NoPartnerException, SecurityException {
         logger.debug("请求业务内容={}", request.getBizContent());
       }
 
       @Override
-      public void postHandle(HttpServletRequest req, HttpServletResponse res, Request request, Response response) {
-        GatewayServerResponse gatewayServerResponse = (GatewayServerResponse) response;
-        logger.debug("响应业务内容={}", gatewayServerResponse.getResult());
+      public void postHandle(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response) {
+        logger.debug("响应业务内容={}", response.getResult());
       }
     });
 

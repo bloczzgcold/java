@@ -37,7 +37,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.hualuomoli.gateway.client.GatewayGenericClient;
 import com.github.hualuomoli.gateway.client.entity.HttpHeader;
 import com.github.hualuomoli.gateway.client.entity.Request;
-import com.github.hualuomoli.gateway.client.entity.Response;
 import com.github.hualuomoli.gateway.client.http.HttpInvoker;
 import com.github.hualuomoli.gateway.client.interceptor.Interceptor;
 import com.github.hualuomoli.gateway.client.parser.GenericParser;
@@ -68,8 +67,8 @@ public class ClientControllerTest {
 
     String partnerId = "tester";
 
-    client = new GatewayGenericClient<GatewayClientRequest, GatewayClientResponse>(serverURL, partnerId, GatewayClientRequest.class,
-        GatewayClientResponse.class);
+    client = new GatewayGenericClient<GatewayClientRequest, GatewayClientResponse>(serverURL, partnerId) {
+    };
     client.setJsonParser(new JSONParser() {
 
       @Override
@@ -146,10 +145,10 @@ public class ClientControllerTest {
         };
       }
     });
-    client.setParser(new Parser() {
+    client.setParser(new Parser<GatewayClientRequest, GatewayClientResponse>() {
 
       @Override
-      public String getRequestContent(Request request) {
+      public String getRequestContent(GatewayClientRequest request) {
         GatewayClientRequest req = (GatewayClientRequest) request;
         StringBuilder buffer = new StringBuilder();
         Class<? extends Request> clazz = req.getClass();
@@ -174,7 +173,7 @@ public class ClientControllerTest {
       }
 
       @Override
-      public <Res extends Response> Res parse(String result, Class<Res> responseClazz) {
+      public GatewayClientResponse parse(String result, Class<GatewayClientResponse> responseClazz) {
         return JSON.parseObject(result, responseClazz);
       }
     });
@@ -299,60 +298,53 @@ public class ClientControllerTest {
     });
 
     // 日志
-    client.addInterceptor(new Interceptor() {
-
-      final Logger logger = LoggerFactory.getLogger(Interceptor.class);
+    client.addInterceptor(new Interceptor<GatewayClientRequest, GatewayClientResponse>() {
 
       @Override
-      public void preHandle(String partnerId, Request request) {
+      public void preHandle(String partnerId, GatewayClientRequest request) {
         GatewayClientRequest req = (GatewayClientRequest) request;
         logger.debug("请求业务内容={}", req.getBizContent());
       }
 
       @Override
-      public void postHandle(String partnerId, Request request, Response response) {
+      public void postHandle(String partnerId, GatewayClientRequest request, GatewayClientResponse response) {
         logger.debug("响应业务内容={}", response.getResult());
       }
     });
 
     // 添加其他信息
-    client.addInterceptor(new Interceptor() {
+    client.addInterceptor(new Interceptor<GatewayClientRequest, GatewayClientResponse>() {
 
       @Override
-      public void preHandle(String partnerId, Request request) {
-        GatewayClientRequest req = (GatewayClientRequest) request;
-        req.setEncryptType("AES");
-        req.setSignType("RSA");
-        req.setVersion("1.0.0");
-        req.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        req.setNonceStr(UUID.randomUUID().toString().replaceAll("[-]", ""));
+      public void preHandle(String partnerId, GatewayClientRequest request) {
+        request.setEncryptType("AES");
+        request.setSignType("RSA");
+        request.setVersion("1.0.0");
+        request.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        request.setNonceStr(UUID.randomUUID().toString().replaceAll("[-]", ""));
       }
 
       @Override
-      public void postHandle(String partnerId, Request request, Response response) {
-        GatewayClientRequest req = (GatewayClientRequest) request;
-        GatewayClientResponse res = (GatewayClientResponse) response;
-        Validate.isTrue(StringUtils.equals(req.getNonceStr(), res.getNonceStr()));
+      public void postHandle(String partnerId, GatewayClientRequest request, GatewayClientResponse response) {
+        Validate.isTrue(StringUtils.equals(request.getNonceStr(), response.getNonceStr()));
       }
     });
 
     // 签名
-    client.addInterceptor(new Interceptor() {
+    client.addInterceptor(new Interceptor<GatewayClientRequest, GatewayClientResponse>() {
 
       @Override
-      public void preHandle(String partnerId, Request request) {
-        GatewayClientRequest req = (GatewayClientRequest) request;
-        String origin = this.getSignOrigin(req, Sets.newHashSet("sign"));
+      public void preHandle(String partnerId, GatewayClientRequest request) {
+        String origin = this.getSignOrigin(request, Sets.newHashSet("sign"));
         logger.debug("客户端请求签名原文={}", origin);
-        req.setSign(RSA.sign(Key.CLIENT_PRIVATE_KEY, origin));
+        request.setSign(RSA.sign(Key.CLIENT_PRIVATE_KEY, origin));
       }
 
       @Override
-      public void postHandle(String partnerId, Request request, Response response) {
-        GatewayClientResponse res = (GatewayClientResponse) response;
-        String origin = this.getSignOrigin(res, Sets.newHashSet("sign"));
+      public void postHandle(String partnerId, GatewayClientRequest request, GatewayClientResponse response) {
+        String origin = this.getSignOrigin(response, Sets.newHashSet("sign"));
         logger.debug("客户端响应签名原文={}", origin);
-        Validate.isTrue(RSA.verify(Key.SERVER_PUBLIC_KEY, origin, res.getSign()));
+        Validate.isTrue(RSA.verify(Key.SERVER_PUBLIC_KEY, origin, response.getSign()));
       }
 
       private String getSignOrigin(Object obj, Set<String> ignores) {
@@ -382,18 +374,16 @@ public class ClientControllerTest {
       }
 
     });
-    client.addInterceptor(new Interceptor() {
+    client.addInterceptor(new Interceptor<GatewayClientRequest, GatewayClientResponse>() {
 
       @Override
-      public void preHandle(String partnerId, Request request) {
-        GatewayClientRequest req = (GatewayClientRequest) request;
-        req.setBizContent(AES.encrypt(Key.SALT, req.getBizContent()));
+      public void preHandle(String partnerId, GatewayClientRequest request) {
+        request.setBizContent(AES.encrypt(Key.SALT, request.getBizContent()));
       }
 
       @Override
-      public void postHandle(String partnerId, Request request, Response response) {
-        GatewayClientResponse res = (GatewayClientResponse) response;
-        res.setResult(AES.decrypt(Key.SALT, res.getResult()));
+      public void postHandle(String partnerId, GatewayClientRequest request, GatewayClientResponse response) {
+        response.setResult(AES.decrypt(Key.SALT, response.getResult()));
       }
     });
     // end
