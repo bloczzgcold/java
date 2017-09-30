@@ -26,10 +26,10 @@ import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-@Component(value = "com.github.hualuomoli.sample.gateway.server.biz.gateway.service.MyFunctionDealer")
-public class MyFunctionDealer implements FunctionDealer, ApplicationContextAware {
+@Component(value = "com.github.hualuomoli.sample.gateway.server.biz.gateway.service.GatewayBusinessFunctionDealer")
+public class GatewayBusinessFunctionDealer implements FunctionDealer, ApplicationContextAware {
 
-  private static final Logger logger = LoggerFactory.getLogger(MyFunctionDealer.class);
+  private static final Logger logger = LoggerFactory.getLogger(GatewayBusinessFunctionDealer.class);
 
   private static final String VERSION_REGEX = "^\\d+(.\\d+)*$";
   private static final Map<String, List<VersionFunction>> functionMap = Maps.newHashMap();
@@ -64,7 +64,7 @@ public class MyFunctionDealer implements FunctionDealer, ApplicationContextAware
 
       @Override
       public int compare(VersionFunction o1, VersionFunction o2) {
-        return MyFunctionDealer.this.versionCompile(o2.version, o1.version);
+        return GatewayBusinessFunctionDealer.this.versionCompile(o2.version, o1.version);
       }
     });
 

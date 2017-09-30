@@ -10,21 +10,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hualuomoli.config.gateway.entity.GatewayServerRequest;
-import com.github.hualuomoli.config.gateway.entity.GatewayServerResponse;
-import com.github.hualuomoli.gateway.server.GatewayServer;
+import com.github.hualuomoli.sample.gateway.server.biz.gateway.entity.GatewayServerResponse;
+import com.github.hualuomoli.sample.gateway.server.biz.gateway.service.GatewayService;
 
 @RequestMapping(value = "/gateway")
 @Controller(value = "com.github.hualuomoli.sample.gateway.server.biz.gateway.controller.GatewayController")
 public class GatewayController {
 
   @Autowired
-  private GatewayServer<GatewayServerRequest, GatewayServerResponse> gatewayServer;
+  private GatewayService gatewayService;
 
   @RequestMapping(value = "", method = RequestMethod.POST)
   @ResponseBody
   public String execute(HttpServletRequest req, HttpServletResponse res) {
-    GatewayServerResponse response = gatewayServer.execute(req, res);
+    GatewayServerResponse response = gatewayService.execute(req, res);
     return JSON.toJSONString(response);
   }
 

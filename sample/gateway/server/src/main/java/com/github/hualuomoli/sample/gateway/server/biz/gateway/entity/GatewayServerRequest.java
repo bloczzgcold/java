@@ -1,4 +1,4 @@
-package com.github.hualuomoli.config.gateway.entity;
+package com.github.hualuomoli.sample.gateway.server.biz.gateway.entity;
 
 import com.github.hualuomoli.gateway.server.entity.Request;
 

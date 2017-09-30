@@ -1,11 +1,12 @@
-package com.github.hualuomoli.config.gateway.entity;
+package com.github.hualuomoli.sample.gateway.server.biz.gateway.entity;
 
 import com.github.hualuomoli.gateway.server.entity.Response;
+import com.github.hualuomoli.sample.gateway.server.biz.gateway.enums.ResponseCodeEnum;
 
 public class GatewayServerResponse implements Response {
 
   /** 网关处理编码 */
-  private String code;
+  private ResponseCodeEnum code;
   /** 网关处理信息 */
   private String message;
   /** 业务处理编码 */
@@ -19,11 +20,11 @@ public class GatewayServerResponse implements Response {
   /** 签名 */
   private String sign;
 
-  public String getCode() {
+  public ResponseCodeEnum getCode() {
     return code;
   }
 
-  public void setCode(String code) {
+  public void setCode(ResponseCodeEnum code) {
     this.code = code;
   }
 

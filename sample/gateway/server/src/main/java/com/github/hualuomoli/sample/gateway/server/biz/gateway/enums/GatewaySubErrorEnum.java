@@ -1,4 +1,4 @@
-package com.github.hualuomoli.enums;
+package com.github.hualuomoli.sample.gateway.server.biz.gateway.enums;
 
 /**
  * 网关业务处理错误枚举
