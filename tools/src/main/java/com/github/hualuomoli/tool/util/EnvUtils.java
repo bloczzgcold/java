@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EnvUtils {
 
   private static final Lock LOCK = new ReentrantLock();
-  private static String[] keys = new String[] { "server-startup-environment" };
+  private static String[] keys = new String[] { "SERVER_STARTUP_ENVIRONMENT" };
   private static Env env = null;
 
   /**

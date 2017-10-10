@@ -23,8 +23,7 @@ import com.github.hualuomoli.gateway.server.lang.NoRouterException;
  */
 public class AbstractBusinessHandler implements BusinessHandler {
 
-  private static boolean success = false;
-  private static final Object LOCK = new Object();
+  private static Boolean INIT_SUCCESS = false; // 初始化成功
 
   // 业务拦截器
   private List<BusinessInterceptor> interceptors = new ArrayList<BusinessInterceptor>();
@@ -58,25 +57,28 @@ public class AbstractBusinessHandler implements BusinessHandler {
   }
 
   // 验证并初始化
-  private void checkAndInit() {
-    if (success) {
+  private void init() {
+    if (INIT_SUCCESS) {
       return;
     }
 
-    synchronized (LOCK) {
-      if (success) {
-        return;
-      }
-      success = true;
-      System.out.println("初始化网关functions");
-      functionDealer.init();
+    this.doInit();
+  }
+
+  // 执行初始化操作
+  private synchronized void doInit() {
+    if (INIT_SUCCESS) {
+      return;
     }
 
+    System.out.println("初始化网关functions");
+    functionDealer.init();
+    INIT_SUCCESS = true;
   }
 
   @Override
   public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {
-    this.checkAndInit();
+    this.init();
 
     Function function = functionDealer.getFunction(method, req);
     // 处理类

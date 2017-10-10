@@ -79,7 +79,13 @@ public abstract class GatewayServer<Req extends Request, Res extends Response> {
     } catch (NoRouterException nre) {
       errorDealer.deal(req, res, request, response, nre);
     } catch (BusinessException be) {
+      // 业务处理错误
+      // 1、格式化异常输出
       errorDealer.deal(req, res, request, response, be);
+      // 2、后置拦截
+      for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
+        interceptors.get(i).postHandle(req, res, request, response);
+      }
     } catch (Exception e) {
       errorDealer.deal(req, res, request, response, e);
       // end catch
