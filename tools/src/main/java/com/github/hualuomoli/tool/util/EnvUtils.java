@@ -136,7 +136,7 @@ public class EnvUtils {
    * @param keys 运行环境名称数组
    * @return 运行环境
    */
-  private static final String getRuntime(String... keys) {
+  public static final String getRuntime(String... keys) {
     if (keys == null || keys.length == 0) {
       return null;
     }
@@ -158,7 +158,7 @@ public class EnvUtils {
    * @param keys 运行环境名称
    * @return 运行环境
    */
-  private static final String getRuntime(String key) {
+  public static final String getRuntime(String key) {
     if (key == null || key.trim().length() == 0) {
       return null;
     }
