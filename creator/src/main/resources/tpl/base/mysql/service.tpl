@@ -156,7 +156,7 @@ public class ${javaName}BaseService {
     Validate.notNull(orderBy, "orderBy is blank.");
 
     // 设置排序
-    PaginationInterceptor.setOrderBy(orderBy);
+    PaginationInterceptor.setListOrder(orderBy);
     // 查询列表
     return ${javaName?uncap_first}BaseMapper.findList(${javaName?uncap_first});
   }
@@ -188,10 +188,8 @@ public class ${javaName}BaseService {
     Validate.isTrue(pageSize > 0, "invalid pageSize.");
     Validate.notNull(orderBy, "orderBy is blank.");
 
-    // 设置排序
-    PaginationInterceptor.setOrderBy(orderBy);
     // 设置分页
-    PaginationInterceptor.setPagination(pageNo, pageSize);
+    PaginationInterceptor.setPagination(pageNo, pageSize, orderBy);
     // 查询
     List<${javaName}> list = ${javaName?uncap_first}BaseMapper.findList(${javaName?uncap_first});
     // 总数量

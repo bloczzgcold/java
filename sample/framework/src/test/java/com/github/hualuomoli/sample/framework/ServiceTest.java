@@ -15,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.github.hualuomoli.config.BaseConfig;
 import com.github.hualuomoli.config.base.MybatisConfig;
-import com.github.hualuomoli.sample.framework.anno.Rollback;
 import com.github.hualuomoli.sample.framework.handler.StateTypeHandler;
 import com.github.hualuomoli.tool.util.EnvUtils;
 import com.github.hualuomoli.tool.util.PropertyUtils;
@@ -24,7 +23,6 @@ import com.github.hualuomoli.util.ProjectConfig;
 @WebAppConfiguration
 @ContextConfiguration(classes = { BaseConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-@Rollback
 public class ServiceTest {
 
   protected static final Logger logger = LoggerFactory.getLogger(ServiceTest.class);

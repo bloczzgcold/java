@@ -14,6 +14,9 @@
   
   <!-- 查询的列 -->
   <sql id="querys">
+    <if test="areaCode != null and areaCode != ''">
+      and `areaCode` = #{areaCode}
+    </if>
     <if test="areaCodeLeftLike != null and areaCodeLeftLike != ''"> 
       and `areaCode` like CONCAT(#{areaCodeLeftLike}, '%')
     </if>
@@ -22,6 +25,9 @@
     </if>
     <if test="areaCodeLike != null and areaCodeLike != ''"> 
       and `areaCode` like CONCAT('%', #{areaCodeLike}, '%')
+    </if>
+    <if test="province != null and province != ''">
+      and `province` = #{province}
     </if>
     <if test="provinceLeftLike != null and provinceLeftLike != ''"> 
       and `province` like CONCAT(#{provinceLeftLike}, '%')
@@ -32,6 +38,9 @@
     <if test="provinceLike != null and provinceLike != ''"> 
       and `province` like CONCAT('%', #{provinceLike}, '%')
     </if>
+    <if test="city != null and city != ''">
+      and `city` = #{city}
+    </if>
     <if test="cityLeftLike != null and cityLeftLike != ''"> 
       and `city` like CONCAT(#{cityLeftLike}, '%')
     </if>
@@ -41,6 +50,9 @@
     <if test="cityLike != null and cityLike != ''"> 
       and `city` like CONCAT('%', #{cityLike}, '%')
     </if>
+    <if test="county != null and county != ''">
+      and `county` = #{county}
+    </if>
     <if test="countyLeftLike != null and countyLeftLike != ''"> 
       and `county` like CONCAT(#{countyLeftLike}, '%')
     </if>
@@ -49,6 +61,9 @@
     </if>
     <if test="countyLike != null and countyLike != ''"> 
       and `county` like CONCAT('%', #{countyLike}, '%')
+    </if>
+    <if test="detailAddress != null and detailAddress != ''">
+      and `detailAddress` = #{detailAddress}
     </if>
     <if test="detailAddressLeftLike != null and detailAddressLeftLike != ''"> 
       and `detailAddress` like CONCAT(#{detailAddressLeftLike}, '%')

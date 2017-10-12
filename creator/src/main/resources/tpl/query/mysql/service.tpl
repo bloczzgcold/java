@@ -28,7 +28,7 @@ public class ${javaName}QueryService {
   /** 查询列表排序 */
   public List<${javaName}> findList(${javaName}Query ${javaName?uncap_first}Query, String orderBy) {
     // 设置排序
-    PaginationInterceptor.setOrderBy(orderBy);
+    PaginationInterceptor.setListOrder(orderBy);
     // 查询列表
     return ${javaName?uncap_first}QueryMapper.findList(${javaName?uncap_first}Query);
   }
@@ -47,10 +47,8 @@ public class ${javaName}QueryService {
 
   /** 查询分页 */
   public Page findPage(${javaName}Query ${javaName?uncap_first}Query, Integer pageNo, Integer pageSize, String orderBy) {
-    // 设置排序
-    PaginationInterceptor.setOrderBy(orderBy);
     // 设置分页
-    PaginationInterceptor.setPagination(pageNo, pageSize);
+    PaginationInterceptor.setPagination(pageNo, pageSize, orderBy);
     // 查询
     List<${javaName}> list = ${javaName?uncap_first}QueryMapper.findList(${javaName?uncap_first}Query);
     // 总数量

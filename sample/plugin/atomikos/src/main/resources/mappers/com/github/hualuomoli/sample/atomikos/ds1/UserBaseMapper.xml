@@ -34,7 +34,7 @@
     <if test="state != null"> 
       and `state` = #{state}
     </if>
-    <if test="status != null and status != ''"> 
+    <if test="status != null"> 
       and `status` = #{status}
     </if>
     <if test="remark != null and remark != ''"> 
@@ -50,7 +50,6 @@
     where `id` =  #{id}
   </select>
   
-
   <!-- 添加 -->
   <insert id="insert">
     insert into `t_user` (
@@ -118,7 +117,7 @@
       <if test="state != null"> 
         `state` = #{state},
       </if>
-      <if test="status != null and status != ''"> 
+      <if test="status != null"> 
         `status` = #{status},
       </if>
       <if test="remark != null and remark != ''"> 
@@ -127,14 +126,14 @@
     </set>
     where id =  #{id}
   </update>
-  
+
   
   <!-- 根据主键id删除 -->
   <delete id="delete">
     delete from `t_user` where id =  #{id}
   </delete>
   
-  
+
   <!-- 根据主键id数组删除 -->
   <delete id="deleteByArray">
     delete from `t_user`
@@ -144,7 +143,6 @@
       </foreach>
       </where>
   </delete>
-  
   
   <!-- 查询列表 -->
   <select id="findList" resultType="com.github.hualuomoli.sample.atomikos.ds1.entity.User">

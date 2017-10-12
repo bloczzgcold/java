@@ -8,13 +8,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.hualuomoli.framework.entity.Page;
-import com.github.hualuomoli.sample.framework.ServiceTest;
+import com.github.hualuomoli.sample.enums.StateEnum;
+import com.github.hualuomoli.sample.enums.StatusEnum;
+import com.github.hualuomoli.sample.framework.ServiceRollbackTest;
 import com.github.hualuomoli.sample.framework.base.entity.User;
-import com.github.hualuomoli.sample.framework.enums.StateEnum;
-import com.github.hualuomoli.sample.framework.enums.StatusEnum;
 import com.google.common.collect.Lists;
 
-public class UserBaseServiceTest extends ServiceTest {
+public class UserBaseServiceTest extends ServiceRollbackTest {
 
   @Autowired
   private UserBaseService userBaseService;

@@ -89,8 +89,8 @@ public class PaginationSQLHelper {
    * @return 总记录数
    * @throws SQLException sql查询错误
    */
-  public static int getCount(final String sql, final Connection connection, final MappedStatement mappedStatement, final Object parameterObject,
-      final BoundSql boundSql, final Logger logger) throws SQLException {
+  public static int getCount(final String sql, final Connection connection, final MappedStatement mappedStatement, final Object parameterObject, final BoundSql boundSql, final Logger logger)
+      throws SQLException {
     final String countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
     Connection conn = null;
     PreparedStatement ps = null;
