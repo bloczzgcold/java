@@ -9,6 +9,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>./creator</module>
     <module>./framework</module>
     <module>./gateway/server</module>
     <module>./plugin/dubbo/api</module>
