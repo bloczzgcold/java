@@ -33,4 +33,14 @@ public interface Interceptor<Req extends Request, Res extends Response> {
    */
   void postHandle(HttpServletRequest req, HttpServletResponse res, Req request, Res response);
 
+  /**
+   * 执行业务后置处理
+   * @param req HTTP请求
+   * @param res HTTP响应
+   * @param request 网关请求
+   * @param response 网关响应
+   * @param e 错误信息
+   */
+  void afterCompletion(HttpServletRequest req, HttpServletResponse res, Req request, Res response, Exception e);
+
 }

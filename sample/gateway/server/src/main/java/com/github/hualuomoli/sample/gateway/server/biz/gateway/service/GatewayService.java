@@ -18,10 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.github.hualuomoli.gateway.client.lang.BusinessException;
 import com.github.hualuomoli.gateway.server.GatewayServer;
-import com.github.hualuomoli.gateway.server.error.ErrorDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.gateway.server.lang.NoPartnerException;
 import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 import com.github.hualuomoli.gateway.server.lang.SecurityException;
@@ -48,8 +47,6 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
   public void init() {
     // 业务处理器
     this.setBusinessHandler(gatewayBusinessHandler);
-    // 错误处理器
-    this.setErrorDealer(this.errorDealer());
     // 拦截器
     List<Interceptor<GatewayServerRequest, GatewayServerResponse>> interceptors = Lists.newArrayList();
     interceptors.add(new EncryptInterceptor());
@@ -70,47 +67,6 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
     return JSON.parseObject(JSON.toJSONString(map), GatewayServerRequest.class);
   }
 
-  // 错误处理器
-  private ErrorDealer<GatewayServerRequest, GatewayServerResponse> errorDealer() {
-    return new ErrorDealer<GatewayServerRequest, GatewayServerResponse>() {
-
-      @Override
-      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, NoPartnerException npe) {
-        this.config(ResponseCodeEnum.NO_PARTNER, "合作伙伴未注册", response);
-      }
-
-      @Override
-      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, SecurityException se) {
-        String message = se.getMessage() == null ? "安全认证失败" : se.getMessage();
-        this.config(ResponseCodeEnum.INVALID_SECURITY, message, response);
-      }
-
-      @Override
-      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, NoRouterException nre) {
-        this.config(ResponseCodeEnum.NO_ROUTER, "请求方法未注册", response);
-      }
-
-      @Override
-      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, BusinessException be) {
-        this.config(ResponseCodeEnum.BUSINESS, "业务处理失败", response);
-        response.setSubCode("9999");
-        response.setSubMessage(be.getMessage());
-      }
-
-      @Override
-      public void deal(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
-        this.config(ResponseCodeEnum.SYSTEM, "系统错误", response);
-        logger.debug("系统错误", e);
-      }
-
-      private void config(ResponseCodeEnum responseCode, String message, GatewayServerResponse response) {
-        response.setCode(responseCode);
-        response.setMessage(message);
-      }
-
-    };
-  }
-
   // 加密、解密拦截器
   private class EncryptInterceptor implements Interceptor<GatewayServerRequest, GatewayServerResponse> {
 
@@ -125,6 +81,11 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       response.setResult(AES.encrypt(Key.SALT, response.getResult()));
     }
     // end
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+    }
+
   }
 
   // 签名、验签拦截器
@@ -149,6 +110,14 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       logger.debug("服务端端响应签名原文={}", origin);
 
       response.setSign(sign);
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+      if (e instanceof NoPartnerException) {
+        return;
+      }
+      this.postHandle(req, res, request, response);
     }
 
     private String getSignOrigin(Object obj, Set<String> ignores) {
@@ -177,6 +146,7 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       return buffer.toString().substring(1);
     }
     // end
+
   }
 
   // 应用拦截器
@@ -196,6 +166,33 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       response.setSubMessage("业务处理成功");
 
       logger.debug("响应业务结果={}", response.getResult());
+    }
+    // end
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+      Class<?> clazz = e.getClass();
+
+      if (NoPartnerException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.NO_PARTNER);
+        response.setMessage("合作伙伴未注册");
+      } else if (SecurityException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.INVALID_SECURITY);
+        response.setMessage("安全认证失败");
+      } else if (NoRouterException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.NO_ROUTER);
+        response.setMessage("请求方法未注册");
+      } else if (BusinessException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.BUSINESS);
+        response.setMessage("业务处理失败");
+      } else if (Exception.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.SYSTEM);
+        response.setMessage("系统错误");
+      } else {
+        response.setCode(ResponseCodeEnum.SYSTEM);
+        response.setMessage("系统错误");
+      }
+      // end
     }
     // end
   }
@@ -220,6 +217,15 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       logger.debug("响应业务内容={}", response.getResult());
     }
     // end
+
+    @Override
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+      if (!logger.isDebugEnabled()) {
+        return;
+      }
+      logger.debug("处理失败,失败原因={}", e.getMessage(), e);
+    }
+
   }
 
 }

@@ -11,12 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.entity.Request;
 import com.github.hualuomoli.gateway.server.entity.Response;
-import com.github.hualuomoli.gateway.server.error.ErrorDealer;
 import com.github.hualuomoli.gateway.server.interceptor.Interceptor;
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
-import com.github.hualuomoli.gateway.server.lang.NoPartnerException;
-import com.github.hualuomoli.gateway.server.lang.NoRouterException;
-import com.github.hualuomoli.gateway.server.lang.SecurityException;
 
 /**
  * 网关服务器
@@ -26,15 +21,11 @@ public abstract class GatewayServer<Req extends Request, Res extends Response> {
   private Class<Res> resClazz;
 
   private BusinessHandler businessHandler;
-  private ErrorDealer<Req, Res> errorDealer;
+
   private List<Interceptor<Req, Res>> interceptors = new ArrayList<Interceptor<Req, Res>>();
 
   public void setBusinessHandler(BusinessHandler businessHandler) {
     this.businessHandler = businessHandler;
-  }
-
-  public void setErrorDealer(ErrorDealer<Req, Res> errorDealer) {
-    this.errorDealer = errorDealer;
   }
 
   public void setInterceptors(List<Interceptor<Req, Res>> interceptors) {
@@ -72,23 +63,12 @@ public abstract class GatewayServer<Req extends Request, Res extends Response> {
       for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
         interceptors.get(i).postHandle(req, res, request, response);
       }
-    } catch (NoPartnerException npe) {
-      errorDealer.deal(req, res, request, response, npe);
-    } catch (SecurityException se) {
-      errorDealer.deal(req, res, request, response, se);
-    } catch (NoRouterException nre) {
-      errorDealer.deal(req, res, request, response, nre);
-    } catch (BusinessException be) {
-      // 业务处理错误
-      // 1、格式化异常输出
-      errorDealer.deal(req, res, request, response, be);
-      // 2、后置拦截
-      for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
-        interceptors.get(i).postHandle(req, res, request, response);
-      }
+
     } catch (Exception e) {
-      errorDealer.deal(req, res, request, response, e);
-      // end catch
+      // 错误拦截
+      for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
+        interceptors.get(i).afterCompletion(req, res, request, response, e);
+      }
     }
 
     return response;
