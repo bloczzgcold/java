@@ -31,6 +31,7 @@ import com.github.hualuomoli.sample.gateway.server.key.Key;
 import com.github.hualuomoli.tool.security.AES;
 import com.github.hualuomoli.tool.security.RSA;
 import com.github.hualuomoli.tool.util.ClassUtils;
+import com.github.hualuomoli.validator.lang.InvalidParameterException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -83,7 +84,7 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
     // end
 
     @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Throwable t) {
     }
 
   }
@@ -113,8 +114,8 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
-      if (e instanceof NoPartnerException) {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Throwable t) {
+      if (t instanceof NoPartnerException) {
         return;
       }
       this.postHandle(req, res, request, response);
@@ -170,8 +171,8 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
     // end
 
     @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
-      Class<?> clazz = e.getClass();
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Throwable t) {
+      Class<?> clazz = t.getClass();
 
       if (NoPartnerException.class.isAssignableFrom(clazz)) {
         response.setCode(ResponseCodeEnum.NO_PARTNER);
@@ -185,9 +186,15 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
       } else if (BusinessException.class.isAssignableFrom(clazz)) {
         response.setCode(ResponseCodeEnum.BUSINESS);
         response.setMessage("业务处理失败");
-      } else if (Exception.class.isAssignableFrom(clazz)) {
+      } else if (IllegalAccessException.class.isAssignableFrom(clazz)) {
         response.setCode(ResponseCodeEnum.SYSTEM);
-        response.setMessage("系统错误");
+        response.setMessage("方法执行-没有访问权限");
+      } else if (IllegalArgumentException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.SYSTEM);
+        response.setMessage("方法执行-参数不合法");
+      } else if (InvalidParameterException.class.isAssignableFrom(clazz)) {
+        response.setCode(ResponseCodeEnum.SYSTEM);
+        response.setMessage("参数不合法");
       } else {
         response.setCode(ResponseCodeEnum.SYSTEM);
         response.setMessage("系统错误");
@@ -219,11 +226,11 @@ public class GatewayService extends GatewayServer<GatewayServerRequest, GatewayS
     // end
 
     @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Exception e) {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, GatewayServerRequest request, GatewayServerResponse response, Throwable t) {
       if (!logger.isDebugEnabled()) {
         return;
       }
-      logger.debug("处理失败,失败原因={}", e.getMessage(), e);
+      logger.debug("处理失败,失败原因={}", t.getMessage(), t);
     }
 
   }

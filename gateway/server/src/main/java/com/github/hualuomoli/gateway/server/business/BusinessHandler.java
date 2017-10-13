@@ -3,7 +3,6 @@ package com.github.hualuomoli.gateway.server.business;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 
 /**
@@ -20,10 +19,8 @@ public interface BusinessHandler {
    * @param bizContent 请求业务内容
    * @return 处理结果
    * @throws NoRouterException 路由未找到
-   * @throws BusinessException 业务处理失败
+   * @throws Throwable 业务处理失败
    */
-  String execute(HttpServletRequest req, HttpServletResponse res//
-      , String partnerId, String method, String bizContent) //
-      throws NoRouterException, BusinessException;
+  String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, Throwable;
 
 }

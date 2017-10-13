@@ -1,9 +1,8 @@
 package com.github.hualuomoli.sample.gateway.server.biz.gateway.lang;
 
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.sample.gateway.server.biz.gateway.enums.GatewaySubErrorEnum;
 
-public class GatewayBusinessException extends BusinessException {
+public class GatewayBusinessException extends RuntimeException {
 
   private static final long serialVersionUID = -3011234878022959136L;
 

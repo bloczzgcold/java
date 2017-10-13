@@ -39,8 +39,8 @@ public interface Interceptor<Req extends Request, Res extends Response> {
    * @param res HTTP响应
    * @param request 网关请求
    * @param response 网关响应
-   * @param e 错误信息
+   * @param t 错误信息
    */
-  void afterCompletion(HttpServletRequest req, HttpServletResponse res, Req request, Res response, Exception e);
+  void afterCompletion(HttpServletRequest req, HttpServletResponse res, Req request, Res response, Throwable t);
 
 }

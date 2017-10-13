@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.hualuomoli.gateway.server.business.dealer.FunctionDealer;
 import com.github.hualuomoli.gateway.server.business.entity.Function;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 import com.github.hualuomoli.gateway.server.business.parser.JSONParser;
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.gateway.server.lang.NoRouterException;
 
 /**
@@ -29,8 +27,6 @@ public class AbstractBusinessHandler implements BusinessHandler {
   private List<BusinessInterceptor> interceptors = new ArrayList<BusinessInterceptor>();
   // Function处理类
   private FunctionDealer functionDealer;
-  // 业务错误解析器
-  private BusinessErrorParser businessErrorParser;
   // JSON转换器
   private JSONParser jsonParser;
   // 实体类包路径
@@ -42,10 +38,6 @@ public class AbstractBusinessHandler implements BusinessHandler {
 
   public void setFunctionDealer(FunctionDealer functionDealer) {
     this.functionDealer = functionDealer;
-  }
-
-  public void setBusinessErrorParser(BusinessErrorParser businessErrorParser) {
-    this.businessErrorParser = businessErrorParser;
   }
 
   public void setJsonParser(JSONParser jsonParser) {
@@ -77,7 +69,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
   }
 
   @Override
-  public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, BusinessException {
+  public String execute(HttpServletRequest req, HttpServletResponse res, String partnerId, String method, String bizContent) throws NoRouterException, Throwable {
     this.init();
 
     Function function = functionDealer.getFunction(method, req);
@@ -126,14 +118,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
     Object[] params = paramList.toArray(new Object[] {});
 
     // 执行业务
-    try {
-      return this.deal(m, handler, params, req, res);
-    } catch (BusinessException be) {
-      throw be;
-    } catch (Throwable t) {
-      throw businessErrorParser.parse(t);
-    }
-
+    return this.deal(m, handler, params, req, res);
   }
 
   /**
@@ -145,7 +130,7 @@ public class AbstractBusinessHandler implements BusinessHandler {
    * @param res HTTP响应
    * @return 业务处理结果
    */
-  private String deal(Method method, Object handler, Object[] params, HttpServletRequest req, HttpServletResponse res) {
+  private String deal(Method method, Object handler, Object[] params, HttpServletRequest req, HttpServletResponse res) throws Throwable {
 
     // 前置拦截
     for (BusinessInterceptor interceptor : interceptors) {
@@ -154,34 +139,31 @@ public class AbstractBusinessHandler implements BusinessHandler {
 
     // 业务处理
     String result = null;
-    BusinessException be = null;
+    Throwable t = null;
     try {
       Object object = method.invoke(handler, params);
       if (object != null) {
         result = jsonParser.toJsonString(object);
       }
-    } catch (IllegalAccessException e) {
-      be = businessErrorParser.parse(e);
-    } catch (IllegalArgumentException e) {
-      be = businessErrorParser.parse(e);
-    } catch (InvocationTargetException e) {
-      be = businessErrorParser.parse(e.getTargetException());
-    }
 
-    if (be == null) {
       // 后置拦截
       for (BusinessInterceptor interceptor : interceptors) {
         interceptor.postHandle(req, res, result);
       }
-    } else {
-      // 错误拦截
-      for (BusinessInterceptor interceptor : interceptors) {
-        interceptor.afterCompletion(req, res, be);
-      }
-      throw be;
+      return result;
+    } catch (IllegalAccessException e) {
+      t = e;
+    } catch (IllegalArgumentException e) {
+      t = e;
+    } catch (InvocationTargetException e) {
+      t = e.getTargetException();
     }
 
-    return result;
+    // 错误拦截
+    for (BusinessInterceptor interceptor : interceptors) {
+      interceptor.afterCompletion(req, res, t);
+    }
+    throw t;
   }
 
 }

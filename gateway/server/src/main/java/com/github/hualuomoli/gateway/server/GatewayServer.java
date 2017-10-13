@@ -64,10 +64,10 @@ public abstract class GatewayServer<Req extends Request, Res extends Response> {
         interceptors.get(i).postHandle(req, res, request, response);
       }
 
-    } catch (Exception e) {
+    } catch (Throwable t) {
       // 错误拦截
       for (int size = interceptors.size(), i = size - 1; i >= 0; i--) {
-        interceptors.get(i).afterCompletion(req, res, request, response, e);
+        interceptors.get(i).afterCompletion(req, res, request, response, t);
       }
     }
 

@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
-
 /**
  * 业务拦截器
  */
@@ -34,8 +32,8 @@ public interface BusinessInterceptor {
    * 错误处理
    * @param req HTTP请求
    * @param res HTTP响应
-   * @param be 业务处理错误
+   * @param t 业务处理错误
    */
-  void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be);
+  void afterCompletion(HttpServletRequest req, HttpServletResponse res, Throwable t);
 
 }

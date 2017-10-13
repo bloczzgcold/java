@@ -18,9 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.hualuomoli.gateway.server.business.AbstractBusinessHandler;
 import com.github.hualuomoli.gateway.server.business.BusinessHandler;
 import com.github.hualuomoli.gateway.server.business.interceptor.BusinessInterceptor;
-import com.github.hualuomoli.gateway.server.business.parser.BusinessErrorParser;
 import com.github.hualuomoli.gateway.server.business.parser.JSONParser;
-import com.github.hualuomoli.gateway.server.lang.BusinessException;
 import com.github.hualuomoli.sample.gateway.server.biz.gateway.enums.GatewaySubErrorEnum;
 import com.github.hualuomoli.sample.gateway.server.biz.gateway.lang.GatewayBusinessException;
 import com.github.hualuomoli.validator.Validator;
@@ -44,34 +42,12 @@ public class GatewayBusinessHandler extends AbstractBusinessHandler implements B
     interceptors.add(new ParameterValidatorBusinessInterceptor());
     this.setInterceptors(interceptors);
 
-    // 错误处理器
-    this.setBusinessErrorParser(new GatewayBusinessErrorParser());
-
     // JSON转换器
     this.setJsonParser(new GatewayJSONParser());
 
     // 扫描的包
     this.setPackageNames(new String[] { "com.github.hualuomoli" });
 
-  }
-
-  // 业务错误转换器
-  private class GatewayBusinessErrorParser implements BusinessErrorParser {
-
-    @Override
-    public BusinessException parse(IllegalAccessException e) {
-      return new GatewayBusinessException(GatewaySubErrorEnum.SYSTEM, "没有访问权限", e);
-    }
-
-    @Override
-    public BusinessException parse(IllegalArgumentException e) {
-      return new GatewayBusinessException(GatewaySubErrorEnum.SYSTEM, "参数不合法", e);
-    }
-
-    @Override
-    public BusinessException parse(Throwable t) {
-      return new GatewayBusinessException(GatewaySubErrorEnum.SYSTEM, "系统错误", t);
-    }
   }
 
   // 参数验证器
@@ -118,8 +94,9 @@ public class GatewayBusinessHandler extends AbstractBusinessHandler implements B
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, BusinessException be) {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Throwable t) {
     }
+
     // end
   }
 
