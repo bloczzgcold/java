@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.hualuomoli.framework.entity.Page;
 import com.github.hualuomoli.framework.plugin.mybatis.interceptor.pagination.PaginationInterceptor;
+import com.github.hualuomoli.framework.util.CollectionUtils;
 import ${packageName}.entity.${javaName};
 import ${packageName}.mapper.${javaName}BaseMapper;
 
@@ -67,7 +68,12 @@ public class ${javaName}BaseService {
     if (list == null || list.size() == 0) {
       return 0;
     }
-    return ${javaName?uncap_first}BaseMapper.batchInsert(list);
+    List<List<T>> splits = CollectionUtils.split(list, fetchSize);
+    int count = 0;
+    for (int i = 0; i < splits.size(); i++) {
+      count += ${javaName?uncap_first}BaseMapper.batchInsert(splits.get(i));
+    }
+    return count;
   }
   <#list columns as column>
     <#if column.primary>
