@@ -28,7 +28,7 @@ public class SenderServiceTest extends ServiceTest {
   public void testBatchTopic() {
     String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
-    int count = (int) (Math.random() * 10) + 20;
+    int count = (int) (Math.random() * 30) + 20;
     logger.info("timestamp={}", timestamp);
     logger.info("count={}", count);
 
