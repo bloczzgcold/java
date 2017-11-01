@@ -17,7 +17,8 @@
     <module>./plugin/dubbo/provider</module>
     <module>./plugin/atomikos</module>
     <module>./plugin/mq/sender</module>
-    <module>./plugin/mq/receiver</module>
+    <module>./plugin/mq/receiver1</module>
+    <module>./plugin/mq/receiver2</module>
     <module>./plugin/ws/consumer</module>
     <module>./plugin/ws/provider</module>
   </modules>

@@ -1,8 +1,5 @@
 package com.github.hualuomoli.sample.mq.sender.biz.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +19,7 @@ public class SenderService {
   private JmsMessageSender jmsMessageSender;
 
   @Transactional(readOnly = false)
-  public void batchQueue() {
-
-    String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-
-    int count = (int) (Math.random() * 20) + 50;
-    logger.info("timestamp={}", timestamp);
-    logger.info("count={}", count);
+  public void batchQueue(int count, String timestamp) {
 
     for (int i = 1; i <= count; i++) {
       jmsMessageSender.send("sample_queue", i + " " + timestamp + " 单点message");
@@ -38,13 +29,7 @@ public class SenderService {
   }
 
   @Transactional(readOnly = false)
-  public void batchTopic() {
-
-    String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-
-    int count = (int) (Math.random() * 10) + 20;
-    logger.info("timestamp={}", timestamp);
-    logger.info("count={}", count);
+  public void batchTopic(int count, String timestamp) {
 
     for (int i = 1; i <= count; i++) {
       jmsMessageSender.send("sample_topic", i + " " + timestamp + " 广播message", Type.TOPIC);
