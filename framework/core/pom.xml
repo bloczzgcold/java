@@ -20,7 +20,7 @@
     <aspectj.version>1.7.4</aspectj.version>
     <cglib.version>3.1</cglib.version>
     <mybatis.version>3.2.8</mybatis.version>
-    <mybatis-spring.version>1.2.2</mybatis-spring.version>
+    <mybatis-spring.version>1.3.1</mybatis-spring.version>
     <druid.version>1.0.15</druid.version>
     <mysql.driver.version>5.1.30</mysql.driver.version>
 
