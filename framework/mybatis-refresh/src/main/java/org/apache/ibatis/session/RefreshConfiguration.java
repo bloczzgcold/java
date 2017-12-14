@@ -19,7 +19,7 @@ public class RefreshConfiguration extends Configuration {
   public static Boolean inited = false;
   protected final Map<String, XNode> sqlFragments = new RefreshStrictMap<XNode>("XML fragments parsed from previous mappers");
 
-  private static RefreshConfiguration CONFIGURATION;
+  private static RefreshConfiguration CONFIGURATION = new RefreshConfiguration();
 
   public static RefreshConfiguration getInstance() {
     return CONFIGURATION;

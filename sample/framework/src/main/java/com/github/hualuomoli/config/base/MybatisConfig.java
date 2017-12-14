@@ -52,7 +52,7 @@ public class MybatisConfig {
     RefreshSqlSessionFactoryBean sqlSessionFactoryBean = new RefreshSqlSessionFactoryBean();
     sqlSessionFactoryBean.setStartup(ProjectConfig.getBoolean("mybatis.refresh"));
     sqlSessionFactoryBean.setWaitSeconds(ProjectConfig.getInteger("mybatis.refresh.waitSeconds"));
-    sqlSessionFactoryBean.setConfiguration(new RefreshConfiguration());
+    sqlSessionFactoryBean.setConfiguration(RefreshConfiguration.getInstance());
     sqlSessionFactoryBean.setDataSource(dataSource);
     sqlSessionFactoryBean.setMapperLocations(resolver.getResources(ProjectConfig.getString("mybatis.mapperLocations", "classpath*:mappers/**/*Mapper.xml")));
 
