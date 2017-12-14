@@ -144,7 +144,7 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
           continue;
         }
         // do refresh
-        logger.info("文件{}被修改,刷新文件", location.filename);
+        logger.info("重新解析文件{}", location.filename);
         this.reload(location.filename, configuration);
 
         // 修改文件的最后修改时间

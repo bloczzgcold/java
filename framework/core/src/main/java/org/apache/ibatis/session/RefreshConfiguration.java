@@ -41,6 +41,7 @@ public class RefreshConfiguration extends Configuration {
   @Override
   public void addMappedStatement(MappedStatement ms) {
     if (inited) {
+      logger.debug("refresh mappedStatement id {}", ms.getId());
       super.mappedStatements.remove(ms.getId());
     }
     super.addMappedStatement(ms);
@@ -49,6 +50,7 @@ public class RefreshConfiguration extends Configuration {
   @Override
   public void addResultMap(ResultMap rm) {
     if (inited) {
+      logger.debug("refresh resultMap id {}", rm.getId());
       super.resultMaps.remove(rm.getId());
     }
     super.addResultMap(rm);
@@ -57,6 +59,7 @@ public class RefreshConfiguration extends Configuration {
   @Override
   public void addParameterMap(ParameterMap pm) {
     if (inited) {
+      logger.debug("refresh parameterMap id {}", pm.getId());
       super.parameterMaps.remove(pm.getId());
     }
     super.addParameterMap(pm);
@@ -65,6 +68,7 @@ public class RefreshConfiguration extends Configuration {
   @Override
   public void addCache(Cache cache) {
     if (inited) {
+      logger.debug("refresh cache id {}", cache.getId());
       super.caches.remove(cache.getId());
     }
     super.addCache(cache);
@@ -73,6 +77,7 @@ public class RefreshConfiguration extends Configuration {
   @Override
   public void addKeyGenerator(String id, KeyGenerator keyGenerator) {
     if (inited) {
+      logger.debug("refresh keyGenerator id {}", id);
       super.keyGenerators.remove(id);
     }
     super.addKeyGenerator(id, keyGenerator);
@@ -88,7 +93,7 @@ public class RefreshConfiguration extends Configuration {
     @Override
     public V put(String key, V value) {
       if (inited) {
-        logger.debug("refresh id {}", key);
+        logger.debug("refresh sqlFragment id {}", key);
         super.remove(key);
       }
       return super.put(key, value);

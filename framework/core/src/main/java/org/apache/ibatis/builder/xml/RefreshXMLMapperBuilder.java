@@ -6,12 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RefreshConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RefreshXMLMapperBuilder extends XMLMapperBuilder {
-
-  public static final Logger logger = LoggerFactory.getLogger(RefreshXMLMapperBuilder.class);
 
   private String resource;
 
@@ -27,7 +23,6 @@ public class RefreshXMLMapperBuilder extends XMLMapperBuilder {
 
   // 刷新
   public void refresh() {
-    logger.info("remove resource {} before parse", resource);
     RefreshConfiguration.getInstance().getLoadedResources().remove(this.resource);
     super.parse();
   }
