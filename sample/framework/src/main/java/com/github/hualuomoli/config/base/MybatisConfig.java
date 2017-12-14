@@ -48,20 +48,11 @@ public class MybatisConfig {
 
     ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(new DefaultResourceLoader());
 
-    SqlSessionFactoryBean sqlSessionFactoryBean = null;
-
     // mybatis异步刷新
-    Boolean refresh = ProjectConfig.getBoolean("mybatis.refresh");
-    if (refresh) {
-      RefreshSqlSessionFactoryBean bean = new RefreshSqlSessionFactoryBean();
-      bean.setStartup(true);
-      bean.setWaitSeconds(1);
-      bean.setConfiguration(RefreshConfiguration.getInstance());
-      sqlSessionFactoryBean = bean;
-    } else {
-      sqlSessionFactoryBean = new SqlSessionFactoryBean();
-    }
-
+    RefreshSqlSessionFactoryBean sqlSessionFactoryBean = new RefreshSqlSessionFactoryBean();
+    sqlSessionFactoryBean.setStartup(ProjectConfig.getBoolean("mybatis.refresh"));
+    sqlSessionFactoryBean.setWaitSeconds(ProjectConfig.getInteger("mybatis.refresh.waitSeconds"));
+    sqlSessionFactoryBean.setConfiguration(RefreshConfiguration.getInstance());
     sqlSessionFactoryBean.setDataSource(dataSource);
     sqlSessionFactoryBean.setMapperLocations(resolver.getResources(ProjectConfig.getString("mybatis.mapperLocations", "classpath*:mappers/**/*Mapper.xml")));
 
