@@ -18,12 +18,10 @@ public class RefreshXMLMapperBuilder extends XMLMapperBuilder {
 
   @Override
   public void parse() {
-    super.parse();
-  }
-
-  // 刷新
-  public void refresh() {
-    RefreshConfiguration.getInstance().getLoadedResources().remove(this.resource);
+    // 如果已经初始化,先移除resource
+    if (RefreshConfiguration.inited) {
+      RefreshConfiguration.getInstance().getLoadedResources().remove(this.resource);
+    }
     super.parse();
   }
 

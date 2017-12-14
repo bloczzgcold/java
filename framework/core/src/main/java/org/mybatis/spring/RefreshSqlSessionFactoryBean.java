@@ -63,7 +63,7 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
     try {
       inputStream = new FileInputStream(resource);
       RefreshXMLMapperBuilder xmlMapperBuilder = new RefreshXMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
-      xmlMapperBuilder.refresh();
+      xmlMapperBuilder.parse();
     } catch (Exception e) {
       throw new NestedIOException("Failed to parse mapping resource: '" + resource + "'", e);
     } finally {
