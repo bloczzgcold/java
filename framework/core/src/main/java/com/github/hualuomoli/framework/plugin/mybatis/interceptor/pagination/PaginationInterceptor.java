@@ -139,7 +139,6 @@ public class PaginationInterceptor extends BaseInterceptor {
    * 设置分页
    * @param pageNumber 当前页码
    * @param pageSize 数据数量
-   * @param orderBy 排序
    */
   public static void setPagination(Integer pageNumber, Integer pageSize) {
     Validate.notNull(pageNumber, "pageNumber is null.");
