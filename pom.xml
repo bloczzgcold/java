@@ -5,7 +5,7 @@
 
   <groupId>com.github.hualuomoli</groupId>
   <artifactId>hualuomoli</artifactId>
-  <version>1.5.8.2</version>
+  <version>1.5.8.3</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -15,6 +15,7 @@
     <module>./framework/core</module>
     <module>./framework/mvc</module>
     <module>./framework/mvcversion</module>
+    <module>./framework/mybatis-refresh</module>
     <module>./gateway/server</module>
     <module>./gateway/server-business</module>
     <module>./gateway/client</module>
