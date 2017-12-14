@@ -8,7 +8,9 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.RefreshConfiguration;
 import org.apache.ibatis.type.TypeHandler;
+import org.mybatis.spring.RefreshSqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +48,20 @@ public class MybatisConfig {
 
     ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(new DefaultResourceLoader());
 
-    SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+    SqlSessionFactoryBean sqlSessionFactoryBean = null;
+
+    // mybatis异步刷新
+    Boolean refresh = ProjectConfig.getBoolean("mybatis.refresh");
+    if (refresh) {
+      RefreshSqlSessionFactoryBean bean = new RefreshSqlSessionFactoryBean();
+      bean.setStartup(true);
+      bean.setWaitSeconds(1);
+      bean.setConfiguration(RefreshConfiguration.getInstance());
+      sqlSessionFactoryBean = bean;
+    } else {
+      sqlSessionFactoryBean = new SqlSessionFactoryBean();
+    }
+
     sqlSessionFactoryBean.setDataSource(dataSource);
     sqlSessionFactoryBean.setMapperLocations(resolver.getResources(ProjectConfig.getString("mybatis.mapperLocations", "classpath*:mappers/**/*Mapper.xml")));
 

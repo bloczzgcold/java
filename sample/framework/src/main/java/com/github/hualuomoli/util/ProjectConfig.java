@@ -94,4 +94,31 @@ public class ProjectConfig {
     return value == null ? defaultValue : value;
   }
 
+  /**
+   * 获取Boolean值
+   * @param key Key
+   * @return 值
+   */
+  public static final Boolean getBoolean(String key) {
+    String value = getString(key);
+    return value == null ? false : isTrue(value);
+  }
+
+  /**
+   * 是否是true
+   * @param value 值
+   * @return 是否为真
+   */
+  public static final Boolean isTrue(String value) {
+    return "y".equalsIgnoreCase(value) //
+        || "yes".equalsIgnoreCase(value) //
+        || "o".equalsIgnoreCase(value) //
+        || "ok".equalsIgnoreCase(value) //
+        || "t".equalsIgnoreCase(value) //
+        || "true".equalsIgnoreCase(value) //
+        || "1".equalsIgnoreCase(value) //
+        || "success".equalsIgnoreCase(value) //
+    ;
+  }
+
 }
