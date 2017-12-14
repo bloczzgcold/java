@@ -16,7 +16,7 @@ public class RefreshConfiguration extends Configuration {
 
   private static final Logger logger = LoggerFactory.getLogger(RefreshConfiguration.class);
 
-  public static boolean inited = false;
+  public static Boolean inited = false;
   protected final Map<String, XNode> sqlFragments = new RefreshStrictMap<XNode>("XML fragments parsed from previous mappers");
 
   private static final RefreshConfiguration CONFIGURATION = new RefreshConfiguration();

@@ -21,15 +21,15 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
 
   private static final Logger logger = LoggerFactory.getLogger(RefreshSqlSessionFactoryBean.class);
 
-  private boolean startup;
-  private int waitSeconds;
+  private Boolean startup;
+  private Integer waitSeconds;
   private Resource[] mapperLocations;
 
-  public void setStartup(boolean startup) {
+  public void setStartup(Boolean startup) {
     this.startup = startup;
   }
 
-  public void setWaitSeconds(int waitSeconds) {
+  public void setWaitSeconds(Integer waitSeconds) {
     this.waitSeconds = waitSeconds;
   }
 
@@ -43,7 +43,7 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
   protected SqlSessionFactory buildSqlSessionFactory() throws IOException {
     SqlSessionFactory factory = super.buildSqlSessionFactory();
 
-    if (startup) {
+    if (startup != null && startup) {
       System.out.println("启动Mybatis修改自动刷新......");
       RefreshConfiguration.inited = true;
       new SyncRefreshDealer(factory, mapperLocations, waitSeconds).start();
