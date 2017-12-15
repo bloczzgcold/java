@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
+import org.apache.ibatis.builder.xml.RefreshXMLConfigBuilder;
 import org.apache.ibatis.builder.xml.RefreshXMLMapperBuilder;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
@@ -23,7 +25,11 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
 
   private Boolean startup;
   private Integer waitSeconds;
+
   private Resource[] mapperLocations;
+  private Configuration configuration;
+  private Resource configLocation;
+  private Properties configurationProperties;
 
   public void setStartup(Boolean startup) {
     this.startup = startup;
@@ -40,7 +46,30 @@ public class RefreshSqlSessionFactoryBean extends SqlSessionFactoryBean {
   }
 
   @Override
+  public void setConfiguration(Configuration configuration) {
+    super.setConfiguration(configuration);
+    this.configuration = configuration;
+  }
+
+  @Override
+  public void setConfigLocation(Resource configLocation) {
+    this.configLocation = configLocation;
+  }
+
+  public void setConfigurationProperties(Properties configurationProperties) {
+    super.setConfigurationProperties(configurationProperties);
+    this.configurationProperties = configurationProperties;
+  }
+
+  @Override
   protected SqlSessionFactory buildSqlSessionFactory() throws IOException {
+
+    // 设置configLocation配置的信息
+    if (this.configLocation != null) {
+      RefreshXMLConfigBuilder xmlConfigBuilder = new RefreshXMLConfigBuilder(configuration, this.configLocation.getInputStream(), null, this.configurationProperties);
+      xmlConfigBuilder.parse();
+    }
+
     SqlSessionFactory factory = super.buildSqlSessionFactory();
 
     if (startup != null && startup) {
