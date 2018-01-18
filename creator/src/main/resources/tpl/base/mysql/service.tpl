@@ -78,12 +78,26 @@ public class ${javaName}BaseService {
   <#list columns as column>
     <#if column.primary>
 
-  /** 根据主键${column.javaName}修改 */
+  /** 根据主键${column.javaName}修改全部信息 */
   @Transactional(readOnly = false)
   public int update(${javaName} ${javaName?uncap_first}) {
     Validate.notNull(${javaName?uncap_first}, "${javaName?uncap_first} is null.");
 
     return ${javaName?uncap_first}BaseMapper.update(${javaName?uncap_first});
+  }
+    </#if>
+  </#list>
+  <#list columns as column>
+    <#if column.primary>
+
+  /** 根据主键${column.javaName}修改 */
+  @Transactional(readOnly = false)
+  public int updateBy${column.javaName?cap_first}(${column.javaTypeName} ${column.javaName?uncap_first}, ${javaName} ${javaName?uncap_first}) {
+    Validate.notNull(${column.javaName?uncap_first}, "${column.javaName?uncap_first} is null.");
+    Validate.notNull(${javaName?uncap_first}, "${javaName?uncap_first} is null.");
+
+    ${javaName?uncap_first}.set${column.javaName?cap_first}(${column.javaName?uncap_first});
+    return ${javaName?uncap_first}BaseMapper.updateBy${column.javaName?cap_first}(${javaName?uncap_first});
   }
     </#if>
   </#list>

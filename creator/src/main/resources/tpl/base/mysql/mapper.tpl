@@ -26,8 +26,15 @@ public interface ${javaName}BaseMapper {
   <#list columns as column>
     <#if column.primary>
 
-  /** 根据主键修改 */
+  /** 根据主键修改全部信息 */
   int update(${javaName} ${javaName?uncap_first});
+    </#if>
+  </#list>
+  <#list columns as column>
+    <#if column.primary>
+
+  /** 根据主键修改 */
+  int updateBy${column.javaName?cap_first}(${javaName} ${javaName?uncap_first});
     </#if>
   </#list>
   <#list uniques as unique>

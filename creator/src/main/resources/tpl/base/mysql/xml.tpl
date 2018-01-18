@@ -68,24 +68,34 @@
   
   <#list columns as column>
     <#if column.primary>
-  <!-- 根据主键${column.javaName}修改 -->
+  <!-- 根据主键修改全部信息 -->
   <update id="update">
     update `${tableName}`
     <set>
     <#list columns as column>
       <#if !column.primary>
       <#-- 主键不参与修改 -->
-        <#if column.javaTypeName == 'java.lang.String'>
-        <#-- 字符串 -->
-      <if test="${column.javaName} != null and ${column.javaName} != ''"> 
         `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
-      </if>
-        <#else>
-        <#-- 普通类型 -->
+      </#if>
+    </#list>
+    </set>
+    where ${column.dbName} =  ${r"#{"}${column.javaName}${r"}"}
+  </update>
+    </#if>
+  </#list>
+
+  <#list columns as column>
+    <#if column.primary>
+  <!-- 根据主键${column.javaName}修改 -->
+  <update id="updateBy${column.javaName?cap_first}">
+    update `${tableName}`
+    <set>
+    <#list columns as column>
+      <#if !column.primary>
+      <#-- 主键不参与修改 -->
       <if test="${column.javaName} != null"> 
         `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
       </if>
-        </#if>
       </#if>
     </#list>
     </set>
@@ -102,17 +112,9 @@
     <#list columns as column>
       <#if !column.primary && !column.unique>
       <#-- 主键或唯一索引不参与修改 -->
-        <#if column.javaTypeName == 'java.lang.String'>
-        <#-- 字符串 -->
-      <if test="${column.javaName} != null and ${column.javaName} != ''"> 
-        `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
-      </if>
-        <#else>
-        <#-- 普通类型 -->
       <if test="${column.javaName} != null"> 
         `${column.dbName}` = ${r"#{"}${column.javaName}${r"}"},
       </if>
-        </#if>
       </#if>
     </#list>
     </set>
